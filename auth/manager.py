@@ -1,3 +1,4 @@
+import os
 import uuid
 from typing import Optional
 
@@ -6,7 +7,7 @@ from fastapi_users import BaseUserManager, UUIDIDMixin, IntegerIDMixin
 
 from auth.db import User, get_user_db
 
-SECRET = "SECRET"
+SECRET = os.getenv("SECRET")
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
