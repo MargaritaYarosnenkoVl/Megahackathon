@@ -6,7 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from models.models import metadata
-from config import FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_LOGIN, FSTR_DB_PASS, DB_NAME
+from config import FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_NAME
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -17,7 +17,7 @@ config.set_section_option(section, "FSTR_DB_LOGIN", FSTR_DB_LOGIN)
 config.set_section_option(section, "FSTR_DB_PASS", FSTR_DB_PASS)
 config.set_section_option(section, "FSTR_DB_HOST", FSTR_DB_HOST)
 config.set_section_option(section, "FSTR_DB_PORT", FSTR_DB_PORT)
-config.set_section_option(section, "DB_NAME", DB_NAME)
+config.set_section_option(section, "FSTR_DB_NAME", FSTR_DB_NAME)
 
 
 # Interpret the config file for Python logging.
