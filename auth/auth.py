@@ -1,10 +1,9 @@
 from fastapi_users.authentication import CookieTransport, JWTStrategy, AuthenticationBackend
 import os
-
+from config import SECRET
 cookie_transport = CookieTransport(cookie_name="news", cookie_max_age=3600)
 
-
-SECRET = os.getenv("SECRET")
+# SECRET = os.getenv("SECRET")
 
 
 def get_jwt_strategy() -> JWTStrategy:

@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 FSTR_DB_LOGIN = os.getenv('FSTR_DB_LOGIN')
 FSTR_DB_PASS = os.getenv('FSTR_DB_PASS')
