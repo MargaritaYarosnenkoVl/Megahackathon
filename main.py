@@ -5,10 +5,13 @@ from auth.auth import auth_backend
 from auth.db import User
 from auth.manager import get_user_manager
 from auth.schemas import UserRead, UserCreate
+from fastadmin import fastapi_app as admin_app
 
 app = FastAPI(
     title="This is ХОРОШО!"
 )
+
+app.mount("/admin", admin_app)
 
 fastapi_users = FastAPIUsers[User, int](get_user_manager,
                                         [auth_backend]
@@ -24,6 +27,10 @@ app.include_router(fastapi_users.get_register_router(UserRead, UserCreate),
                    tags=["auth"]
                    )
 
+app.include_router(fastapi_users.get_register_router(UserRead, UserCreate),
+                   prefix="/auth",
+                   tags=["auth"]
+                   )
 
 current_user = fastapi_users.current_user()
 
