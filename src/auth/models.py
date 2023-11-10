@@ -4,20 +4,37 @@ from typing import AsyncGenerator
 
 from fastadmin import register, SqlAlchemyModelAdmin
 from fastapi import Depends
-from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
+from fastapi_users.db import SQLAlchemyUserDatabase
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
-from sqlalchemy import String, Boolean, Column, Integer, TIMESTAMP, ForeignKey, select
+from sqlalchemy import String, Boolean, Column, Integer, TIMESTAMP, ForeignKey, select, MetaData, Table, JSON
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped
 
-from config import FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_NAME
-from models.models import role
+from ..database import Base, DATABASE_URL, async_session_maker
 
-DATABASE_URL = f"postgresql+asyncpg://{FSTR_DB_LOGIN}:{FSTR_DB_PASS}@{FSTR_DB_HOST}:{FSTR_DB_PORT}/{FSTR_DB_NAME}"
+metadata = MetaData()
 
 
-class Base(DeclarativeBase):
-    pass
+role = Table("role",
+             metadata,
+             Column("id", Integer, primary_key=True),
+             Column("name", String, nullable=False),
+             Column("permissions", JSON)
+             )
+
+
+user = Table("user",
+             metadata,
+             Column("id", Integer, primary_key=True),
+             Column("username", String, nullable=False),
+             Column("hashed_password", String(length=1024), nullable=False),
+             Column("registred_at", TIMESTAMP, default=datetime.utcnow),
+             Column("role_id", Integer, ForeignKey(role.c.id)),
+             Column("email", String(length=320), unique=True, index=True, nullable=False),
+             Column("is_active", Boolean, default=True, nullable=False),
+             Column("is_superuser", Boolean, default=False, nullable=False),
+             Column("is_verified", Boolean, default=False, nullable=False)
+             )
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
@@ -33,15 +50,6 @@ class User(SQLAlchemyBaseUserTable[int], Base):
 
     def __str__(self):
         return self.username
-
-
-engine = create_async_engine(DATABASE_URL)
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-
-# async def create_db_and_tables():
-#     async with engine.begin() as conn:
-#         await conn.run_sync(Base.metadata.create_all)
 
 
 @register(User, sqlalchemy_sessionmaker=async_session_maker)
@@ -64,6 +72,10 @@ class UserAdmin(SqlAlchemyModelAdmin):
             if not bcrypt.checkpw(password.encode(), user.hashed_password.encode()):
                 return None
             return user.id
+
+# async def create_db_and_tables():
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:

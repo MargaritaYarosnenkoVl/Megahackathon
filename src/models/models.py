@@ -14,6 +14,7 @@ from sqlalchemy import (MetaData,
                         Text)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
+
 metadata = MetaData()
 
 
@@ -38,11 +39,5 @@ user = Table("user",
              Column("is_verified", Boolean, default=False, nullable=False)
              )
 
-article = Table(
-    "article",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("title", String),
-    Column("text", Text),
-    Column("timedata", TIMESTAMP),
-)
+
+
