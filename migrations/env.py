@@ -11,10 +11,9 @@ import sys
 sys.path.append(os.path.join(sys.path[0], 'src'))
 
 from src.auth.models import metadata as metadata_auth
-from src.models.models import metadata as metadata_models
 from src.parse_news.models import metadata as metadata_parser
 
-from src.config import FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_NAME
+from src.config import FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_NAME
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -37,7 +36,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = [metadata_auth, metadata_models, metadata_parser]
+target_metadata = [metadata_auth, metadata_parser]
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
