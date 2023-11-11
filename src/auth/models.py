@@ -32,7 +32,7 @@ user = Table("user",
              Column("role_id", Integer, ForeignKey(role.c.id)),
              Column("email", String(length=320), unique=True, index=True, nullable=False),
              Column("is_active", Boolean, default=True, nullable=False),
-             Column("is_superuser", Boolean, default=True, nullable=False),
+             Column("is_superuser", Boolean, default=False, nullable=False),
              Column("is_verified", Boolean, default=False, nullable=False)
              )
 
@@ -45,7 +45,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     role_id = Column("role_id", Integer, ForeignKey(role.c.id))
     email: Mapped[str] = Column(String(length=320), unique=True, index=True, nullable=False)
     is_active: Mapped[bool] = Column(Boolean, default=True, nullable=False)
-    is_superuser: Mapped[bool] = Column(Boolean, default=True, nullable=False)
+    is_superuser: Mapped[bool] = Column(Boolean, default=False, nullable=False)
     is_verified: Mapped[bool] = Column(Boolean, default=False, nullable=False)
 
     def __str__(self):
@@ -63,7 +63,7 @@ class UserAdmin(SqlAlchemyModelAdmin):
     async def authenticate(self, username, password):
         sessionmaker = self.get_sessionmaker()
         async with sessionmaker() as session:
-            query = select(User).filter_by(username=username)
+            query = select(User).filter_by(username=username, is_superuser=True)
             result = await session.scalars(query)
             user = result.first()
             if not user:
