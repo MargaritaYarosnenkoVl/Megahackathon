@@ -1,11 +1,13 @@
 from fastapi import FastAPI, Depends
 from fastapi_users import FastAPIUsers
+from fastadmin import fastapi_app as admin_app
 
 from src.auth.auth import auth_backend
 from src.auth.models import User
 from src.auth.manager import get_user_manager
 from src.auth.schemas import UserRead, UserCreate
-from fastadmin import fastapi_app as admin_app
+from src.parse_news.router import router as router_parser
+
 
 app = FastAPI(
     title="This is ХОРОШО!"
@@ -43,3 +45,6 @@ def protected_route(user: User = Depends(current_user)):
 @app.get("/unprotected-route")
 def protected_route():
     return f"Hello, anonym"
+
+
+app.include_router(router_parser)
