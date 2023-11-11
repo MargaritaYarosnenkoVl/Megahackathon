@@ -32,7 +32,7 @@ user = Table("user",
              Column("role_id", Integer, ForeignKey(role.c.id)),
              Column("email", String(length=320), unique=True, index=True, nullable=False),
              Column("is_active", Boolean, default=True, nullable=False),
-             Column("is_superuser", Boolean, default=False, nullable=False),
+             Column("is_superuser", Boolean, default=True, nullable=False),
              Column("is_verified", Boolean, default=False, nullable=False)
              )
 
@@ -45,7 +45,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     role_id = Column("role_id", Integer, ForeignKey(role.c.id))
     email: Mapped[str] = Column(String(length=320), unique=True, index=True, nullable=False)
     is_active: Mapped[bool] = Column(Boolean, default=True, nullable=False)
-    is_superuser: Mapped[bool] = Column(Boolean, default=False, nullable=False)
+    is_superuser: Mapped[bool] = Column(Boolean, default=True, nullable=False)
     is_verified: Mapped[bool] = Column(Boolean, default=False, nullable=False)
 
     def __str__(self):
@@ -55,10 +55,10 @@ class User(SQLAlchemyBaseUserTable[int], Base):
 @register(User, sqlalchemy_sessionmaker=async_session_maker)
 class UserAdmin(SqlAlchemyModelAdmin):
     exclude = ("hash_password",)
-    list_display = ("id", "username", "is_superuser", "is_active")
-    list_display_links = ("id", "username")
-    list_filter = ("id", "username", "is_superuser", "is_active")
-    search_fields = ("username",)
+    list_display = ("id", "username", "role_id", "is_superuser", "is_active")
+    list_display_links = ("id", "username", "role_id")
+    list_filter = ("id", "username", "role_id", "is_superuser", "is_active")
+    search_fields = ("username", "role_id", )
 
     async def authenticate(self, username, password):
         sessionmaker = self.get_sessionmaker()
