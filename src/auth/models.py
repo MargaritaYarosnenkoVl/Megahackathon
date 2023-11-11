@@ -64,7 +64,6 @@ class UserAdmin(SqlAlchemyModelAdmin):
         sessionmaker = self.get_sessionmaker()
         async with sessionmaker() as session:
             query = select(User).filter_by(username=username, is_superuser=True)
-            print(username)
             result = await session.scalars(query)
             user = result.first()
             if not user:

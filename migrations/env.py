@@ -14,6 +14,7 @@ from src.auth.models import metadata as metadata_auth
 from src.parse_news.models import metadata as metadata_parser
 
 from src.config import FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_NAME
+from src.config import ADMIN_USER_MODEL, ADMIN_USER_MODEL_USERNAME_FIELD, ADMIN_SECRET_KEY
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -25,6 +26,9 @@ config.set_section_option(section, "FSTR_DB_PASS", FSTR_DB_PASS)
 config.set_section_option(section, "FSTR_DB_HOST", FSTR_DB_HOST)
 config.set_section_option(section, "FSTR_DB_PORT", FSTR_DB_PORT)
 config.set_section_option(section, "FSTR_DB_NAME", FSTR_DB_NAME)
+config.set_section_option(section, "ADMIN_USER_MODEL", ADMIN_USER_MODEL)
+config.set_section_option(section, "ADMIN_USER_MODEL_USERNAME_FIELD", ADMIN_USER_MODEL_USERNAME_FIELD)
+config.set_section_option(section, "ADMIN_SECRET_KEY", ADMIN_SECRET_KEY)
 
 
 # Interpret the config file for Python logging.
