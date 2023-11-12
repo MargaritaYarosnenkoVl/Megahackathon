@@ -1,9 +1,11 @@
+import datetime
 from pathlib import Path
 from bs4 import BeautifulSoup
 import requests
 import asyncio
 import aiohttp
 import scrapy
+from datetime import datetime
 
 
 class NakedScienceSpider(scrapy.Spider):
@@ -36,15 +38,27 @@ class NakedScienceSpider(scrapy.Spider):
         for quote in response.css("div.news-item.grid"):
             title = quote.css("a::text").get()
             short_text = quote.css("p::text").get()
+            published_at = quote.css("span::attr(data-published)").get()
+
             full_text_link = quote.css("a::attr(href)").get()
             full_text = await self.get_full_text(link=full_text_link)
             if not full_text:
                 full_text = "Not available"
 
-            yield {"title": title,
-                   "short_text": short_text,
-                   "full_text": full_text,
-                   "link": full_text_link}
+            tag = "science"  # или функция
+
+            search_words: list = quote.css("div.terms-item a.animate-custom::text").getall()
+            search_words_cleared: list = await self.clear_search_words(search_words)
+
+            yield {"title": title,  # название
+                   "brief_text": short_text,  # короткое описание
+                   "full_text": full_text,  # полный текст
+                   "tag": tag,  # тэг - одно слово
+                   "search_words": search_words_cleared,  # слова для поиска
+                   "full_text_link": full_text_link,  # ссылка на полный текст
+                   "published_at": datetime.fromisoformat(published_at),  # дата публикации
+                   "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
+                   }
 
     async def get_full_text(self, link: str) -> str:
         res = requests.get(url=link, headers=self.headers)
@@ -54,3 +68,6 @@ class NakedScienceSpider(scrapy.Spider):
             paragraphs = soup.find('div', {"class": "body"}).findAll("p")
             full_t = post_lead.strip() + " " + " ".join((p.text.strip() for p in paragraphs))
             return full_t
+
+    async def clear_search_words(self, words: list[str]) -> list:
+        return [word.strip()[2:] if word.startswith("#") else word.strip().lower() for word in words]

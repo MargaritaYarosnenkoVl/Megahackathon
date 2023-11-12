@@ -12,19 +12,33 @@ from sqlalchemy import (MetaData,
                         JSON,
                         Boolean,
                         Text,
-                        Tuple)
+                        Tuple,
+                        )
 
 metadata = MetaData()
+
+tag = Table("tag",
+            metadata,
+            Column("id", Integer, primary_key=True),
+            Column("tag_name", String),  # science, games, auto, sport, show, education, agriculture ...
+            )
+
+search_word = Table("search_word",
+                    metadata,
+                    Column("id", Integer, primary_key=True),
+                    Column("word", String),  # any single word
+                    )
 
 article = Table("article",
                 metadata,
                 Column("id", Integer, primary_key=True),
-                Column("origin_url", String),
-                Column("title", String),
-                Column("brief_text", Text),
-                Column("full_text", Text),
-                Column("key_words", String),
-                Column("full_text_link", Text),
-                Column("created_at", TIMESTAMP, default=datetime.utcnow()),
-                Column("parsed_at", TIMESTAMP, default=datetime.utcnow()),
+                Column("title", String),  # название
+                Column("brief_text", Text),  # короткое описание
+                Column("full_text", Text),  # полный текст
+                Column("key_words", String),  # 20 key words defined with NLTK and Scikit-Learn (TfidfVectorizer)
+                Column("words_for_search", ForeignKey(search_word.c.id)),
+                Column("tag", ForeignKey(tag.c.id)),  # тэг - одно слово
+                Column("full_text_link", String),  # ссылка на полный текст
+                Column("created_at", TIMESTAMP, default=datetime.utcnow()),  # дата публикации
+                Column("parsed_at", TIMESTAMP, default=datetime.utcnow()),  # дата добавления / парсинга
                 )
