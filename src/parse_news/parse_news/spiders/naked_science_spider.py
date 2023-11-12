@@ -1,9 +1,6 @@
 import datetime
-from pathlib import Path
 from bs4 import BeautifulSoup
 import requests
-import asyncio
-import aiohttp
 import scrapy
 from datetime import datetime
 
@@ -13,28 +10,13 @@ class NakedScienceSpider(scrapy.Spider):
     headers: dict = {'User-Agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
 
-    start_urls = [
-        "https://naked-science.ru/article/page/1",
-        "https://naked-science.ru/article/page/2",
-        "https://naked-science.ru/article/page/3",
-        "https://naked-science.ru/article/page/4",
-    ]
-
-    # def start_requests(self):
-    #     urls = [
-    #         "https://naked-science.ru/article/page/1",
-    #         "https://naked-science.ru/article/page/2",
-    #         "https://naked-science.ru/article/page/3",
-    #         "https://naked-science.ru/article/page/4",
-    #     ]
-    #     for url in urls:
-    #         yield scrapy.Request(url=url, callback=self.parse)
+    start_urls = ["https://naked-science.ru/article/page/1",
+                  "https://naked-science.ru/article/page/2",
+                  "https://naked-science.ru/article/page/3",
+                  "https://naked-science.ru/article/page/4",
+                  ]
 
     async def parse(self, response, **kwargs):
-        # page = "_".join(response.url.split("/")[2:])
-        # filename = f"quotes-{page}.html"
-        # Path(filename).write_bytes(response.body)
-        # self.log(f"Saved file {filename}")
         for quote in response.css("div.news-item.grid"):
             title = quote.css("a::text").get()
             short_text = quote.css("p::text").get()
