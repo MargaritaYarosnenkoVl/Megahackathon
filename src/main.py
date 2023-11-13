@@ -14,7 +14,7 @@ app = FastAPI(
 )
 
 origins = [
-    "http://localhost:8000/graphql"
+    "http://localhost:5173"
 ]
 
 app.add_middleware(CORSMiddleware,
