@@ -7,11 +7,21 @@ from src.auth.models import User
 from src.auth.manager import get_user_manager
 from src.auth.schemas import UserRead, UserCreate
 from src.parse_news.router import router as router_parser
-
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="This is ХОРОШО!"
 )
+
+origins = [
+    "http://localhost:8000/graphql"
+]
+
+app.add_middleware(CORSMiddleware,
+                   allow_origins=origins,
+                   allow_credentials=True,
+                   allow_methods=["*"],
+                   allow_headers=["*"])
 
 app.mount("/admin", admin_app)
 
