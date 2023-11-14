@@ -30,7 +30,7 @@ class Nplus1Spider(scrapy.Spider):
 
     async def parse(self, response, **kwargs):
         target_script_content = response.css("script").getall()[3]  # строка - результат выполнения скрипта
-        links_origin_str: str = target_script_content[41:-15]  # json строка с данными, не парсится scrapy & bs
+        links_origin_str: str = target_script_content[41:-15]  # json строка с данными, не парсится в scrapy & bs
         raw_links: list[str] = re.findall(r"https:\\\\\\/\\\\\\/nplus1\.ru\\\\\\/news\\\\\\/\d{4}\\\\\\/\d{2}\\\\\\/\d{2}\\\\\\/[\w|-]*",
                                           string=links_origin_str)  # список ссылок на статьи в этот день
         links = [link.replace("\\\\\\", "") for link in raw_links]  # удаляем лишние символы из ссылок
