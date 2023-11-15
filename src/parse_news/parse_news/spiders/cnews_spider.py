@@ -1,0 +1,64 @@
+import datetime
+import re
+
+from bs4 import BeautifulSoup
+import requests
+import scrapy
+from datetime import datetime, timedelta
+
+
+class FontankaSpider(scrapy.Spider):
+    name: str = "fontanka"
+    headers: dict = {'User-Agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                                   "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
+    day = datetime.today()
+    day_4 = day - timedelta(days=4)
+
+    start_urls = [f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_1",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_2",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_3",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_4",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_5",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_6",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_7",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_8",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_9",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_10",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_11",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_12",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_13",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_14",
+                  f"https://www.cnews.ru/archive/date_{day_4.day}.{day_4.month}.{day_4.year}_{day.day}.{day.month}.{day.year}/type_top_lenta/page_15",
+                  ]
+
+    async def parse(self, response, **kwargs):
+        quote: str = response.css("div.allnews_mainpage").get()
+        links: list = re.findall(r"http:\/\/\w*\.cnews\.ru\/news\/line\/\d{4}-\d{2}-\d{2}_[\w|_]*", quote)
+        titles: list = re.findall(r'<a href="http:\/\/\w*\.cnews\.ru\/news\/line\/\d{4}-\d{2}-\d{2}_[\w|_]*".*>(.*)</a>', quote)
+
+        for full_text_link, title in zip(links, titles):
+            news_info: dict = await self.get_news_info(link=full_text_link)
+
+            yield {"title": title,  # название
+                   "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
+                   "full_text": news_info.get("full_text"),  # полный текст
+                   "tag": quote.css("a.IFjt::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
+                   "search_words": news_info.get("search_words"),  # строка всех тегов
+                   "parsed_from": "Фонтанка.ру",  # название сайта
+                   "full_text_link": full_text_link,  # ссылка на полный текст
+                   "published_at": datetime.strptime(response.url[24:34], "%Y/%m/%d"),  # дата публикации
+                   "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
+                   }
+
+    async def get_news_info(self, link: str) -> dict:
+        res = requests.get(url=link, headers=self.headers)
+        if res.status_code == 200:
+            soup = BeautifulSoup(res.content, 'lxml')
+            brief_text = soup.find("section", {"class": "LRapz"}).find("p").text
+            full_text = soup.find("section", {"class": "LRapz"}).text.strip()
+            search_words: list[soup] = soup.findAll("h4", {"class": "B5jt"})
+
+            return {"brief_text": brief_text,
+                    "full_text": full_text,
+                    "search_words": " ".join((word.text.strip().lower() for word in search_words))
+                    }
