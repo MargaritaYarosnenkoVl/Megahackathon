@@ -32,6 +32,7 @@ article = Table("article",
                 Column("published_at", TIMESTAMP, default=datetime.utcnow()),  # дата публикации
                 Column("parsed_at", TIMESTAMP, default=datetime.utcnow()),  # дата добавления / парсинга
                 Column("rating", Integer, default=0),  # рейтинг новости, каждый вывод в поиске +1
+                Column("counter", Integer, default=0),  # сколько раз встречалась на сайтах
                 Column("fun_metric", Float, default=0),  # метрика забавности что ли
                 Column("unique_metric", Float, default=0),  # метрика уникальности
                 Column("simple_metric", Float, default=0)  # метрика простоты понимания
