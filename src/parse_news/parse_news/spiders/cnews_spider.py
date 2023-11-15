@@ -7,8 +7,8 @@ import scrapy
 from datetime import datetime, timedelta
 
 
-class FontankaSpider(scrapy.Spider):
-    name: str = "fontanka"
+class CnewsSpider(scrapy.Spider):
+    name: str = "cnews"
     headers: dict = {'User-Agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
     day = datetime.today()
@@ -42,11 +42,11 @@ class FontankaSpider(scrapy.Spider):
             yield {"title": title,  # название
                    "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
                    "full_text": news_info.get("full_text"),  # полный текст
-                   "tag": quote.css("a.IFjt::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
+                   "tag": news_info.get("tag"),  # тэг - тема новости (первое слово/фраза из группы тегов)
                    "search_words": news_info.get("search_words"),  # строка всех тегов
-                   "parsed_from": "Фонтанка.ру",  # название сайта
+                   "parsed_from": "Cnews",  # название сайта
                    "full_text_link": full_text_link,  # ссылка на полный текст
-                   "published_at": datetime.strptime(response.url[24:34], "%Y/%m/%d"),  # дата публикации
+                   "published_at": datetime.strptime(response.url[31:41], "%Y-%m-%d"),  # дата публикации
                    "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
                    }
 
@@ -54,11 +54,12 @@ class FontankaSpider(scrapy.Spider):
         res = requests.get(url=link, headers=self.headers)
         if res.status_code == 200:
             soup = BeautifulSoup(res.content, 'lxml')
-            brief_text = soup.find("section", {"class": "LRapz"}).find("p").text
-            full_text = soup.find("section", {"class": "LRapz"}).text.strip()
-            search_words: list[soup] = soup.findAll("h4", {"class": "B5jt"})
+            brief_text: str = soup.find("article", {"class": "news_container"}).find("p").text.strip()
+            full_text: list[soup] = soup.find("article", {"class": "news_container"}).findAll("p")
+            # search_words: ОТСУТСТВУЮТ!
+            # published_at:
 
             return {"brief_text": brief_text,
-                    "full_text": full_text,
-                    "search_words": " ".join((word.text.strip().lower() for word in search_words))
+                    "full_text": " ".join(p.text.strip() for p in full_text),
+                    # "search_words": " ".join((word.text.strip().lower() for word in search_words))
                     }
