@@ -18,26 +18,19 @@ class KnifeMediaSpider(scrapy.Spider):
     async def parse(self, response, **kwargs):
         for quote in response.css("div.widget-news__content"):
             full_text_link = quote.css("a.widget-news__content-link::attr(href)").get()
-            published_at = quote.css("time::attr(datetime)").get()
-
-            search_words: list = quote.css("a.meta__item::text").getall()
-            search_words_cleared: list = await self.clear_search_words(search_words)
-
-            tag = search_words_cleared[0]
+            search_words: list[str] = quote.css("a.meta__item::text").getall()
+            search_words_cleared: list[str] = await self.clear_search_words(search_words)
 
             news_info: dict = await self.get_news_info(link=full_text_link)
 
-            title = news_info.get("title")
-            brief_text = news_info.get("brief_text")
-            full_text = news_info.get("full_text")
-
-            yield {"title": title,  # название
-                   "brief_text": brief_text,  # короткое описание
-                   "full_text": full_text,  # полный текст
-                   "tag": tag,  # тэг - одно слово
-                   "search_words": search_words_cleared,  # слова для поиска
+            yield {"title": news_info.get("title"),  # название
+                   "brief_text": news_info.get("brief_text"),  # короткое описание
+                   "full_text": news_info.get("full_text"),  # полный текст
+                   "tag": search_words_cleared[0],  # тэг - одно слово
+                   "search_words": " ".join(search_words_cleared),  # слова для поиска
+                   "parsed_from": "Нож",
                    "full_text_link": full_text_link,  # ссылка на полный текст
-                   "published_at": datetime.fromisoformat(published_at),  # дата публикации
+                   "published_at": datetime.fromisoformat(quote.css("time::attr(datetime)").get()),  # дата публикации
                    "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
                    }
 

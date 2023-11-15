@@ -34,15 +34,15 @@ class FontankaSpider(scrapy.Spider):
             if not link_quote.startswith("https:"):
                 full_text_link = "https://www.fontanka.ru" + link_quote
                 title = quote.css("a.IFft::text").get()
-                tag = quote.css("a.IFjt::attr(title)").get()
 
                 news_info: dict = await self.get_news_info(link=full_text_link)
                 print(response.url[24:35])
                 yield {"title": title,  # название
                        "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
                        "full_text": news_info.get("full_text"),  # полный текст
-                       "tag": tag,  # тэг - одно слово
-                       "search_words": news_info.get("search_words"),  # слова для поиска
+                       "tag": quote.css("a.IFjt::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
+                       "search_words": news_info.get("search_words"),  # строка всех тегов
+                       "parsed_from": "Фонтанка.ру",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст
                        "published_at": datetime.strptime(response.url[24:34], "%Y/%m/%d"),  # дата публикации
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга

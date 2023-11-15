@@ -42,7 +42,8 @@ class Nplus1Spider(scrapy.Spider):
                    "brief_text": news_info.get("title") + news_info.get("brief_text"),  # короткое описание
                    "full_text": news_info.get("full_text"),  # полный текст
                    "tag": news_info.get("tag"),  # тэг - одно слово
-                   "search_words": "",  # слова для поиска
+                   "search_words": news_info.get("tag"),  # слова для поиска
+                   "parsed_from": "Nplus1",
                    "full_text_link": full_text_link,  # ссылка на полный текст
                    "published_at": datetime.strptime((response.url[25:]), "%y/%m/%d"),  # дата публикации
                    "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
