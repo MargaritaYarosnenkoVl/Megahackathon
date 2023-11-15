@@ -6,6 +6,7 @@ from sqlalchemy import (MetaData,
                         Table,
                         Column,
                         Integer,
+                        Float,
                         String,
                         TIMESTAMP,
                         ForeignKey,
@@ -17,28 +18,21 @@ from sqlalchemy import (MetaData,
 
 metadata = MetaData()
 
-tag = Table("tag",
-            metadata,
-            Column("id", Integer, primary_key=True),
-            Column("tag_name", String),  # science, games, auto, sport, show, education, agriculture ...
-            )
-
-search_word = Table("search_word",
-                    metadata,
-                    Column("id", Integer, primary_key=True),
-                    Column("word", String),  # any single word
-                    )
-
 article = Table("article",
                 metadata,
-                Column("id", Integer, primary_key=True),
+                Column("id", Integer, primary_key=True, autoincrement="auto"),
                 Column("title", String),  # название
                 Column("brief_text", Text),  # короткое описание
                 Column("full_text", Text),  # полный текст
-                Column("key_words", String),  # 20 key words defined with NLTK and Scikit-Learn (TfidfVectorizer)
-                Column("words_for_search", ForeignKey(search_word.c.id)),
-                Column("tag", ForeignKey(tag.c.id)),  # тэг - одно слово
+                Column("tag", String),  # тэг - тема новости (первое слово/фраза из группы тегов)
+                Column("search_words", String),  # строка всех тегов
+                Column("ml_key_words", String),  # 20 ключевых слов выдел с помощью NLTK and Scikit-Learn TfidfVectorizer
+                Column("parsed_from", String),  # название сайта
                 Column("full_text_link", String),  # ссылка на полный текст
-                Column("created_at", TIMESTAMP, default=datetime.utcnow()),  # дата публикации
+                Column("published_at", TIMESTAMP, default=datetime.utcnow()),  # дата публикации
                 Column("parsed_at", TIMESTAMP, default=datetime.utcnow()),  # дата добавления / парсинга
+                Column("rating", Integer, default=0),  # рейтинг новости, каждый вывод в поиске +1
+                Column("fun_metric", Float, default=0),  # метрика забавности что ли
+                Column("unique_metric", Float, default=0),  # метрика уникальности
+                Column("simple_metric", Float, default=0)  # метрика простоты понимания
                 )
