@@ -33,7 +33,7 @@ class ParseNewsPipeline:
         self.cur.execute("""SELECT * FROM article WHERE title = %s""", (item['title'],))
         result = self.cur.fetchone()
         if result:
-            spider.logger.warn("Item already in database: %s" % item['text'])
+            spider.logger.warn("Item already in database: %s" % item['title'])
         else:
             self.cur.execute(f"""
             INSERT INTO article (
