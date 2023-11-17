@@ -7,6 +7,12 @@ import scrapy
 
 
 class ParseNewsItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    title = scrapy.Field()
+    brief_text = scrapy.Field()
+    full_text = scrapy.Field()
+    tag = scrapy.Field()
+    search_words = scrapy.Field()
+    parsed_from = scrapy.Field()
+    full_text_link = scrapy.Field()
+    published_at = scrapy.Field()
+    parsed_at = scrapy.Field()
