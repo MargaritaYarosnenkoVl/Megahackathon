@@ -31,13 +31,11 @@ class FontankaSpider(scrapy.Spider):
     async def parse(self, response, **kwargs):
         for quote in response.css("li.IHafh"):
             link_quote: str = quote.css("a.IHb9::attr(href)").get()
-            print(link_quote)
             if not link_quote.startswith("https:"):
                 full_text_link = "https://www.fontanka.ru" + link_quote
                 title = quote.css("a.IHb9::text").get()
 
                 news_info: dict = await self.get_news_info(link=full_text_link)
-                print(response.url[24:35])
                 yield {"title": title,  # название
                        "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
                        "full_text": news_info.get("full_text"),  # полный текст
