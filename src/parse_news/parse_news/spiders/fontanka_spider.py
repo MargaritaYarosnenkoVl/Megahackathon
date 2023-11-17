@@ -29,18 +29,19 @@ class FontankaSpider(scrapy.Spider):
                   ]
 
     async def parse(self, response, **kwargs):
-        for quote in response.css("li.IFafn"):
-            link_quote: str = quote.css("a.IFft::attr(href)").get()
+        for quote in response.css("li.IHafh"):
+            link_quote: str = quote.css("a.IHb9::attr(href)").get()
+            print(link_quote)
             if not link_quote.startswith("https:"):
                 full_text_link = "https://www.fontanka.ru" + link_quote
-                title = quote.css("a.IFft::text").get()
+                title = quote.css("a.IHb9::text").get()
 
                 news_info: dict = await self.get_news_info(link=full_text_link)
                 print(response.url[24:35])
                 yield {"title": title,  # название
                        "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
                        "full_text": news_info.get("full_text"),  # полный текст
-                       "tag": quote.css("a.IFjt::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
+                       "tag": quote.css("a.IHf3::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
                        "search_words": news_info.get("search_words"),  # строка всех тегов
                        "parsed_from": "Фонтанка.ру",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст
@@ -52,11 +53,11 @@ class FontankaSpider(scrapy.Spider):
         res = requests.get(url=link, headers=self.headers)
         if res.status_code == 200:
             soup = BeautifulSoup(res.content, 'lxml')
-            brief_text = soup.find("section", {"class": "LRapz"}).find("p").text
-            full_text = soup.find("section", {"class": "LRapz"}).text.strip()
-            search_words: list[soup] = soup.findAll("h4", {"class": "B5jt"})
+            full_text: list[soup] = soup.find("div", {"class": "JNfp"}).findAll("p")
+            brief_text = full_text[1].text.strip()
+            search_words: list[soup] = soup.findAll("h4", {"class": "A7f3"})
 
             return {"brief_text": brief_text,
-                    "full_text": full_text,
-                    "search_words": " ".join((word.text.strip().lower() for word in search_words))
+                    "full_text": " ".join((p.text.strip() for p in full_text)),
+                    "search_words": " ".join((word.text.strip().lower() for word in search_words)),
                     }
