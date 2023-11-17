@@ -4,7 +4,7 @@ import re
 from bs4 import BeautifulSoup
 import requests
 import scrapy
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class SnobSpider(scrapy.Spider):
@@ -15,6 +15,18 @@ class SnobSpider(scrapy.Spider):
     start_urls = [f"https://snob.ru/news/?page=1",
                   f"https://snob.ru/news/?page=2",
                   f"https://snob.ru/news/?page=3",
+                  f"https://snob.ru/news/?page=4",
+                  f"https://snob.ru/news/?page=5",
+                  f"https://snob.ru/news/?page=6",
+                  f"https://snob.ru/news/?page=7",
+                  f"https://snob.ru/news/?page=8",
+                  f"https://snob.ru/news/?page=9",
+                  f"https://snob.ru/news/?page=10",
+                  f"https://snob.ru/news/?page=11",
+                  f"https://snob.ru/news/?page=12",
+                  f"https://snob.ru/news/?page=13",
+                  f"https://snob.ru/news/?page=14",
+                  f"https://snob.ru/news/?page=15",
                   ]
 
     async def parse(self, response, **kwargs):
@@ -25,15 +37,15 @@ class SnobSpider(scrapy.Spider):
                 title = quote.css("a div.title::text").get().strip()
 
                 news_info: dict = await self.get_news_info(link=full_text_link)
-                print(response.url[24:35])
+
                 yield {"title": title,  # название
                        "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
                        "full_text": news_info.get("full_text"),  # полный текст
-                       "tag": quote.css("a.IFjt::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
+                       "tag": news_info.get("tag"),  # тэг - тема новости (первое слово/фраза из группы тегов)
                        "search_words": news_info.get("search_words"),  # строка всех тегов
-                       "parsed_from": "Фонтанка.ру",  # название сайта
+                       "parsed_from": "snob.ru",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст
-                       "published_at": datetime.strptime(response.url[24:34], "%Y/%m/%d"),  # дата публикации
+                       "published_at": news_info.get("published_at"),  # дата публикации
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
                        }
 
@@ -41,11 +53,15 @@ class SnobSpider(scrapy.Spider):
         res = requests.get(url=link, headers=self.headers)
         if res.status_code == 200:
             soup = BeautifulSoup(res.content, 'lxml')
-            brief_text = soup.find("section", {"class": "LRapz"}).find("p").text
-            full_text = soup.find("section", {"class": "LRapz"}).text.strip()
-            search_words: list[soup] = soup.findAll("h4", {"class": "B5jt"})
+            brief_text: str = soup.find("div", {"class": "lead"}).find("p").text.strip()
+            full_text_list: list[soup] = soup.find("div", {"class": "text"}).findAll("p")
+            full_text: str = " ".join((p.text for p in full_text_list))
+            search_words: list[soup] = soup.find("div", {"class": "entry__tags"}).findAll("a")
+            published_at = soup.find("meta", {"name": "datePublished"})["content"]
 
             return {"brief_text": brief_text,
                     "full_text": full_text,
-                    "search_words": " ".join((word.text.strip().lower() for word in search_words))
+                    "search_words": " ".join((word.text[1:].strip().lower() for word in search_words)),
+                    "tag": search_words[-1].text[1:].strip().lower(),
+                    "published_at": datetime.fromisoformat(published_at)
                     }
