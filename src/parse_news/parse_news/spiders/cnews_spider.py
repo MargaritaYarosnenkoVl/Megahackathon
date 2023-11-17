@@ -11,6 +11,21 @@ class CnewsSpider(scrapy.Spider):
     name: str = "cnews"
     headers: dict = {'User-Agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
+    RU_MONTH_VALUES = {
+        'Января': "01",
+        'Февраля': "02",
+        'Марта': "03",
+        'Апреля': "04",
+        'Мая': "05",
+        'Июня': "06",
+        'Июля': "07",
+        'Августа': "08",
+        'Сентября': "09",
+        'Октября': "10",
+        'Ноября': "11",
+        'Декабря': "12",
+    }
+
     day = datetime.today()
     day_4 = day - timedelta(days=4)
 
@@ -57,9 +72,11 @@ class CnewsSpider(scrapy.Spider):
                        "search_words": "search_words",  # строка всех тегов
                        "parsed_from": "Cnews",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст
-                       "published_at": "published_at",  # дата публикации
+                       "published_at": datetime.utcnow(),  # дата публикации
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
                        }
+            except TypeError:
+                continue
 
     async def get_news_info(self, link: str) -> dict:
         res = requests.get(url=link.replace("http", "https"), headers=self.headers)
@@ -69,9 +86,11 @@ class CnewsSpider(scrapy.Spider):
             full_text: list[soup] = soup.find("article", {"class": "news_container"}).findAll("p")
             # search_words: ОТСУТСТВУЮТ!
             published_at = soup.find("div", {"class": "article_date"}).find("time", {"class": "article-date-desktop"}).text.strip()
+            for old, new in self.RU_MONTH_VALUES.items():
+                published_at = re.sub(old, new, published_at)
 
             return {"brief_text": brief_text,
                     "full_text": " ".join(p.text.strip() for p in full_text),
                     # "search_words": " ".join((word.text.strip().lower() for word in search_words))
-                    "published_at": published_at
+                    "published_at": datetime.strptime(published_at, "%d %m %Y %H:%M")
                     }
