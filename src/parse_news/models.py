@@ -21,14 +21,14 @@ metadata = MetaData()
 article = Table("article",
                 metadata,
                 Column("id", Integer, primary_key=True, autoincrement="auto"),
-                Column("title", String),  # название
+                Column("title", Text),  # название
                 Column("brief_text", Text),  # короткое описание
                 Column("full_text", Text),  # полный текст
                 Column("tag", String),  # тэг - тема новости (первое слово/фраза из группы тегов)
-                Column("search_words", String),  # строка всех тегов
-                Column("ml_key_words", String),  # 20 ключевых слов выдел с помощью NLTK and Scikit-Learn TfidfVectorizer
+                Column("search_words", Text),  # строка всех тегов
+                Column("ml_key_words", Text),  # 20 ключевых слов выдел с помощью NLTK and Scikit-Learn TfidfVectorizer
                 Column("parsed_from", String),  # название сайта
-                Column("full_text_link", String),  # ссылка на полный текст
+                Column("full_text_link", Text),  # ссылка на полный текст
                 Column("published_at", TIMESTAMP, default=datetime.utcnow()),  # дата публикации
                 Column("parsed_at", TIMESTAMP, default=datetime.utcnow()),  # дата добавления / парсинга
                 Column("rating", Integer, default=0),  # рейтинг новости, каждый вывод в поиске +1
