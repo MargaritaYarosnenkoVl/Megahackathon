@@ -11,16 +11,15 @@ from typing import List
 router = APIRouter(prefix="/get_news_by_id",
                    tags=["Get news"])
 
-
 @router.get("/{item_id}", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
     try:
         # query = session.get(article, item_id)
-        query = article.select().where(article.c.id == item_id)
+        query = select(article).where(article.c.id == item_id)
         result = await session.execute(query)
         return result.all()
     except:
-        return {"ststus": "error",
+        return {"status": "error",
                 "data": None,
                 "details": None}
 
