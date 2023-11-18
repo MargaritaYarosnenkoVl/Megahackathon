@@ -6,6 +6,8 @@ import asyncio
 # import asyncpg
 import psycopg2
 import datetime
+
+import scrapy
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from .spiders.config import FSTR_DB_LOGIN, FSTR_DB_NAME, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_PASS
@@ -45,6 +47,7 @@ class ParseNewsPipeline:
             self.connection.commit()
         return item
 
-    def close_spider(self):
+    def close_spider(self, spider: scrapy.Spider = None):  # , spider=None, reason=None
         self.cur.close()
         self.connection.close()
+        print(spider)
