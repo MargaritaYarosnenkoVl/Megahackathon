@@ -7,7 +7,7 @@ from pydantic import EmailStr
 
 class UserRead(schemas.BaseUser[int]):
     id: int
-    email: EmailStr
+    email: str
     username: str
     role_id: int
     is_active: bool = True
@@ -20,7 +20,7 @@ class UserRead(schemas.BaseUser[int]):
 
 class UserCreate(schemas.BaseUserCreate):
     username: str = "user"
-    email: EmailStr = "user@example.com"
+    email: str = "user@example.com"
     password: str = "123456"
     role_id: int = 1
     is_active: Optional[bool] = True
