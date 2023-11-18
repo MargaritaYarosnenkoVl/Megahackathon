@@ -45,7 +45,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         # Update password hash to a more robust one if needed
         if updated_password_hash is not None:
             await self.user_db.update(user, {"hashed_password": updated_password_hash})
-        print("You are now logged in.")
+        print(f"{user.username} is now logged in.")
         return user
 
 
