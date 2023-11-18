@@ -1,16 +1,16 @@
 import bcrypt
 from datetime import datetime
-from typing import AsyncGenerator
+from typing import AsyncGenerator, List
 
 from fastadmin import register, SqlAlchemyModelAdmin
 from fastapi import Depends
-from fastapi_users.db import SQLAlchemyUserDatabase
-from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
+from fastapi_users.db import SQLAlchemyUserDatabase, SQLAlchemyBaseUserTable, SQLAlchemyBaseOAuthAccountTable
 from sqlalchemy import String, Boolean, Column, Integer, TIMESTAMP, ForeignKey, select, MetaData, Table, JSON
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, Mapped
+from sqlalchemy.ext.asyncio import AsyncSession  # async_sessionmaker, create_async_engine
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import Mapped, relationship  # DeclarativeBase,
 
-from ..database import Base, DATABASE_URL, async_session_maker
+from ..database import Base, async_session_maker  # DATABASE_URL,
 
 metadata = MetaData()
 
@@ -36,8 +36,17 @@ user = Table("user",
              Column("is_verified", Boolean, default=False, nullable=False)
              )
 
+#
+# class OAuthAccount(SQLAlchemyBaseOAuthAccountTable[int], Base):
+#     id = Column(Integer, primary_key=True)
+#
+#     @declared_attr
+#     def user_id(cls):
+#         return Column(Integer, ForeignKey("user.id", ondelete="cascade"), nullable=False)
+
 
 class User(SQLAlchemyBaseUserTable[int], Base):
+    # oauth_accounts: Mapped[List[OAuthAccount]] = relationship("OAuthAccount", lazy="joined")
     id = Column("id", Integer, primary_key=True)
     username = Column("username", String, nullable=False)
     hashed_password: Mapped[str] = Column(String(length=1024), nullable=False)
@@ -83,5 +92,5 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    yield SQLAlchemyUserDatabase(session, User)
+    yield SQLAlchemyUserDatabase(session, User)  # , OAuthAccount
     
