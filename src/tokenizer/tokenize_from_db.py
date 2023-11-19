@@ -6,7 +6,7 @@ import nltk
 from string import punctuation
 from nltk.corpus import stopwords
 from sqlalchemy import create_engine, text
-from src.config import FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_NAME
+from config import FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_NAME
 
 
 def get_clear_tokens(text) -> str:
