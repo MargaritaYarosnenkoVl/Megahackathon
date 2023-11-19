@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import get_async_session
 from src.parse_news.models import article
 from src.parse_news.parse_news.spiders import naked_science_spider
-from .schemas import News, FilterNews, Tag
+from .schemas import News, FilterNews, Tag, Origin
 from typing import List
 
 router = APIRouter(prefix="/get",
@@ -36,7 +36,19 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
                 "details": None}
 
 
-@router.post("/filter/", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
+@router.get("/origins/parsed_from", response_model=List[Origin])  # response_model=OfferSearchResult, operation_id="offer_search"
+async def get_unique_origins(session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(article.c.parsed_from).distinct()
+        result = await session.execute(query)
+        return result.all()
+    except:
+        return {"status": "error",
+                "data": None,
+                "details": None}
+
+
+@router.post("/filter", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_async_session)):
     tag = data.tag
     search_words = data.search_words
@@ -46,11 +58,11 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
     parsed_at = data.parsed_at
     try:
         query = select(article).where(or_(article.c.tag == tag,
-                                      article.c.search_words == search_words,
-                                      article.c.ml_key_words == ml_key_words,
+                                      # article.c.search_words == search_words,
+                                      # article.c.ml_key_words == ml_key_words,
                                       article.c.parsed_from == parsed_from,
-                                      article.c.published_at >= published_at,
-                                      article.c.parsed_at >= parsed_at
+                                      article.c.published_at <= published_at,
+                                      article.c.parsed_at <= parsed_at
                                       ))
         print(query.params())
         result = await session.execute(query)
