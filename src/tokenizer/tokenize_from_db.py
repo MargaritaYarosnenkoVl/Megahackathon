@@ -41,6 +41,7 @@ def vectorize(tokens: pd.DataFrame, names: np.array) -> pd.DataFrame:
     matrix = pd.DataFrame(tfidf_matrix.toarray(),
                           columns=terms,
                           index=names)
+    print("DF with vectorized 'tokenized_text' created", "OK")
     return matrix
 
 
@@ -56,13 +57,17 @@ def write_to_db(df: pd.DataFrame, engine):
             WHERE :id = article.id 
             RETURNING article.id, :id"""), params)
             cur.commit()
+            print("Words written to DB", "OK")
 
 
 def main():
     engine = create_engine(
         f'postgresql+psycopg2://{FSTR_DB_LOGIN}:{FSTR_DB_PASS}@{FSTR_DB_HOST}:{FSTR_DB_PORT}/{FSTR_DB_NAME}')
+    print("DB engine created", "OK")
     df = pd.read_sql_query("""SELECT id, full_text FROM article""", con=engine)
+    print("DB data loaded", "OK")
     df["tokenized_text"] = df["full_text"].apply(get_clear_tokens)
+    print("DF column 'tokenized_text' created", "OK")
     m = vectorize(df["tokenized_text"].values, names=df["id"].values)
     write_to_db(m, engine=engine)
 
