@@ -25,6 +25,7 @@ def check_conditions(lemmatized_token: str) -> bool:
 
 def vectorize(tokens: pd.DataFrame) -> pd.DataFrame:
     nltk.download('averaged_perceptron_tagger')
+    nltk.download('punkt')
     vectorizer = TfidfVectorizer(input='content',
                                  use_idf=True,
                                  lowercase=True,
