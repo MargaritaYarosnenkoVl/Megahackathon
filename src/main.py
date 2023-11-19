@@ -7,6 +7,7 @@ from src.auth.models import User
 from src.auth.manager import get_user_manager
 from src.auth.schemas import UserRead, UserCreate, UserUpdate
 from src.parse_news.router import router as router_parser
+from src.auth.router import router as auth_check_router
 from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -45,19 +46,6 @@ app.include_router(
     tags=["users"],
 )
 
-current_user = fastapi_users.current_user()
-
-
-
-
-@app.get("/protected-route")
-def protected_route(user: User = Depends(current_user)):
-    return f"Hello, {user.username}"
-
-
-@app.get("/unprotected-route")
-def protected_route():
-    return f"Hello, anonym"
-
 
 app.include_router(router_parser)
+app.include_router(auth_check_router)
