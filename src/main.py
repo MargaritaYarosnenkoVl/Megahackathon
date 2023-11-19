@@ -5,7 +5,7 @@ from fastadmin import fastapi_app as admin_app
 from src.auth.auth import auth_backend
 from src.auth.models import User
 from src.auth.manager import get_user_manager
-from src.auth.schemas import UserRead, UserCreate
+from src.auth.schemas import UserRead, UserCreate, UserUpdate
 from src.parse_news.router import router as router_parser
 from starlette.middleware.cors import CORSMiddleware
 
@@ -39,7 +39,15 @@ app.include_router(fastapi_users.get_register_router(UserRead, UserCreate),
                    tags=["auth"]
                    )
 
+app.include_router(
+    fastapi_users.get_users_router(UserRead, UserUpdate),
+    prefix="/users",
+    tags=["users"],
+)
+
 current_user = fastapi_users.current_user()
+
+
 
 
 @app.get("/protected-route")
