@@ -1,9 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
 from datetime import datetime
 
 
 class News(BaseModel):
-    id: int
+    id: Optional[int] = Field(1, ge=1)
     title: str
     brief_text: str
     full_text: str
@@ -19,6 +20,25 @@ class News(BaseModel):
     fun_metric: float | None
     unique_metric: float | None
     simple_metric: float | None
+
+    class Config:
+        orm_mode = True
+
+
+class FilterNews(BaseModel):
+    tag: str
+    search_words: str
+    ml_key_words: str
+    parsed_from: str
+    published_at: datetime
+    parsed_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class Tag(BaseModel):
+    tag: str | None
 
     class Config:
         orm_mode = True
