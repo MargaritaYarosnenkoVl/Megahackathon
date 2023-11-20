@@ -24,7 +24,7 @@ async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async
                 "details": None}
 
 
-@router.get("/tags/all_unique", response_model=List[Tag])  # response_model=OfferSearchResult, operation_id="offer_search"
+@router.get("/tags/unique", response_model=List[Tag])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article.c.tag).distinct()
@@ -36,7 +36,7 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
                 "details": None}
 
 
-@router.get("/origins/parsed_from", response_model=List[Origin])  # response_model=OfferSearchResult, operation_id="offer_search"
+@router.get("/origins/unique", response_model=List[Origin])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_origins(session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article.c.parsed_from).distinct()
