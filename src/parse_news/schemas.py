@@ -26,12 +26,12 @@ class News(BaseModel):
 
 
 class FilterNews(BaseModel):
-    tag: str = Field(default="science")
-    search_words: str = Field()
-    ml_key_words: str = Field()
-    parsed_from: str = Field(default="Нож")
-    published_at: datetime = Field(default=datetime.fromisoformat("2023-11-01T00:00:00.000"))
-    parsed_at: datetime = Field(default=datetime.fromisoformat("2023-11-01T00:00:00.000"))
+    tag: str = Field(default="science", alias="Тема новости")
+    search_words: str = Field(alias="Поиск по тамам")
+    ml_key_words: str = Field(alias="Ключевые слова")
+    parsed_from: str = Field(default="Нож", alias="Источник новости")
+    published_at: datetime = Field(default=datetime.fromisoformat("2023-11-01T00:00:00.000"), alias="Дата публикации")
+    parsed_at: datetime = Field(default=datetime.fromisoformat("2023-11-01T00:00:00.000"), alias="Дата парсинга")
 
     class Config:
         orm_mode = True
