@@ -1,15 +1,20 @@
+import json
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, insert, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_async_session
 from src.parse_news.models import article
-from src.parse_news.parse_news.spiders import naked_science_spider
-from .schemas import News, FilterNews, Tag, Origin
+from src.parse_news.parse_news.spiders.naked_science_launcher import SpiderFromCode
+from .schemas import News, FilterNews, Tag, Origin, FreshNewsYetNotInDB
 from typing import List
 
 router = APIRouter(prefix="/get",
                    tags=["Get News"])
+
+launch_parser = APIRouter(prefix="/launch",
+                          tags=["Launch parser"])
 
 
 @router.get("/{item_id}", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
@@ -71,6 +76,23 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
         return {"status": "error",
                 "data": None,
                 "details": None}
+
+
+@launch_parser.get("/naked_science")  # response_model=OfferSearchResult, operation_id="offer_search"
+async def launch_naked_science(session: AsyncSession = Depends(get_async_session)):
+    try:
+
+        s = SpiderFromCode()
+        s.parse()
+        with open("src/parse_news/parse_news/spiders/json_data/naked_science.json", "r") as f:
+            data = f.read()
+        print(json.loads(data))
+        return data
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
 
 
 if __name__ == "__main__":
