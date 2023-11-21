@@ -1,9 +1,10 @@
-from fastapi_users.authentication import CookieTransport, JWTStrategy, AuthenticationBackend
+from fastapi_users.authentication import CookieTransport, JWTStrategy, AuthenticationBackend, BearerTransport
 from src.config import SECRET
 cookie_transport = CookieTransport(cookie_name="news",
                                    cookie_max_age=3600,
                                    cookie_secure=False,
                                    cookie_httponly=False)
+bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
 # SECRET = os.getenv("SECRET")
 
