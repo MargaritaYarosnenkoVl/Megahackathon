@@ -18,21 +18,24 @@ class NakedScienceSpider(scrapy.Spider):
 
     async def parse(self, response, **kwargs):
         for quote in response.css("div.news-item.grid"):
+            try:
+                full_text_link: str = quote.css("a::attr(href)").get()
+                search_words: list = quote.css("div.terms-item a.animate-custom::text").getall()
+                search_words_cleared: list = await self.clear_search_words(search_words)
 
-            full_text_link: str = quote.css("a::attr(href)").get()
-            search_words: list = quote.css("div.terms-item a.animate-custom::text").getall()
-            search_words_cleared: list = await self.clear_search_words(search_words)
-
-            yield {"title": quote.css("a::text").get(),  # название
-                   "brief_text": quote.css("p::text").get(),  # короткое описание
-                   "full_text": await self.get_full_text(link=full_text_link),  # полный текст
-                   "tag": "science",  # тэг - одно слово
-                   "search_words": " ".join(search_words_cleared),  # слова для поиска
-                   "parsed_from": "Naked Science",
-                   "full_text_link": full_text_link,  # ссылка на полный текст
-                   "published_at": datetime.fromisoformat(quote.css("span::attr(data-published)").get()),  # дата публикации
-                   "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
-                   }
+                yield {"title": quote.css("a::text").get(),  # название
+                       "brief_text": quote.css("p::text").get(),  # короткое описание
+                       "full_text": await self.get_full_text(link=full_text_link),  # полный текст
+                       "tag": "наука",  # тэг - одно слово
+                       "search_words": " ".join(search_words_cleared),  # слова для поиска
+                       "parsed_from": "naked-science.ru",
+                       "full_text_link": full_text_link,  # ссылка на полный текст
+                       "published_at": datetime.fromisoformat(quote.css("span::attr(data-published)").get()),  # дата публикации
+                       "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
+                       }
+            except AttributeError as e:
+                print(e)
+                continue
 
     async def get_full_text(self, link: str) -> str:
         res = requests.get(url=link, headers=self.headers)

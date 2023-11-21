@@ -28,7 +28,7 @@ class KnifeMediaSpider(scrapy.Spider):
                    "full_text": news_info.get("full_text"),  # полный текст
                    "tag": search_words_cleared[0],  # тэг - одно слово
                    "search_words": " ".join(search_words_cleared),  # слова для поиска
-                   "parsed_from": "Нож",
+                   "parsed_from": "knife.media",
                    "full_text_link": full_text_link,  # ссылка на полный текст
                    "published_at": datetime.fromisoformat(quote.css("time::attr(datetime)").get()),  # дата публикации
                    "parsed_at": datetime.utcnow(),  # дата добавления / парсинга

@@ -41,7 +41,7 @@ class FontankaSpider(scrapy.Spider):
                        "full_text": news_info.get("full_text"),  # полный текст
                        "tag": quote.css("a.IHf3::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
                        "search_words": news_info.get("search_words"),  # строка всех тегов
-                       "parsed_from": "Фонтанка.ру",  # название сайта
+                       "parsed_from": "fontanka.ru",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст
                        "published_at": datetime.strptime(response.url[24:34], "%Y/%m/%d"),  # дата публикации
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга

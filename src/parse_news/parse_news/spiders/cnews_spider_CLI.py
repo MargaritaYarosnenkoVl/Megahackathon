@@ -70,7 +70,7 @@ class CnewsSpider(scrapy.Spider):
                        "full_text": "full_text",  # полный текст
                        "tag": "tag",  # тэг - тема новости (первое слово/фраза из группы тегов)
                        "search_words": "search_words",  # строка всех тегов
-                       "parsed_from": "Cnews",  # название сайта
+                       "parsed_from": "cnews.ru",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст
                        "published_at": datetime.utcnow(),  # дата публикации
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
