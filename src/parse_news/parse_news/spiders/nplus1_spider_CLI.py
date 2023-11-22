@@ -36,18 +36,28 @@ class Nplus1Spider(scrapy.Spider):
         links = [link.replace("\\\\\\", "") for link in raw_links]  # удаляем лишние символы из ссылок
 
         for full_text_link in links:
-            news_info: dict = await self.get_news_info(link=full_text_link)
+            try:
+                news_info: dict = await self.get_news_info(link=full_text_link)
 
-            yield {"title": news_info.get("title"),  # название
-                   "brief_text": news_info.get("title") + news_info.get("brief_text"),  # короткое описание
-                   "full_text": news_info.get("full_text"),  # полный текст
-                   "tag": news_info.get("tag"),  # тэг - одно слово
-                   "search_words": news_info.get("tag"),  # слова для поиска
-                   "parsed_from": "nplus1.ru",
-                   "full_text_link": full_text_link,  # ссылка на полный текст
-                   "published_at": datetime.strptime((response.url[25:]), "%y/%m/%d"),  # дата публикации
-                   "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
-                   }
+                yield {"title": news_info.get("title"),  # название
+                       "brief_text": news_info.get("title") + news_info.get("brief_text"),  # короткое описание
+                       "full_text": news_info.get("full_text"),  # полный текст
+                       "tag": news_info.get("tag"),  # тэг - одно слово
+                       "search_words": news_info.get("tag"),  # слова для поиска
+                       "parsed_from": "nplus1.ru",
+                       "full_text_link": full_text_link,  # ссылка на полный текст
+                       "published_at": datetime.strptime((response.url[25:]), "%y/%m/%d"),  # дата публикации
+                       "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
+                       }
+            except AttributeError as e:
+                print(e)
+                continue
+            except IndexError as e:
+                print(e)
+                continue
+            except TypeError as e:
+                print(e)
+                continue
 
     async def get_news_info(self, link: str) -> dict:
         res = requests.get(url=link, headers=self.headers)
