@@ -9,7 +9,7 @@ export const useAuthPage = () => {
 	const {
 		register,
 		handleSubmit,
-		getValues,
+		// getValues,
 		formState: { errors },
 	} = useForm({ mode: 'onChange' });
 
@@ -23,7 +23,6 @@ export const useAuthPage = () => {
 			onSubmit,
 			register,
 			handleSubmit,
-			getValues,
 			errors,
 		};
 	});

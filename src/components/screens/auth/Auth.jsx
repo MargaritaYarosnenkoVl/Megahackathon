@@ -1,12 +1,13 @@
 import { useAuthPage } from '../../../hooks/useAuthPage';
+import Layout from '../../layout/Layout';
 import Button from '../../ui/button/Button';
 import styles from './Auth.module.scss';
 
 const Auth = () => {
-	const { onSubmit, register, handleSubmit, getValues, errors } = useAuthPage();
+	const { onSubmit, register, handleSubmit, errors } = useAuthPage();
 
 	return (
-		<div className={styles.wrapper}>
+		<Layout bgImage='./images/auth.jpg' justifyContent='center'>
 			<div className={styles.auth}>
 				<img
 					className={styles.image_auth}
@@ -41,7 +42,7 @@ const Auth = () => {
 					<Button>Вход</Button>
 				</form>
 			</div>
-		</div>
+		</Layout>
 	);
 };
 

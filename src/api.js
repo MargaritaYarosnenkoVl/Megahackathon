@@ -10,7 +10,6 @@ export const $axios = axios.create({
 	baseURL: API_URL,
 	headers: {
 		'Content-Type': 'application/x-www-form-urlencoded',
-		// Authorization: `Bearer ${token}`,
 	},
 });
 

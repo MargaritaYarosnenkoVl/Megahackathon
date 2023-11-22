@@ -1,17 +1,18 @@
+import Content from '../../content/Content';
 import Header from '../../header/Header';
 import InsideInfo from '../../inside-info/InsideInfo';
+import Layout from '../../layout/Layout';
 import LeftPanel from '../../left-panel/LeftPanel';
-import styles from './PersonalArea.module.scss';
 
 const PersonalArea = () => {
 	return (
-		<div className={styles.wrapper}>
+		<Layout justifyContent='space-between'>
 			<Header />
-			<div className={styles.block_content}>
+			<Content>
 				<LeftPanel />
 				<InsideInfo />
-			</div>
-		</div>
+			</Content>
+		</Layout>
 	);
 };
 
