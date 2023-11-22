@@ -1,0 +1,9 @@
+.wrapper {
+	position: relative;
+	height: 100%;
+
+	> .block_content {
+		height: 100%;
+		display: flex;
+	}
+}

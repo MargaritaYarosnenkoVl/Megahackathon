@@ -1,0 +1,36 @@
+@import '../../assets/styles/variables';
+@import '../../assets/styles/mixins';
+
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 84px;
+	width: 166px;
+	height: 100%;
+	padding: 54px 0px;
+	background-color: $gray;
+
+	> .block_one {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+
+		> .block_param {
+			@include leftPanelBlock_param();
+		}
+	}
+
+	> .block_two {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+
+		> .block_param {
+			@include leftPanelBlock_param();
+		}
+	}
+	> .block_param {
+		@include leftPanelBlock_param();
+	}
+}

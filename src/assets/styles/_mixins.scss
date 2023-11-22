@@ -1,0 +1,36 @@
+@import './variables';
+
+@mixin leftPanelBlock_param() {
+	width: 100%;
+	padding: 10px 0px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 92px;
+	background-color: rgba($color: #000000, $alpha: 0);
+	font-size: $fz_standart;
+
+	> svg {
+		margin-bottom: 5px;
+		width: 30px;
+		height: 30px;
+	}
+
+	> p {
+		width: 96px;
+		font-size: 0.8em;
+	}
+
+	&:hover {
+		background-color: $blue;
+		color: $white;
+		cursor: pointer;
+
+		svg {
+			path {
+				stroke: $gray;
+			}
+		}
+	}
+}

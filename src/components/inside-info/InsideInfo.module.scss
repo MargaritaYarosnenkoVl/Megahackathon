@@ -1,0 +1,129 @@
+@import '../../assets/styles/variables';
+
+.wrapper {
+	padding: 76px 102px;
+	display: flex;
+	gap: 20px;
+
+	> .image_profile {
+		width: 434px;
+		height: 338px;
+	}
+
+	> .block__content {
+		display: flex;
+		flex-direction: column;
+		max-width: 438px;
+
+		> .block__name {
+			margin-bottom: 85px;
+
+			> h2 {
+				font-weight: 600;
+				line-height: 1.4;
+				margin-bottom: 17px;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+			> p {
+				line-height: 1;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+
+			> .h2 {
+				font-weight: 600;
+				line-height: 1.4;
+				margin-bottom: 17px;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+			> .p {
+				line-height: 1;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+		}
+
+		> .block__contact {
+			display: flex;
+			gap: 100px;
+			margin-bottom: 85px;
+
+			> .mobile {
+				> p {
+					line-height: 1;
+
+					&:first-child {
+						margin-bottom: 28px;
+					}
+
+					&:last-child {
+						&:hover {
+							cursor: pointer;
+						}
+					}
+				}
+
+				> .p {
+					line-height: 1;
+
+					&:hover {
+						cursor: pointer;
+					}
+				}
+			}
+			> .email {
+				> p {
+					line-height: 1;
+
+					&:first-child {
+						margin-bottom: 28px;
+					}
+
+					&:last-child {
+						&:hover {
+							cursor: pointer;
+						}
+					}
+				}
+
+				> .p {
+					line-height: 1;
+
+					&:hover {
+						cursor: pointer;
+					}
+				}
+			}
+		}
+
+		> .block__password {
+			display: flex;
+			flex-direction: column;
+
+			> label {
+				margin-bottom: 25px;
+			}
+
+			> input {
+				width: 140px;
+				height: 27px;
+				line-height: 1;
+				border: 1px solid $black;
+			}
+
+			> .main_pass {
+				margin-bottom: 25px;
+			}
+		}
+	}
+}

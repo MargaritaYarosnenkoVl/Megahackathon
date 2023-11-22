@@ -1,0 +1,14 @@
+@import '../../assets/styles/variables';
+
+.wrapper {
+	background-color: $blue;
+	min-height: 91px;
+	display: flex;
+	justify-content: flex-end;
+	padding: 23px 60px;
+
+	> img {
+		width: 146px;
+		height: 45px;
+	}
+}
