@@ -78,3 +78,7 @@ class SpiderName(str):
 
 class KeyWord(str):
     name: str
+
+
+class Count(int):
+    quantity: int = Field()

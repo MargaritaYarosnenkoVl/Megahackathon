@@ -2,13 +2,13 @@ import json
 import os
 from datetime import datetime
 from fastapi import APIRouter, Depends
-from sqlalchemy import select, insert, and_, or_
+from sqlalchemy import select, insert, and_, or_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from scrapy.crawler import CrawlerProcess
 from src.database import get_async_session
 from src.parse_news.models import article
 # from src.parse_news.parse_news.spiders.naked_science_spider_CLI import NakedScienceSpider
-from .schemas import News, FilterNews, Tag, Origin, NewsJSONNoID, SpiderName, KeyWord
+from .schemas import News, FilterNews, Tag, Origin, NewsJSONNoID, SpiderName, KeyWord, Count
 from typing import List
 # from src.parse_news.parse_news.pipelines import ParseNewsPipeline
 
@@ -19,13 +19,28 @@ launch_parser = APIRouter(prefix="/launch",
                           tags=["Launch parser"])
 
 
+
+@router.get("/count/all", response_model=Count)  # response_model=OfferSearchResult, operation_id="offer_search"
+async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(func.count(article.c.id))
+        result = await session.execute(query)
+        return result.scalar()
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": None,
+                "details": None}
+
+
 @router.get("/{item_id}", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article).where(article.c.id == item_id)
         result = await session.execute(query)
         return result.all()
-    except:
+    except Exception as e:
+        print(e)
         return {"status": "error",
                 "data": None,
                 "details": None}
@@ -37,7 +52,8 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
         query = select(article.c.tag).distinct()
         result = await session.execute(query)
         return result.all()
-    except:
+    except Exception as e:
+        print(e)
         return {"status": "error",
                 "data": None,
                 "details": None}
@@ -50,7 +66,8 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
         query = select(article.c.parsed_from).distinct()
         result = await session.execute(query)
         return result.all()
-    except:
+    except Exception as e:
+        print(e)
         return {"status": "error",
                 "data": None,
                 "details": None}
@@ -74,7 +91,8 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
                                           ))
         result = await session.execute(query)
         return result.all()
-    except:
+    except Exception as e:
+        print(e)
         return {"status": "error",
                 "data": None,
                 "details": None}
