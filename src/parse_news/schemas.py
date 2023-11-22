@@ -51,7 +51,7 @@ class Origin(BaseModel):
         orm_mode = True
 
 
-class FreshNewsYetNotInDB(BaseModel):
+class NewsJSONNoID(BaseModel):
     title: str
     brief_text: str
     full_text: str
@@ -67,3 +67,11 @@ class FreshNewsYetNotInDB(BaseModel):
     fun_metric: float | None
     unique_metric: float | None
     simple_metric: float | None
+
+    class Config:
+        orm_mode = True
+
+
+class SpiderName(str):
+    name: str = Field(default="naked_science")
+

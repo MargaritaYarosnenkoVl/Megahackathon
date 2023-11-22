@@ -5,7 +5,7 @@ import scrapy
 from datetime import datetime
 
 
-class SdelanoUNasSpider(scrapy.Spider):
+class DNewsSpider(scrapy.Spider):
     name: str = "3d"
     headers: dict = {'User-Agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}

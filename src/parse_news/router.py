@@ -1,5 +1,5 @@
 import json
-
+import os
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, insert, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import get_async_session
 from src.parse_news.models import article
 from src.parse_news.parse_news.spiders.naked_science_launcher import SpiderFromCode
-from .schemas import News, FilterNews, Tag, Origin, FreshNewsYetNotInDB
+from .schemas import News, FilterNews, Tag, Origin, NewsJSONNoID, SpiderName
 from typing import List
 
 router = APIRouter(prefix="/get",
@@ -78,22 +78,23 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
                 "details": None}
 
 
-@launch_parser.get("/naked_science")  # response_model=OfferSearchResult, operation_id="offer_search"
-async def launch_naked_science(session: AsyncSession = Depends(get_async_session)):
+@launch_parser.get("/{naked_science}")  # , response_model=List[NewsJSONNoID]
+async def launch_naked_science(spider_name: SpiderName, session: AsyncSession = Depends(get_async_session)):
     try:
-
-        s = SpiderFromCode()
+        # return None
+        s = SpiderFromCode(spider_name)
         s.parse()
-        with open("src/parse_news/parse_news/spiders/json_data/naked_science.json", "r") as f:
-            data = f.read()
-        print(json.loads(data))
-        return data
+        # s.stop()
     except Exception as e:
         print(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
+    finally:
+        with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
+            data = f.read()
+        return json.loads(data)
 
-
-if __name__ == "__main__":
-    get_news_by_id()
+#
+# if __name__ == "__main__":
+#     get_news_by_id()

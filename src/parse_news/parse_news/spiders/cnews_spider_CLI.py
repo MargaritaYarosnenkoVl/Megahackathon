@@ -47,35 +47,27 @@ class CnewsSpider(scrapy.Spider):
                   ]
 
     async def parse(self, response, **kwargs):
-        quote: str = response.css("div.allnews_mainpage").get()
-        links: list = re.findall(r"http:\/\/\w*\.cnews\.ru\/news\/line\/\d{4}-\d{2}-\d{2}_[\w|_|\-|:]*", quote)
-        titles: list = re.findall(r'<a href="http:\/\/\w*\.cnews\.ru\/news\/line\/\d{4}-\d{2}-\d{2}_[\w|_|\-|:]*".*>(.*)</a>', quote)
+        for quote in response.css("div.allnews_item"):
+            full_text_link: str = quote.css("a::attr(href)").get().strip()
+            title: str = quote.css("a::text").get().strip()
 
-        for full_text_link, title in zip(links, titles):
             news_info: dict = await self.get_news_info(link=full_text_link)
             try:
                 yield {"title": title,  # название
                        "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
                        "full_text": news_info.get("full_text"),  # полный текст
-                       "tag": news_info.get("tag"),  # тэг - тема новости (первое слово/фраза из группы тегов)
-                       "search_words": news_info.get("search_words"),  # строка всех тегов
-                       "parsed_from": "Cnews",  # название сайта
+                       "tag": "",  # тэг - тема новости (первое слово/фраза из группы тегов)
+                       "search_words": "",  # строка всех тегов
+                       "parsed_from": "cnews.ru",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст
                        "published_at": news_info.get("published_at"),  # дата публикации
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
                        }
-            except AttributeError:
-                yield {"title": title,  # название
-                       "brief_text": "brief_text",  # короткое описание
-                       "full_text": "full_text",  # полный текст
-                       "tag": "tag",  # тэг - тема новости (первое слово/фраза из группы тегов)
-                       "search_words": "search_words",  # строка всех тегов
-                       "parsed_from": "cnews.ru",  # название сайта
-                       "full_text_link": full_text_link,  # ссылка на полный текст
-                       "published_at": datetime.utcnow(),  # дата публикации
-                       "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
-                       }
-            except TypeError:
+            except AttributeError as e:
+                print(e)
+                continue
+            except TypeError as e:
+                print(e)
                 continue
 
     async def get_news_info(self, link: str) -> dict:
