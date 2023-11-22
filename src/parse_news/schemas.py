@@ -26,10 +26,10 @@ class News(BaseModel):
 
 
 class FilterNews(BaseModel):
-    tag: str = Field(default="science", alias="Тема новости")
-    search_words: str = Field(alias="Поиск по тамам")
+    tag: str = Field(default="наука", alias="Тема новости")
+    search_words: str = Field(alias="Поиск по темам/тэгам")
     ml_key_words: str = Field(alias="Ключевые слова")
-    parsed_from: str = Field(default="Нож", alias="Источник новости")
+    parsed_from: str = Field(default="cnews.ru", alias="Источник новости")
     published_at: datetime = Field(default=datetime.fromisoformat("2023-11-01T00:00:00.000"), alias="Дата публикации")
     parsed_at: datetime = Field(default=datetime.fromisoformat("2023-11-01T00:00:00.000"), alias="Дата парсинга")
 
@@ -75,3 +75,6 @@ class NewsJSONNoID(BaseModel):
 class SpiderName(str):
     name: str = Field(default="naked_science")
 
+
+class KeyWord(str):
+    name: str

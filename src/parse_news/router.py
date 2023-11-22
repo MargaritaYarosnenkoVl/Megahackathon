@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, insert, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +8,7 @@ from scrapy.crawler import CrawlerProcess
 from src.database import get_async_session
 from src.parse_news.models import article
 # from src.parse_news.parse_news.spiders.naked_science_spider_CLI import NakedScienceSpider
-from .schemas import News, FilterNews, Tag, Origin, NewsJSONNoID, SpiderName
+from .schemas import News, FilterNews, Tag, Origin, NewsJSONNoID, SpiderName, KeyWord
 from typing import List
 # from src.parse_news.parse_news.pipelines import ParseNewsPipeline
 
@@ -55,14 +56,14 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
                 "details": None}
 
 
-@router.post("/filter", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
+@router.get("/filter", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_async_session)):
     tag = data.tag
     search_words = data.search_words
     ml_key_words = data.ml_key_words
     parsed_from = data.parsed_from
     published_at = data.published_at
-    parsed_at = data.parsed_at
+    parsed_at = datetime.strptime(data.parsed_at)
     try:
         query = select(article).where(or_(article.c.tag == tag,
                                           # article.c.search_words == search_words,
@@ -71,13 +72,24 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
                                           article.c.published_at <= published_at,
                                           article.c.parsed_at <= parsed_at
                                           ))
-        print(query.params())
         result = await session.execute(query)
         return result.all()
     except:
         return {"status": "error",
                 "data": None,
                 "details": None}
+
+
+@router.get("/filter/{key_word}", response_model=List[News])
+async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(article).where(article.c.ml_key_words.like(f"%{key_word}%"))
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        return {"status": "error",
+                "data": None,
+                "details": e.__dict__}
 
 
 @launch_parser.get("/{spider_name}")
