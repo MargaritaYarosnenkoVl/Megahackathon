@@ -1,9 +1,7 @@
-import json
 from typing import Any, Type
 import scrapy
 import twisted
-from twisted.internet import reactor, defer
-from scrapy.crawler import CrawlerProcess, CrawlerRunner
+# from scrapy.crawler import CrawlerProcess, CrawlerRunner
 from src.parse_news.parse_news.pipelines import ParseNewsPipeline
 from src.parse_news.parse_news.spiders import (cnews_spider_CLI,
                                                fontanka_spider_CLI,
@@ -25,11 +23,10 @@ class SpiderFromCode:
                                                                                                 "overwrite": True}
                                    },
                          "ITEM_PIPELINES": {ParseNewsPipeline: 300}}
-        self.runner = CrawlerRunner(self.settings)
-        self.reactor: twisted.internet = reactor
+        # self.process = CrawlerProcess(self.settings)
         self.spider_name = name
 
-    def get_spider_by_name(self, name: str) -> Type[scrapy.Spider]:
+    def get_spider_by_name(self) -> Type[scrapy.Spider]:
         spiders = {f"{naked_science_spider_CLI.NakedScienceSpider.name}": naked_science_spider_CLI.NakedScienceSpider,
                    f"{cnews_spider_CLI.CnewsSpider.name}": cnews_spider_CLI.CnewsSpider,
                    f"{dnews_spider_CLI.DNewsSpider.name}": dnews_spider_CLI.DNewsSpider,
@@ -41,21 +38,24 @@ class SpiderFromCode:
                    f"{windozo_spider_CLI.WindozoSpider.name}": windozo_spider_CLI.WindozoSpider,
                    f"{snob_spider_CLI.SnobSpider.name}": snob_spider_CLI.SnobSpider,
                    }
-        return spiders.get(name)
+        return spiders.get(self.spider_name)
 
     def parse(self):
         spider = self.get_spider_by_name(self.spider_name)
+        # self.process.crawl(spider)
+        # self.process.start()
+        # self.process.stop()
         # d = self.runner.crawl(spider)
-        self.runner.crawl(spider)
-        d = self.runner.join()
-        self.runner.stop()
+        # self.runner.crawl(spider)
+        # d = self.runner.join()
+        # self.runner.stop()
         # d.addBoth(lambda _: reactor.stop())
         # self.reactor.run()
 
     def stop(self):
         #self.reactor.callFromThread(self.reactor.stop)
         self.runner.join()
-        self.runner.stop()
+        # self.runner.stop()
         # self.runner.crawl(NakedScienceSpider)
         # # self.process.start()
         # d = self.runner.join()
@@ -66,5 +66,4 @@ class SpiderFromCode:
 if __name__ == "__main__":
     s = SpiderFromCode("naked_science")
     s.parse()
-    s.stop()
 
