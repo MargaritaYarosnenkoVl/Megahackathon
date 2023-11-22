@@ -56,7 +56,7 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
                 "details": None}
 
 
-@router.get("/filter", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
+@router.post("/filter", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_async_session)):
     tag = data.tag
     search_words = data.search_words
@@ -80,10 +80,22 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
                 "details": None}
 
 
-@router.get("/filter/{key_word}", response_model=List[News])
+@router.get("/filter_kw/{key_word}", response_model=List[News])
 async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article).where(article.c.ml_key_words.like(f"%{key_word}%"))
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        return {"status": "error",
+                "data": None,
+                "details": e.__dict__}
+
+
+@router.get("/filter_t/{tag}", response_model=List[News])
+async def filter_news_by_key_word(tag: str, session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(article).where(article.c.tag.ilike(f"%{tag}%"))
         result = await session.execute(query)
         return result.all()
     except Exception as e:
