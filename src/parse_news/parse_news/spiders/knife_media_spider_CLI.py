@@ -17,22 +17,32 @@ class KnifeMediaSpider(scrapy.Spider):
 
     async def parse(self, response, **kwargs):
         for quote in response.css("div.widget-news__content"):
-            full_text_link = quote.css("a.widget-news__content-link::attr(href)").get()
-            search_words: list[str] = quote.css("a.meta__item::text").getall()
-            search_words_cleared: list[str] = await self.clear_search_words(search_words)
+            try:
+                full_text_link = quote.css("a.widget-news__content-link::attr(href)").get()
+                search_words: list[str] = quote.css("a.meta__item::text").getall()
+                search_words_cleared: list[str] = await self.clear_search_words(search_words)
 
-            news_info: dict = await self.get_news_info(link=full_text_link)
+                news_info: dict = await self.get_news_info(link=full_text_link)
 
-            yield {"title": news_info.get("title"),  # название
-                   "brief_text": news_info.get("brief_text"),  # короткое описание
-                   "full_text": news_info.get("full_text"),  # полный текст
-                   "tag": search_words_cleared[0],  # тэг - одно слово
-                   "search_words": " ".join(search_words_cleared),  # слова для поиска
-                   "parsed_from": "knife.media",
-                   "full_text_link": full_text_link,  # ссылка на полный текст
-                   "published_at": datetime.fromisoformat(quote.css("time::attr(datetime)").get()),  # дата публикации
-                   "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
-                   }
+                yield {"title": news_info.get("title"),  # название
+                       "brief_text": news_info.get("brief_text"),  # короткое описание
+                       "full_text": news_info.get("full_text"),  # полный текст
+                       "tag": search_words_cleared[0],  # тэг - одно слово
+                       "search_words": " ".join(search_words_cleared),  # слова для поиска
+                       "parsed_from": "knife.media",
+                       "full_text_link": full_text_link,  # ссылка на полный текст
+                       "published_at": datetime.fromisoformat(quote.css("time::attr(datetime)").get()),  # дата публикации
+                       "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
+                       }
+            except AttributeError as e:
+                print(e)
+                continue
+            except IndexError as e:
+                print(e)
+                continue
+            except TypeError as e:
+                print(e)
+                continue
 
     async def get_news_info(self, link: str) -> dict:
         res = requests.get(url=link, headers=self.headers)

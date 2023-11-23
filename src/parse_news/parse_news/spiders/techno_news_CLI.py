@@ -24,25 +24,35 @@ class TexnoNewsSpider(scrapy.Spider):
 
     async def parse(self, response, **kwargs):
         for quote in response.css("div.inside-article"):
-            full_text_link: str = quote.css("h2.entry-title a::attr(href)").get().strip()
-            title = quote.css("a[rel='bookmark']::text").get().strip()
-            brief_text = quote.css("div.entry-summary p::text").get().strip()
-            tag = quote.css("div.entry-meta a::text").get().strip()
-            published_at = quote.css("div.entry-meta span::text").get().strip()
+            try:
+                full_text_link: str = quote.css("h2.entry-title a::attr(href)").get().strip()
+                title = quote.css("a[rel='bookmark']::text").get().strip()
+                brief_text = quote.css("div.entry-summary p::text").get().strip()
+                tag = quote.css("div.entry-meta a::text").get().strip()
+                published_at = quote.css("div.entry-meta span::text").get().strip()
 
-            news_info: dict = await self.get_news_info(link=full_text_link)
+                news_info: dict = await self.get_news_info(link=full_text_link)
 
-            print(response.url[24:35])
-            yield {"title": title.replace(' ', ' '),  # название
-                   "brief_text": brief_text,  # короткое описание
-                   "full_text": news_info.get("full_text").strip().replace('\t', ''),  # полный текст
-                   "tag": tag,  # тэг - тема новости (первое слово/фраза из группы тегов)
-                   "search_words": tag,  # строка всех тегов
-                   "parsed_from": "techno-news.net",  # название сайта
-                   "full_text_link": full_text_link,  # ссылка на полный текст
-                   "published_at": datetime.strptime(published_at, "%H:%M %d-%m-%Y"),  # дата публикации
-                   "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
-                   }
+                print(response.url[24:35])
+                yield {"title": title.replace(' ', ' '),  # название
+                       "brief_text": brief_text,  # короткое описание
+                       "full_text": news_info.get("full_text").strip().replace('\t', ''),  # полный текст
+                       "tag": tag,  # тэг - тема новости (первое слово/фраза из группы тегов)
+                       "search_words": tag,  # строка всех тегов
+                       "parsed_from": "techno-news.net",  # название сайта
+                       "full_text_link": full_text_link,  # ссылка на полный текст
+                       "published_at": datetime.strptime(published_at, "%H:%M %d-%m-%Y"),  # дата публикации
+                       "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
+                       }
+            except AttributeError as e:
+                print(e)
+                continue
+            except IndexError as e:
+                print(e)
+                continue
+            except TypeError as e:
+                print(e)
+                continue
 
     async def get_news_info(self, link: str) -> dict:
         res = requests.get(url=link, headers=self.headers)

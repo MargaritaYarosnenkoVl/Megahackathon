@@ -30,22 +30,32 @@ class FontankaSpider(scrapy.Spider):
 
     async def parse(self, response, **kwargs):
         for quote in response.css("li.IHafh"):
-            link_quote: str = quote.css("a.IHb9::attr(href)").get()
-            if not link_quote.startswith("https:"):
-                full_text_link = "https://www.fontanka.ru" + link_quote
-                title = quote.css("a.IHb9::text").get()
+            try:
+                link_quote: str = quote.css("a.IHb9::attr(href)").get()
+                if not link_quote.startswith("https:"):
+                    full_text_link = "https://www.fontanka.ru" + link_quote
+                    title = quote.css("a.IHb9::text").get()
 
-                news_info: dict = await self.get_news_info(link=full_text_link)
-                yield {"title": title,  # название
-                       "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
-                       "full_text": news_info.get("full_text"),  # полный текст
-                       "tag": quote.css("a.IHf3::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
-                       "search_words": news_info.get("search_words"),  # строка всех тегов
-                       "parsed_from": "fontanka.ru",  # название сайта
-                       "full_text_link": full_text_link,  # ссылка на полный текст
-                       "published_at": datetime.strptime(response.url[24:34], "%Y/%m/%d"),  # дата публикации
-                       "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
-                       }
+                    news_info: dict = await self.get_news_info(link=full_text_link)
+                    yield {"title": title,  # название
+                           "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
+                           "full_text": news_info.get("full_text"),  # полный текст
+                           "tag": quote.css("a.IHf3::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
+                           "search_words": news_info.get("search_words"),  # строка всех тегов
+                           "parsed_from": "fontanka.ru",  # название сайта
+                           "full_text_link": full_text_link,  # ссылка на полный текст
+                           "published_at": datetime.strptime(response.url[24:34], "%Y/%m/%d"),  # дата публикации
+                           "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
+                           }
+            except AttributeError as e:
+                print(e)
+                continue
+            except IndexError as e:
+                print(e)
+                continue
+            except TypeError as e:
+                print(e)
+                continue
 
     async def get_news_info(self, link: str) -> dict:
         res = requests.get(url=link, headers=self.headers)

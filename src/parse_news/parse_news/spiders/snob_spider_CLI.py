@@ -31,23 +31,33 @@ class SnobSpider(scrapy.Spider):
 
     async def parse(self, response, **kwargs):
         for quote in response.css("div.col-entry a"):
-            link_quote: str = quote.css("a::attr(href)").get()
-            if not link_quote.startswith("https:"):
-                full_text_link = "https://snob.ru" + link_quote
-                title = quote.css("a div.title::text").get().strip()
+            try:
+                link_quote: str = quote.css("a::attr(href)").get()
+                if not link_quote.startswith("https:"):
+                    full_text_link = "https://snob.ru" + link_quote
+                    title = quote.css("a div.title::text").get().strip()
 
-                news_info: dict = await self.get_news_info(link=full_text_link)
+                    news_info: dict = await self.get_news_info(link=full_text_link)
 
-                yield {"title": title,  # название
-                       "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
-                       "full_text": news_info.get("full_text"),  # полный текст
-                       "tag": news_info.get("tag"),  # тэг - тема новости (первое слово/фраза из группы тегов)
-                       "search_words": news_info.get("search_words"),  # строка всех тегов
-                       "parsed_from": "snob.ru",  # название сайта
-                       "full_text_link": full_text_link,  # ссылка на полный текст
-                       "published_at": news_info.get("published_at"),  # дата публикации
-                       "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
-                       }
+                    yield {"title": title,  # название
+                           "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
+                           "full_text": news_info.get("full_text"),  # полный текст
+                           "tag": news_info.get("tag"),  # тэг - тема новости (первое слово/фраза из группы тегов)
+                           "search_words": news_info.get("search_words"),  # строка всех тегов
+                           "parsed_from": "snob.ru",  # название сайта
+                           "full_text_link": full_text_link,  # ссылка на полный текст
+                           "published_at": news_info.get("published_at"),  # дата публикации
+                           "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
+                           }
+            except AttributeError as e:
+                print(e)
+                continue
+            except IndexError as e:
+                print(e)
+                continue
+            except TypeError as e:
+                print(e)
+                continue
 
     async def get_news_info(self, link: str) -> dict:
         res = requests.get(url=link, headers=self.headers)
