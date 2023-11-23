@@ -14,7 +14,7 @@ export const routes = [
 		isAuth: false,
 	},
 	{
-		path: '/personalArea',
+		path: '/home/personalArea',
 		component: PersonalArea,
 		isAuth: true,
 	},

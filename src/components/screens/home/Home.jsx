@@ -31,7 +31,7 @@ const Home = () => {
 
 	return (
 		<Layout justifyContent='space-between'>
-			<Header />
+			<Header search='search' />
 			<Content>
 				<LeftPanel />
 				<div className={styles.block__news}>

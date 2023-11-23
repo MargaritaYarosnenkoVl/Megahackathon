@@ -1,13 +1,38 @@
 @import '../../assets/styles/variables';
 
 .wrapper {
-	padding: 76px 102px;
+	padding: 85px 46px;
 	display: flex;
 	gap: 20px;
 
-	> .image_profile {
+	> .block__image_profile {
 		width: 434px;
 		height: 338px;
+		position: relative;
+
+		> .block__navigation {
+			display: flex;
+			gap: 12px;
+			position: absolute;
+			top: -30px;
+
+			> a {
+				color: $black;
+				font-size: 0.8em;
+				line-height: 1.25;
+			}
+
+			> p {
+				font-size: 0.8em;
+				line-height: 1.25;
+				color: $blue;
+			}
+		}
+
+		> .image_profile {
+			width: 434px;
+			height: 338px;
+		}
 	}
 
 	> .block__content {
@@ -115,14 +140,23 @@
 			}
 
 			> input {
-				width: 140px;
-				height: 27px;
+				width: 326px;
+				height: 31px;
 				line-height: 1;
-				border: 1px solid $black;
+				border: 1px solid $blue;
+				border-radius: 20px;
+				outline: none;
+				font-size: 1em;
+				line-height: 1;
+				padding: 6.5px 16px;
 			}
 
 			> .main_pass {
 				margin-bottom: 25px;
+			}
+
+			> .second_pass {
+				margin-bottom: 11px;
 			}
 		}
 	}

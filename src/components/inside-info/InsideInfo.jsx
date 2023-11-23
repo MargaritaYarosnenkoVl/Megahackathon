@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../ui/button/Button';
 import styles from './InsideInfo.module.scss';
 
@@ -15,11 +16,20 @@ const InsideInfo = () => {
 
 	return (
 		<div className={styles.wrapper}>
-			<img
-				className={styles.image_profile}
-				src='./images/auth.jpg'
-				alt='image'
-			/>
+			<div className={styles.block__image_profile}>
+				<div className={styles.block__navigation}>
+					<Link to={'/home'}>Главная</Link>
+					<p>/</p>
+					<p>Личный кабинет</p>
+				</div>
+
+				<img
+					className={styles.image_profile}
+					src='../images/auth.jpg'
+					alt='image'
+				/>
+			</div>
+
 			<div className={styles.block__content}>
 				<div className={styles.block__name}>
 					{isViewName ? (
@@ -99,7 +109,7 @@ const InsideInfo = () => {
 				</div>
 				<div className={styles.block__password}>
 					<label htmlFor='repeat'>Повторить новый пароль</label>
-					<input type='password' id='repeat' />
+					<input className={styles.second_pass} type='password' id='repeat' />
 				</div>
 				<Button saveInfo='saveInfo'>сохранить</Button>
 			</div>
