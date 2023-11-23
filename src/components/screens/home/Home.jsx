@@ -63,7 +63,7 @@ const Home = () => {
 					isViewEditNews={isViewEditNews}
 				/>
 			</Content>
-			<button onClick={test}>test</button>
+			{/* <button onClick={test}>test</button> */}
 		</Layout>
 	);
 };

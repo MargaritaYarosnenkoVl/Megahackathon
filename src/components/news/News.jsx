@@ -12,7 +12,7 @@ const News = ({
 			className={styles.news}
 			style={
 				isViewEditNews && editingNews.id === news.id
-					? { backgroundColor: '#d0d9e2' }
+					? { backgroundColor: '#f3f3f3' }
 					: {}
 			}
 		>
