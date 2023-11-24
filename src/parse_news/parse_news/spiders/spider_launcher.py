@@ -3,16 +3,16 @@ import scrapy
 import twisted
 # from scrapy.crawler import CrawlerProcess, CrawlerRunner
 from src.parse_news.parse_news.pipelines import ParseNewsPipeline
-from src.parse_news.parse_news.spiders import (cnews_spider_CLI,
-                                               fontanka_spider_CLI,
-                                               knife_media_spider_CLI,
-                                               naked_science_spider_CLI,
-                                               nplus1_spider_CLI,
-                                               sdelanounas_spider_CLI,
-                                               techno_news_CLI,
-                                               windozo_spider_CLI,
-                                               dnews_spider_CLI,
-                                               snob_spider_CLI
+from src.parse_news.parse_news.spiders import (cnews_spider,
+                                               fontanka_spider,
+                                               knife_media_spider,
+                                               naked_science_spider,
+                                               nplus1_spider,
+                                               sdelanounas_spider,
+                                               techno_news,
+                                               windozo_spider,
+                                               dnews_spider,
+                                               snob_spider
                                                )
 
 

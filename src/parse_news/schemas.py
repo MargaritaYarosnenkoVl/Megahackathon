@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, validator
+from typing import Optional, Literal
 from datetime import datetime
+from enum import Enum
 
 
 class News(BaseModel):
@@ -72,8 +73,30 @@ class NewsJSONNoID(BaseModel):
         orm_mode = True
 
 
-class SpiderName(str):
-    name: str = Field(default="naked_science")
+class SpiderNameCls(str, Enum):
+    naked_science = "naked_science"
+    cnews = "cnews"
+    fontanka = "fontanka"
+    dimonvideo = "dimonvideo"
+    news3d = "news3d"
+    forbes = "forbes"
+    knife_media = "knife_media"
+    nplus1 = "nplus1"
+    portal_kultura = "portal_kultura"
+    sdelanounas = "sdelanounas"
+    snob = "snob"
+    techno_news = "techno_news"
+    windozo = "windozo"
+
+
+class SpiderName(BaseModel):
+    name: list[SpiderNameCls]
+
+    # @validator('c')
+    # def c_match(self, v):
+    #     if not v in ['naked_science', 'cnews']:
+    #         raise ValueError('c must be in [naked_science, cnews]')
+    #     return v
 
 
 class KeyWord(str):

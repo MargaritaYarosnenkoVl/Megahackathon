@@ -6,8 +6,7 @@ from src.auth.auth import auth_backend
 from src.auth.models import User
 from src.auth.manager import get_user_manager
 from src.auth.schemas import UserRead, UserCreate, UserUpdate
-from src.parse_news.router import router as router_parser
-from src.parse_news.router import launch_parser as launch_parser_router
+from src.parse_news.router import get_router, launch_parser_router
 from src.auth.router import router as auth_check_router
 from starlette.middleware.cors import CORSMiddleware
 
@@ -52,6 +51,6 @@ app.include_router(
 )
 
 
-app.include_router(router_parser)
+app.include_router(get_router)
 app.include_router(auth_check_router)
 app.include_router(launch_parser_router)
