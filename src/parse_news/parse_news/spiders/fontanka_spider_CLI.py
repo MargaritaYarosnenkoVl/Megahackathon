@@ -29,43 +29,51 @@ class FontankaSpider(scrapy.Spider):
                   ]
 
     async def parse(self, response, **kwargs):
-        for quote in response.css("li.IHafh"):
+        target_script_content = response.css("script")[-18].get()  # строка - результат выполнения скрипта
+        raw_links: list[str] = re.findall(r"""url":"\\u002F(\d{4})\\u002F(\d{2})\\u002F(\d{2})\\u002F(\d{8})""",
+                                          string=target_script_content)
+        links = ["/".join(link) for link in raw_links]  # соединяем группы
+        # print(*links, sep="\n")
+        for link in links:
+            full_text_link: str = "https://www.fontanka.ru/" + link + "/"
             try:
-                link_quote: str = quote.css("a.IHb9::attr(href)").get()
-                if not link_quote.startswith("https:"):
-                    full_text_link = "https://www.fontanka.ru" + link_quote
-                    title = quote.css("a.IHb9::text").get()
 
-                    news_info: dict = await self.get_news_info(link=full_text_link)
-                    yield {"title": title,  # название
-                           "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
-                           "full_text": news_info.get("full_text"),  # полный текст
-                           "tag": quote.css("a.IHf3::attr(title)").get(),  # тэг - тема новости (первое слово/фраза из группы тегов)
-                           "search_words": news_info.get("search_words"),  # строка всех тегов
-                           "parsed_from": "fontanka.ru",  # название сайта
-                           "full_text_link": full_text_link,  # ссылка на полный текст
-                           "published_at": datetime.strptime(response.url[24:34], "%Y/%m/%d"),  # дата публикации
-                           "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
-                           }
+                news_info: dict = await self.get_news_info(link=full_text_link)
+
+                yield {"title": news_info.get("title"),  # название
+                       "brief_text": news_info.get("brief_text"),  # короткое описание
+                       "full_text": news_info.get("full_text"),  # полный текст
+                       "tag": news_info.get("tag"), # тэг - тема новости (первое слово/фраза из группы тегов)
+                       "search_words": news_info.get("search_words"),  # строка всех тегов
+                       "parsed_from": "fontanka.ru",  # название сайта
+                       "full_text_link": full_text_link,  # ссылка на полный текст
+                       "published_at": datetime.strptime(response.url[24:34], "%Y/%m/%d"),  # дата публикации
+                       "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
+                       }
             except AttributeError as e:
-                print(e)
+                print(e, full_text_link)
                 continue
             except IndexError as e:
-                print(e)
+                print(e, full_text_link)
                 continue
             except TypeError as e:
-                print(e)
+                print(e, full_text_link)
                 continue
 
     async def get_news_info(self, link: str) -> dict:
         res = requests.get(url=link, headers=self.headers)
         if res.status_code == 200:
             soup = BeautifulSoup(res.content, 'lxml')
-            full_text: list[soup] = soup.find("div", {"class": "JNfp"}).findAll("p")
-            brief_text = full_text[1].text.strip()
-            search_words: list[soup] = soup.findAll("h4", {"class": "A7f3"})
-
-            return {"brief_text": brief_text,
-                    "full_text": " ".join((p.text.strip() for p in full_text)),
-                    "search_words": " ".join((word.text.strip().lower() for word in search_words)),
+            title = soup.find("h1", {"itemprop": "http://schema.org/headline"}).text.strip()
+            tag = soup.find("h4", {"itemprop": "name"}).text.strip()
+            brief_text = soup.find("section", {"itemprop": "articleBody"}).find("p").text.strip()
+            full_text_list: list[soup] = soup.find("section", {"itemprop": "articleBody"}).findAll("p")
+            # search_words: list[soup] = soup.findAll('a', {'itemprop': 'about'})
+            published_at = soup.find("span", {"itemprop": "datePublished"}).text.strip()
+            return {"title": title,
+                    "tag": tag,
+                    "brief_text": brief_text,
+                    "full_text": " ".join((p.text.strip() for p in full_text_list)),
+                    "search_words": tag,
+                    "published_at": published_at
                     }

@@ -45,7 +45,7 @@ class ParseNewsPipeline:
                               item.get('search_words'), item.get('parsed_from'), item.get('full_text_link'),
                               item.get('published_at'), item.get('parsed_at')))
             self.connection.commit()
-            print(item.get('title'), " --|---|-- is successfully added to DB! OK")
+            print("\n" + item.get('title'), " --|---|-- is successfully added to DB! OK\n")
         return item
 
     def close_spider(self, spider: scrapy.Spider = None):  # , spider=None, reason=None
