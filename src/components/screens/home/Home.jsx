@@ -43,7 +43,7 @@ const Home = () => {
 						<p className={styles.allNews}>Всего {users.news.length} новости</p>
 					</div>
 
-					{users.news.map(news => {
+					{users.news.newNews.map(news => {
 						return (
 							<News
 								key={news.id}
@@ -63,7 +63,7 @@ const Home = () => {
 					isViewEditNews={isViewEditNews}
 				/>
 			</Content>
-			{/* <button onClick={test}>test</button> */}
+			<button onClick={test}>test</button>
 		</Layout>
 	);
 };

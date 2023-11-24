@@ -7,7 +7,7 @@ import LeftPanel from '../../left-panel/LeftPanel';
 const PersonalArea = () => {
 	return (
 		<Layout justifyContent='space-between'>
-			<Header />
+			<Header  />
 			<Content>
 				<LeftPanel />
 				<InsideInfo />

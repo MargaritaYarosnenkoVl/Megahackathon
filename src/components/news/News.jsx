@@ -1,3 +1,5 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { actions } from '../../store/users/Users.slice';
 import styles from './News.module.scss';
 
 const News = ({
@@ -7,6 +9,9 @@ const News = ({
 	isViewEditNews,
 	editingNews,
 }) => {
+	const dispatch = useDispatch();
+	const user = useSelector(state => state.users[0]);
+
 	return (
 		<div
 			className={styles.news}
@@ -15,6 +20,18 @@ const News = ({
 					? { backgroundColor: '#f3f3f3' }
 					: {}
 			}
+			onClick={() => {
+				setEditingNews({
+					id: news.id,
+					title: news.title,
+					preview: news.preview,
+					date: news.date,
+					source: news.source,
+					description: news.description,
+				});
+				setIsViewEditNews(!isViewEditNews);
+				dispatch(actions.addHistoryNews(news));
+			}}
 		>
 			<div className={styles.news__blockOne}>
 				<p className={styles.news__id}>{news.id}</p>
@@ -39,24 +56,13 @@ const News = ({
 					<button>
 						<img src='./images/icons/foulder.svg' alt='image' />
 					</button>
-					<button
-						onClick={() => {
-							setEditingNews({
-								id: news.id,
-								title: news.title,
-								preview: news.preview,
-								date: news.date,
-								source: news.source,
-								description: news.description,
-							});
-
-							setIsViewEditNews(!isViewEditNews);
-						}}
-					>
+					<button>
 						{
 							<img
 								src={
-									isViewEditNews && editingNews.id === news.id
+									user.news.viewHistoryNews.some(
+										historyNews => historyNews.id === news.id
+									)
 										? './images/icons/focus_edit_active_blue.svg'
 										: './images/icons/focus_edit.svg'
 								}
