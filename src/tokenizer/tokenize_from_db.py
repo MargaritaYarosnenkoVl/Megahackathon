@@ -19,8 +19,7 @@ def get_clear_tokens(text) -> str:
 
 def check_conditions(lemmatized_token: str) -> bool:
     words_to_avoid = set(stopwords.words("russian") + stopwords.words("english") + list(punctuation))
-    bool_ = all([lemmatized_token not in words_to_avoid,
-                nltk.pos_tag([lemmatized_token])[0][1] == "NN"])
+    bool_ = all((lemmatized_token not in words_to_avoid, nltk.pos_tag([lemmatized_token])[0][1] == "NN"))
     return bool_
 
 
@@ -57,7 +56,7 @@ def write_to_db(df: pd.DataFrame, engine):
             WHERE :id = article.id 
             RETURNING article.id, :id"""), params)
             cur.commit()
-            print("Words written to DB", "OK")
+    print("Words written to DB", "OK")
 
 
 def main():
@@ -68,8 +67,8 @@ def main():
     print("DB data loaded", "OK")
     df["tokenized_text"] = df["full_text"].apply(get_clear_tokens)
     print("DF column 'tokenized_text' created", "OK")
-    m = vectorize(df["tokenized_text"].values, names=df["id"].values)
-    write_to_db(m, engine=engine)
+    mtrx = vectorize(df["tokenized_text"].values, names=df["id"].values)
+    write_to_db(mtrx, engine=engine)
 
 
 if __name__ == "__main__":
