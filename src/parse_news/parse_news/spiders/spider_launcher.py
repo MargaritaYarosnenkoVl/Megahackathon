@@ -1,19 +1,19 @@
 from typing import Any, Type
 import scrapy
 import twisted
-# from scrapy.crawler import CrawlerProcess, CrawlerRunner
-from src.parse_news.parse_news.pipelines import ParseNewsPipeline
-from src.parse_news.parse_news.spiders import (cnews_spider,
-                                               fontanka_spider,
-                                               knife_media_spider,
-                                               naked_science_spider,
-                                               nplus1_spider,
-                                               sdelanounas_spider,
-                                               techno_news,
-                                               windozo_spider,
-                                               dnews_spider,
-                                               snob_spider
-                                               )
+from scrapy.crawler import CrawlerProcess, CrawlerRunner
+from ..pipelines import ParseNewsPipeline
+from ..spiders import (cnews_spider,
+                       fontanka_spider,
+                       knife_media_spider,
+                       naked_science_spider,
+                       nplus1_spider,
+                       sdelanounas_spider,
+                       techno_news,
+                       windozo_spider,
+                       dnews_spider,
+                       snob_spider
+                       )
 
 
 class SpiderFromCode:
@@ -27,16 +27,16 @@ class SpiderFromCode:
         self.spider_name = name
 
     def get_spider_by_name(self) -> Type[scrapy.Spider]:
-        spiders = {f"{naked_science_spider_CLI.NakedScienceSpider.name}": naked_science_spider_CLI.NakedScienceSpider,
-                   f"{cnews_spider_CLI.CnewsSpider.name}": cnews_spider_CLI.CnewsSpider,
-                   f"{dnews_spider_CLI.DNewsSpider.name}": dnews_spider_CLI.DNewsSpider,
-                   f"{fontanka_spider_CLI.FontankaSpider.name}": fontanka_spider_CLI.FontankaSpider,
-                   f"{knife_media_spider_CLI.KnifeMediaSpider.name}": knife_media_spider_CLI.KnifeMediaSpider,
-                   f"{nplus1_spider_CLI.Nplus1Spider.name}": nplus1_spider_CLI.Nplus1Spider,
-                   f"{sdelanounas_spider_CLI.SdelanoUNasSpider.name}": sdelanounas_spider_CLI.SdelanoUNasSpider,
-                   f"{techno_news_CLI.TexnoNewsSpider.name}": techno_news_CLI.TexnoNewsSpider,
-                   f"{windozo_spider_CLI.WindozoSpider.name}": windozo_spider_CLI.WindozoSpider,
-                   f"{snob_spider_CLI.SnobSpider.name}": snob_spider_CLI.SnobSpider,
+        spiders = {f"{naked_science_spider.NakedScienceSpider.name}": naked_science_spider.NakedScienceSpider,
+                   f"{cnews_spider.CnewsSpider.name}": cnews_spider.CnewsSpider,
+                   f"{dnews_spider.DNewsSpider.name}": dnews_spider.DNewsSpider,
+                   f"{fontanka_spider.FontankaSpider.name}": fontanka_spider.FontankaSpider,
+                   f"{knife_media_spider.KnifeMediaSpider.name}": knife_media_spider.KnifeMediaSpider,
+                   f"{nplus1_spider.Nplus1Spider.name}": nplus1_spider.Nplus1Spider,
+                   f"{sdelanounas_spider.SdelanoUNasSpider.name}": sdelanounas_spider.SdelanoUNasSpider,
+                   f"{techno_news.TexnoNewsSpider.name}": techno_news.TexnoNewsSpider,
+                   f"{windozo_spider.WindozoSpider.name}": windozo_spider.WindozoSpider,
+                   f"{snob_spider.SnobSpider.name}": snob_spider.SnobSpider,
                    }
         return spiders.get(self.spider_name)
 
@@ -53,7 +53,7 @@ class SpiderFromCode:
         # self.reactor.run()
 
     def stop(self):
-        #self.reactor.callFromThread(self.reactor.stop)
+        # self.reactor.callFromThread(self.reactor.stop)
         self.runner.join()
         # self.runner.stop()
         # self.runner.crawl(NakedScienceSpider)
@@ -66,4 +66,3 @@ class SpiderFromCode:
 if __name__ == "__main__":
     s = SpiderFromCode("naked_science")
     s.parse()
-
