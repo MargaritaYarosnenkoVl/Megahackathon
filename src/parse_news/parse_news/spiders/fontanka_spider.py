@@ -30,8 +30,8 @@ class FontankaSpider(scrapy.Spider):
 
     async def parse(self, response, **kwargs):
         target_script_content = response.css("script")[-18].get()  # строка - результат выполнения скрипта
-        raw_links: list[str] = re.findall(r"""url":"\\u002F(\d{4})\\u002F(\d{2})\\u002F(\d{2})\\u002F(\d{8})""",
-                                          string=target_script_content)
+        raw_links: list[tuple] = re.findall(r"""url":"\\u002F(\d{4})\\u002F(\d{2})\\u002F(\d{2})\\u002F(\d{8})""",
+                                            string=target_script_content)
         links = ["/".join(link) for link in raw_links]  # соединяем группы
         # print(*links, sep="\n")
         for link in links:
@@ -43,7 +43,7 @@ class FontankaSpider(scrapy.Spider):
                 yield {"title": news_info.get("title"),  # название
                        "brief_text": news_info.get("brief_text"),  # короткое описание
                        "full_text": news_info.get("full_text"),  # полный текст
-                       "tag": news_info.get("tag"), # тэг - тема новости (первое слово/фраза из группы тегов)
+                       "tag": news_info.get("tag"),  # тэг - тема новости (первое слово/фраза из группы тегов)
                        "search_words": news_info.get("search_words"),  # строка всех тегов
                        "parsed_from": "fontanka.ru",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст

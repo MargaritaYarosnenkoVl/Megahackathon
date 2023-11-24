@@ -64,10 +64,13 @@ class CnewsSpider(scrapy.Spider):
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
                        }
             except AttributeError as e:
-                print(e)
+                print(e, full_text_link)
                 continue
             except TypeError as e:
-                print(e)
+                print(e, full_text_link)
+                continue
+            except IndexError as e:
+                print(e, full_text_link)
                 continue
 
     async def get_news_info(self, link: str) -> dict:
