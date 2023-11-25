@@ -5,7 +5,7 @@ import nltk
 from string import punctuation
 from nltk.corpus import stopwords
 from sqlalchemy import create_engine, text
-from config import FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_NAME
+from src.config import FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_NAME
 # from typing import Generator
 # import psycopg2
 
@@ -63,7 +63,7 @@ def main():
     engine = create_engine(
         f'postgresql+psycopg2://{FSTR_DB_LOGIN}:{FSTR_DB_PASS}@{FSTR_DB_HOST}:{FSTR_DB_PORT}/{FSTR_DB_NAME}')
     print("DB engine created", "OK")
-    df = pd.read_sql_query("""SELECT id, full_text FROM article""", con=engine)
+    df = pd.read_sql_query("""SELECT id, full_text FROM article WHERE ml_key_words IS NULL""", con=engine)
     print("DB data loaded", "OK")
     df["tokenized_text"] = df["full_text"].apply(get_clear_tokens)
     print("DF column 'tokenized_text' created", "OK")
