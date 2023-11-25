@@ -24,7 +24,7 @@ class DimonVideoSpider(scrapy.Spider):
             try:
                 link_quote: str = quote.css("div.entry-title b a::attr(href)").get().strip()
                 if not link_quote.startswith("https:"):
-                    full_text_link = "https://dimonvideo.ru/" + link_quote
+                    full_text_link = "https://dimonvideo.ru" + link_quote
                     title = quote.css("div.entry-title b a::attr(title)").get().replace(' ', ' ')
                     tag = quote.css("span[style='vertical-align: middle'] a::text").get()
                     published_at = quote.css("span[style='vertical-align: middle'] time::attr(datetime)").get()
