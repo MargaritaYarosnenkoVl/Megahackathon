@@ -5,18 +5,18 @@ from typing import Any, Type
 import scrapy
 from twisted.internet import reactor
 from scrapy.crawler import CrawlerProcess, CrawlerRunner
-from src.parse_news.parse_news.pipelines import ParseNewsPipeline
-from src.parse_news.parse_news.spiders import (cnews_spider,
-                                               fontanka_spider,
-                                               knife_media_spider,
-                                               naked_science_spider,
-                                               nplus1_spider,
-                                               sdelanounas_spider,
-                                               techno_news,
-                                               windozo_spider,
-                                               dnews_spider,
-                                               snob_spider
-                                               )
+from .pipelines import ParseNewsPipeline
+from .spiders import (cnews_spider,
+                      fontanka_spider,
+                      knife_media_spider,
+                      naked_science_spider,
+                      nplus1_spider,
+                      sdelanounas_spider,
+                      techno_news,
+                      windozo_spider,
+                      dnews_spider,
+                      snob_spider
+                      )
 
 
 class SpiderFromCode:
@@ -50,9 +50,9 @@ class SpiderFromCode:
         # self.process.stop()
         self.runner.crawl(spider)
         d = self.runner.join()
-        # d.addBoth(lambda _: self.reactor.stop())
+        d.addBoth(lambda _: self.reactor.stop())
+        self.runner.join()
         reactor.run()
-        reactor.stop(d)
         # reactor.callFromThread(reactor.stop)
         # os._exit(70)
         # time.sleep(0.2)

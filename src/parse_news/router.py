@@ -1,19 +1,15 @@
-import json
-import os
 import subprocess
-from datetime import datetime
+from typing import List
 from fastapi import APIRouter, Depends
-from sqlalchemy import select, insert, and_, or_, func
-from sqlalchemy.ext.asyncio import AsyncSession
-from scrapy.crawler import CrawlerProcess
-from src.database import get_async_session
-from src.parse_news.models import article
-from src.parse_news.parse_news.spiders.spider_launcher import SpiderFromCode
-from src.tokenizer.tokenize_from_db import main as main_tokenizer
-from .schemas import News, FilterNews, Tag, Origin, NewsJSONNoID, SpiderName, KeyWord, Count
-from typing import List, Literal
 
-# from src.parse_news.parse_news.pipelines import ParseNewsPipeline
+from sqlalchemy import select, func
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.database import get_async_session
+from src.tokenizer.tokenize_from_db import main as main_tokenizer
+from .models import article
+from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count
+from .parse_news.spider_launcher import SpiderFromCode
 
 get_router = APIRouter(prefix="/get",
                        tags=["Get News"])
@@ -137,12 +133,12 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
 @launch_parser_router.get("/{spider_name}")
 async def launch_spider(spider_name: SpiderName, session: AsyncSession = Depends(get_async_session)):
     try:
-        subprocess.call(["spider_launcher.sh", "spider_launcher.py", "$PATH"],
-                        env={
-                            "PATH": "/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news/spiders"})
-        print("OK")
-        # spider = SpiderFromCode(spider_name)
-        # spider.parse()
+        # subprocess.call(["spider_launcher.sh", "spider_launcher.py", "$PATH"],
+        #                 env={
+        #                     "PATH": "/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news/spiders"})
+        # print("OK")
+        spider = SpiderFromCode(spider_name)
+        spider.parse()
         # settings = {"FEEDS": {f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json": {"format": "json",
         #                                                                                           "overwrite": True}
         #                       },
