@@ -40,7 +40,7 @@ class DNewsSpider(scrapy.Spider):
                        "full_text": news_info.get("full_text").strip(),  # полный текст
                        "tag": news_info.get("tag"),  # тэг - тема новости (первое слово/фраза из группы тегов)
                        "search_words": news_info.get("search_words"),  # строка всех тегов
-                       "parsed_from": "sdelanounas.ru",  # название сайта
+                       "parsed_from": "3dnews.ru",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст
                        "published_at": datetime.strptime(published_at, "%d.%m.%Y %H:%M"),  # дата публикации
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
