@@ -133,27 +133,15 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
 @launch_parser_router.get("/{spider_name}")
 async def launch_spider(spider_name: SpiderName, session: AsyncSession = Depends(get_async_session)):
     try:
-        # subprocess.call(["spider_launcher.sh", "spider_launcher.py", "$PATH"],
-        #                 env={
-        #                     "PATH": "/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news/spiders"})
+        subprocess.Popen([f"curl",
+                          f"http://localhost:6800/schedule.json",
+                          f"-d",
+                          f"project=parse_news",
+                          f"-d",
+                          f"spider={spider_name}"])
         # print("OK")
-        spider = SpiderFromCode(spider_name)
-        spider.parse()
-        # settings = {"FEEDS": {f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json": {"format": "json",
-        #                                                                                           "overwrite": True}
-        #                       },
-        #             "ITEM_PIPELINES": {ParseNewsPipeline: 300}}
-        # process = CrawlerProcess(settings=settings)
-        # res = await process.crawl(NakedScienceSpider).addBoth()
-        # process.start()
-        # await process.stop()
-        # return None
-        # s = SpiderFromCode(spider_name)
-        # s.parse()
-        # s.stop()
-        # with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
-        #     data = f.read()
-        # return json.loads(data)
+        # spider = SpiderFromCode(spider_name)
+        # spider.parse()
     except Exception as e:
         print(e)
         return {"status": "error",
