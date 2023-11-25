@@ -9,7 +9,6 @@ from src.database import get_async_session
 from src.tokenizer.tokenize_from_db import main as main_tokenizer
 from .models import article
 from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count
-from .parse_news.spider_launcher import SpiderFromCode
 
 get_router = APIRouter(prefix="/get",
                        tags=["Get News"])

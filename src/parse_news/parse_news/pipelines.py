@@ -10,7 +10,7 @@ import datetime
 import scrapy
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-from .spiders.config import FSTR_DB_LOGIN, FSTR_DB_NAME, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_PASS
+from src.config import FSTR_DB_LOGIN, FSTR_DB_NAME, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_PASS
 
 
 class ParseNewsPipeline:
