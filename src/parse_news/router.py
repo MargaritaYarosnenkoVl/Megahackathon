@@ -21,6 +21,9 @@ get_router = APIRouter(prefix="/get",
 launch_parser_router = APIRouter(prefix="/launch",
                                  tags=["Launch parser"])
 
+fill_ml = APIRouter(prefix="/fill",
+                    tags=["Launch tokenizer"])
+
 
 @get_router.get("/count/all", response_model=Count)  # response_model=OfferSearchResult, operation_id="offer_search"
 async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
@@ -77,7 +80,7 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
 
 
 @get_router.get("/origins/unique", response_model=List[Origin])
-                                        # response_model=OfferSearchResult, operation_id="offer_search"
+# response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_origins(session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article.c.parsed_from).distinct()
@@ -88,7 +91,6 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
         return {"status": "error",
                 "data": e,
                 "details": e}
-
 
 
 @get_router.post("/filter", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
@@ -145,7 +147,8 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
 async def launch_spider(spider_name: SpiderName, session: AsyncSession = Depends(get_async_session)):
     try:
         subprocess.call(["spider_launcher.sh", "spider_launcher.py", "$PATH"],
-                         env={"PATH": "/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news/spiders"})
+                        env={
+                            "PATH": "/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news/spiders"})
         print("OK")
         # spider = SpiderFromCode(spider_name)
         # spider.parse()
@@ -173,26 +176,24 @@ async def launch_spider(spider_name: SpiderName, session: AsyncSession = Depends
         # with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
         #     data = f.read()
         # return json.loads(data)
-         return "Coming soon"
+        return "Coming soon"
 
 
-
-
-@get_router.get("/ml_key_words}")
+@fill_ml.get("/ml_key_words")
 async def fill_ml_key_words(session: AsyncSession = Depends(get_async_session)):
     try:
-        pass
+        main_tokenizer()
     except Exception as e:
         print(e)
         return {"status": "error",
                 "data": e,
-                "details": e}
+                "details": e
+                }
     finally:
         # with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
         #     data = f.read()
         # return json.loads(data)
-         return "Coming soon"
-
+        return "Coming soon"
 
 #
 # if __name__ == "__main__":

@@ -1,19 +1,22 @@
+import os
+import sys
+import time
 from typing import Any, Type
 import scrapy
-import twisted
+from twisted.internet import reactor
 from scrapy.crawler import CrawlerProcess, CrawlerRunner
-from ..pipelines import ParseNewsPipeline
-from ..spiders import (cnews_spider,
-                       fontanka_spider,
-                       knife_media_spider,
-                       naked_science_spider,
-                       nplus1_spider,
-                       sdelanounas_spider,
-                       techno_news,
-                       windozo_spider,
-                       dnews_spider,
-                       snob_spider
-                       )
+from src.parse_news.parse_news.pipelines import ParseNewsPipeline
+from src.parse_news.parse_news.spiders import (cnews_spider,
+                                               fontanka_spider,
+                                               knife_media_spider,
+                                               naked_science_spider,
+                                               nplus1_spider,
+                                               sdelanounas_spider,
+                                               techno_news,
+                                               windozo_spider,
+                                               dnews_spider,
+                                               snob_spider
+                                               )
 
 
 class SpiderFromCode:
@@ -23,7 +26,7 @@ class SpiderFromCode:
                                                                                                 "overwrite": True}
                                    },
                          "ITEM_PIPELINES": {ParseNewsPipeline: 300}}
-        # self.process = CrawlerProcess(self.settings)
+        self.runner = CrawlerRunner(self.settings)
         self.spider_name = name
 
     def get_spider_by_name(self) -> Type[scrapy.Spider]:
@@ -41,11 +44,19 @@ class SpiderFromCode:
         return spiders.get(self.spider_name)
 
     def parse(self):
-        spider = self.get_spider_by_name(self.spider_name)
+        spider = self.get_spider_by_name()
         # self.process.crawl(spider)
         # self.process.start()
         # self.process.stop()
-        # d = self.runner.crawl(spider)
+        self.runner.crawl(spider)
+        d = self.runner.join()
+        # d.addBoth(lambda _: self.reactor.stop())
+        reactor.run()
+        reactor.stop(d)
+        # reactor.callFromThread(reactor.stop)
+        # os._exit(70)
+        # time.sleep(0.2)
+        # os.execl(sys.executable, sys.executable, *sys.argv)
         # self.runner.crawl(spider)
         # d = self.runner.join()
         # self.runner.stop()
