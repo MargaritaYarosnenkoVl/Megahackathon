@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 from datetime import datetime
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, insert, and_, or_, func
@@ -7,8 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from scrapy.crawler import CrawlerProcess
 from src.database import get_async_session
 from src.parse_news.models import article
-from src.parse_news.parse_news.spiders.naked_science_spider import NakedScienceSpider
-from .schemas import News, FilterNews, Tag, Origin, NewsJSONNoID, SpiderName, KeyWord, Count, SpiderNameCls
+from src.parse_news.parse_news.spiders.spider_launcher import SpiderFromCode
+from src.tokenizer.tokenize_from_db import main as main_tokenizer
+from .schemas import News, FilterNews, Tag, Origin, NewsJSONNoID, SpiderName, KeyWord, Count
 from typing import List, Literal
 
 # from src.parse_news.parse_news.pipelines import ParseNewsPipeline
@@ -29,11 +31,11 @@ async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
     except Exception as e:
         print(e)
         return {"status": "error",
-                "data": None,
-                "details": None}
+                "data": e,
+                "details": e}
 
 
-@get_router.get("/{item_id}",
+@get_router.get("/single/{item_id}",
                 response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
     try:
@@ -43,8 +45,21 @@ async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async
     except Exception as e:
         print(e)
         return {"status": "error",
-                "data": None,
-                "details": None}
+                "data": e,
+                "details": e}
+
+
+@get_router.get("/many/{last_n}", response_model=List[News])
+async def get_last_published(last_n: int, session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(article).order_by(article.c.published_at.desc()).limit(last_n)
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
 
 
 @get_router.get("/tags/unique",
@@ -57,12 +72,12 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
     except Exception as e:
         print(e)
         return {"status": "error",
-                "data": None,
-                "details": None}
+                "data": e,
+                "details": e}
 
 
-@get_router.get("/origins/unique",
-                response_model=List[Origin])  # response_model=OfferSearchResult, operation_id="offer_search"
+@get_router.get("/origins/unique", response_model=List[Origin])
+                                        # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_origins(session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article.c.parsed_from).distinct()
@@ -71,8 +86,9 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
     except Exception as e:
         print(e)
         return {"status": "error",
-                "data": None,
-                "details": None}
+                "data": e,
+                "details": e}
+
 
 
 @get_router.post("/filter", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
@@ -81,7 +97,7 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
     search_words = data.search_words
     ml_key_words = data.ml_key_words
     parsed_from = data.parsed_from
-    published_at = data.published_at
+    published_at = datetime.strptime(data.published_at, "")
     parsed_at = datetime.strptime(data.parsed_at)
     try:
         query = select(article).where(or_(article.c.tag == tag,
@@ -96,39 +112,43 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
     except Exception as e:
         print(e)
         return {"status": "error",
-                "data": None,
-                "details": None}
+                "data": e,
+                "details": e}
 
 
 @get_router.get("/filter_kw/{key_word}", response_model=List[News])
 async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends(get_async_session)):
     try:
-        query = select(article).where(article.c.ml_key_words.like(f"%{key_word}%"))
+        query = select(article).where(article.c.ml_key_words.ilike(f"%{key_word}%")).order_by(
+            article.c.published_at.desc())
         result = await session.execute(query)
         return result.all()
     except Exception as e:
         return {"status": "error",
-                "data": None,
-                "details": e.__dict__}
+                "data": e,
+                "details": e}
 
 
 @get_router.get("/filter_t/{tag}", response_model=List[News])
-async def filter_news_by_key_word(tag: str, session: AsyncSession = Depends(get_async_session)):
+async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async_session)):
     try:
-        query = select(article).where(article.c.tag.ilike(f"%{tag}%"))
+        query = select(article).where(article.c.tag.ilike(f"%{tag}%")).order_by(article.c.published_at.desc())
         result = await session.execute(query)
         return result.all()
     except Exception as e:
         return {"status": "error",
-                "data": None,
-                "details": e.__dict__}
+                "data": e,
+                "details": e}
 
 
 @launch_parser_router.get("/{spider_name}")
-async def launch_spider(spider_name: SpiderNameCls, session: AsyncSession = Depends(get_async_session)):
+async def launch_spider(spider_name: SpiderName, session: AsyncSession = Depends(get_async_session)):
     try:
-        # s = SpiderFromCode(spider_name)
-        # spider = s.get_spider_by_name()
+        subprocess.call(["spider_launcher.sh", "spider_launcher.py", "$PATH"],
+                         env={"PATH": "/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news/spiders"})
+        print("OK")
+        # spider = SpiderFromCode(spider_name)
+        # spider.parse()
         # settings = {"FEEDS": {f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json": {"format": "json",
         #                                                                                           "overwrite": True}
         #                       },
@@ -141,16 +161,38 @@ async def launch_spider(spider_name: SpiderNameCls, session: AsyncSession = Depe
         # s = SpiderFromCode(spider_name)
         # s.parse()
         # s.stop()
-        with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
-            data = f.read()
-        return json.loads(data)
+        # with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
+        #     data = f.read()
+        # return json.loads(data)
     except Exception as e:
         print(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
     finally:
-        return "Coming soon"
+        # with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
+        #     data = f.read()
+        # return json.loads(data)
+         return "Coming soon"
+
+
+
+
+@get_router.get("/ml_key_words}")
+async def fill_ml_key_words(session: AsyncSession = Depends(get_async_session)):
+    try:
+        pass
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+    finally:
+        # with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
+        #     data = f.read()
+        # return json.loads(data)
+         return "Coming soon"
+
 
 #
 # if __name__ == "__main__":

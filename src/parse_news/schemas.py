@@ -7,7 +7,7 @@ from enum import Enum
 class News(BaseModel):
     id: Optional[int] = Field(1, ge=1)
     title: str
-    brief_text: str
+    brief_text: str | None
     full_text: str
     tag: str | None
     search_words: str | None
@@ -73,7 +73,7 @@ class NewsJSONNoID(BaseModel):
         orm_mode = True
 
 
-class SpiderNameCls(str, Enum):
+class SpiderName(str, Enum):
     naked_science = "naked_science"
     cnews = "cnews"
     fontanka = "fontanka"
@@ -89,19 +89,9 @@ class SpiderNameCls(str, Enum):
     windozo = "windozo"
 
 
-class SpiderName(BaseModel):
-    name: list[SpiderNameCls]
-
-    # @validator('c')
-    # def c_match(self, v):
-    #     if not v in ['naked_science', 'cnews']:
-    #         raise ValueError('c must be in [naked_science, cnews]')
-    #     return v
-
-
 class KeyWord(str):
     name: str
 
 
 class Count(int):
-    quantity: int = Field()
+    quantity: int
