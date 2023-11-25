@@ -50,8 +50,21 @@ const News = ({
 					<button>
 						<img src='./images/icons/marker.svg' alt='image' />
 					</button>
-					<button>
-						<img src='./images/icons/favorite.svg' alt='image' />
+					<button
+						onClick={() => {
+							dispatch(actions.addFavoritesNews(news));
+						}}
+					>
+						<img
+							src={
+								user.news.favoritesNews.some(
+									favorite => favorite.id === news.id
+								)
+									? './images/icons/favorite_active_blue.svg'
+									: './images/icons/favorite.svg'
+							}
+							alt='image'
+						/>
 					</button>
 					<button>
 						<img src='./images/icons/foulder.svg' alt='image' />
@@ -70,7 +83,11 @@ const News = ({
 							/>
 						}
 					</button>
-					<button>
+					<button
+						onClick={() => {
+							dispatch(actions.deleteNewNews(news));
+						}}
+					>
 						<img src='./images/icons/exit_edit.svg' alt='image' />
 					</button>
 				</div>

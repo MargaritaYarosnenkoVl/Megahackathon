@@ -65,6 +65,24 @@ export const Users = createSlice({
 				state[0].news.newNews.push(payload);
 			}
 		},
+		addFavoritesNews: (state, { payload }) => {
+			const index = state[0].news.favoritesNews.findIndex(
+				news => news.id === payload.id
+			);
+
+			if (index === -1) {
+				state[0].news.favoritesNews.push(payload);
+			}
+		},
+		deleteNewNews: (state, { payload }) => {
+			const index = state[0].news.newNews.findIndex(
+				news => news.id === payload.id
+			);
+
+			if (index !== -1) {
+				state[0].news.newNews.splice(index, 1);
+			}
+		},
 	},
 });
 

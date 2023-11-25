@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useEditNews } from '../../hooks/useEditNews';
-import { actions } from '../../store/users/Users.slice';
 import Button from '../ui/button/Button';
 import styles from './Editing.module.scss';
 
-const Editing = ({ isViewEditNews, editingNews }) => {
+const Editing = ({ isViewEditNews, editingNews, setIsViewEditNews }) => {
 	const [isEditNews, setIsEditNews] = useState(false);
 	const { register, handleSubmit, onSubmit, getValues } = useEditNews();
 
@@ -18,7 +17,7 @@ const Editing = ({ isViewEditNews, editingNews }) => {
 					<div className={styles.header__edit}>
 						<a href='#'>К источнику</a>
 						<div className={styles.header__buttons}>
-							<button onClick={() => setIsEditNews(!isEditNews)}>
+							<button onClick={() => setIsEditNews(true)}>
 								<img src='./images/icons/edit.svg' alt='image' />
 							</button>
 							<button>
@@ -115,25 +114,21 @@ const Editing = ({ isViewEditNews, editingNews }) => {
 						)}
 
 						<div className={styles.block__buttons}>
-							<Button>отмена</Button>
-							{/* <Button>Сохранить</Button> */}
-							<button
-								onClick={() =>
-									dispatch(
-										actions.addEditingNews({
-											id: editingNews.id,
-											title: getValues('title'),
-											description: getValues('description'),
-											date: getValues('date'),
-											source: getValues('source'),
-											teg: getValues('teg'),
-											comments: getValues('comments'),
-										})
-									)
-								}
+							<Button
+								saveInfo='no-saveEdit'
+								setIsViewEditNews={setIsViewEditNews}
+							>
+								отмена
+							</Button>
+							<Button
+								saveInfo='saveEdit'
+								getValues={getValues}
+								editingNews={editingNews}
+								setIsEditNews={setIsEditNews}
+								setIsViewEditNews={setIsViewEditNews}
 							>
 								Сохранить
-							</button>
+							</Button>
 						</div>
 					</form>
 				</>
