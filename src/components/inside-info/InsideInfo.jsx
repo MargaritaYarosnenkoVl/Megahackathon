@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { actions } from '../../store/users/Users.slice';
 import Button from '../ui/button/Button';
 import styles from './InsideInfo.module.scss';
 
@@ -8,11 +10,33 @@ const InsideInfo = () => {
 	const [prof, setProf] = useState('Директор');
 	const [mobile, setMobile] = useState('8-921-951-95-95');
 	const [email, setEmail] = useState('tix@yandex.ru');
+	const [profileImage, setProfileImage] = useState(null);
 
 	const [isViewName, setIsViewName] = useState(false);
 	const [isViewProf, setIsViewProf] = useState(false);
 	const [isViewMobile, setIsViewMobile] = useState(false);
 	const [isViewEmail, setIsViewEmail] = useState(false);
+
+	const dispatch = useDispatch();
+
+	const handleFileChange = event => {
+		const file = event.target.files[0];
+
+		if (file) {
+			const imageUrl = URL.createObjectURL(file);
+			setProfileImage(imageUrl);
+			console.log(profileImage);
+		}
+	};
+
+	const confirmImage = () => {
+		console.log(profileImage);
+		dispatch(actions.addURLImage(profileImage)); //TODO: Разобраться с добавлением ссылки
+	};
+
+	const deleteFileChange = () => {
+		setProfileImage(null);
+	};
 
 	return (
 		<div className={styles.wrapper}>
@@ -22,12 +46,27 @@ const InsideInfo = () => {
 					<p>/</p>
 					<p>Личный кабинет</p>
 				</div>
-
-				<img
-					className={styles.image_profile}
-					src='../images/auth.jpg'
-					alt='image'
-				/>
+				{profileImage ? (
+					<img
+						className={styles.image_profile}
+						src={profileImage}
+						alt='image'
+					/>
+				) : (
+					<p className={styles.image_profile_noFoto}>фото</p>
+				)}
+				<div className={styles.block__addImage}>
+					<div className={styles.block__image_upload}>
+						<input type='file' accept='image/*' onChange={handleFileChange} />
+						<img src='../images/icons/add_image.svg' alt='image' />
+					</div>
+					<button onClick={confirmImage}>
+						<img src='../images/icons/focus_edit.svg' alt='image' />
+					</button>
+					<button onClick={deleteFileChange}>
+						<img src='../images/icons/exit_edit.svg' alt='image' />
+					</button>
+				</div>
 			</div>
 
 			<div className={styles.block__content}>

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
+//TODO: Обязательно исправить поиск юзера
 const initialState = [
 	{
 		id: 0,
@@ -8,6 +8,7 @@ const initialState = [
 		number: '832',
 		email: 'dsfsafdsf@sf.ru',
 		password: '43534',
+		urlImage: null,
 		news: {
 			newNews: [
 				{
@@ -82,6 +83,9 @@ export const Users = createSlice({
 			if (index !== -1) {
 				state[0].news.newNews.splice(index, 1);
 			}
+		},
+		addURLImage: (state, { payload }) => {
+			state[0].news.urlImage = payload;
 		},
 	},
 });
