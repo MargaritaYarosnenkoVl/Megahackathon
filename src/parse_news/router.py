@@ -95,20 +95,11 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
 
 @get_router.post("/filter", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_async_session)):
-    tag = data.tag
-    search_words = data.search_words
-    ml_key_words = data.ml_key_words
-    parsed_from = data.parsed_from
-    published_at = datetime.strptime(data.published_at, "")
-    parsed_at = datetime.strptime(data.parsed_at)
     try:
-        query = select(article).where(or_(article.c.tag == tag,
-                                          # article.c.search_words == search_words,
-                                          # article.c.ml_key_words == ml_key_words,
-                                          article.c.parsed_from == parsed_from,
-                                          article.c.published_at <= published_at,
-                                          article.c.parsed_at <= parsed_at
-                                          ))
+        query = select(article).filter(article.c.parsed_from == data.parsed_from,
+                                       article.c.published_at >= data.published_at_low,
+                                       article.c.published_at <= data.published_at_high
+                                       ).order_by(article.c.published_at.desc())
         result = await session.execute(query)
         return result.all()
     except Exception as e:

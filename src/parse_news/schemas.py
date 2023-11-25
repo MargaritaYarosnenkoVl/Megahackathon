@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, validator
 from typing import Optional, Literal
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 
 
@@ -26,13 +26,29 @@ class News(BaseModel):
         orm_mode = True
 
 
+class ParsedFrom(str, Enum):
+    naked_science = "naked-science.ru"
+    cnews = "cnews.ru"
+    fontanka = "fontanka.ru"
+    dimonvideo = "dimonvideo.ru"
+    news3d = "3dnews.ru"
+    forbes = "forbes.ru"
+    knife_media = "knife.media"
+    nplus1 = "nplus1.ru"
+    portal_kultura = "portal-kultura.ru"
+    sdelanounas = "sdelanounas.ru"
+    snob = "snob.ru"
+    techno_news = "techno-news.ru"
+    windozo = "windozo.ru"
+
+
 class FilterNews(BaseModel):
-    tag: str = Field(default="наука", alias="Тема новости")
-    search_words: str = Field(alias="Поиск по темам/тэгам")
-    ml_key_words: str = Field(alias="Ключевые слова")
-    parsed_from: str = Field(default="cnews.ru", alias="Источник новости")
-    published_at: datetime = Field(default=datetime.fromisoformat("2023-11-01T00:00:00.000"), alias="Дата публикации")
-    parsed_at: datetime = Field(default=datetime.fromisoformat("2023-11-01T00:00:00.000"), alias="Дата парсинга")
+    # tag: str = Field(default="наука", alias="Тема новости")
+    # search_words: str = Field(alias="Поиск по темам/тэгам")
+    # ml_key_words: str = Field(alias="Ключевые слова")
+    parsed_from: ParsedFrom = Field(default="cnews.ru", alias="Источник новости")
+    published_at_high: datetime = Field(default=datetime.utcnow(), alias="Дата публикации до")
+    published_at_low: datetime = Field(default=datetime.utcnow()-timedelta(days=7), alias="Дата публикации с")
 
     class Config:
         orm_mode = True
