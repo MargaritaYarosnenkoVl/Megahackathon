@@ -132,7 +132,7 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
                 "details": e}
 
 
-@schedule_parser_router.get("/spider/{name}/{username}", response_model=JobID)  # , response_model=List[TempNews]
+@schedule_parser_router.get("/spider/{name}/{username}")  # , response_model=List[TempNews]  , response_model=JobID
 async def launch_spider(name: SpiderName, username: str = 'admin', session: AsyncSession = Depends(get_async_session)):
     try:
         proc_result = subprocess.run([f"curl",
