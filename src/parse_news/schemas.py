@@ -137,4 +137,4 @@ class Count(int):
 
 
 class JobID(str):
-    scrapyd_job_id: str | Any
+    scrapyd_job_id: str | None
