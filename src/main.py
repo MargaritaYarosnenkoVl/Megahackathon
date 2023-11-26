@@ -13,7 +13,7 @@ from auth.router import router as auth_check_router
 from starlette.middleware.cors import CORSMiddleware
 
 import uvicorn
-from config import UVCRN_HOST, UVCRN_PORT
+from config import UVCRN_HOST, UVCRN_PORT, SSL_KEYFILE, SSL_SERTIF
 
 
 def create_app() -> FastAPI:
@@ -101,4 +101,7 @@ if __name__ == "__main__":
     uvicorn.run("main:create_app",
                 host=UVCRN_HOST,
                 port=int(UVCRN_PORT),
+                ssl_keyfile=SSL_KEYFILE,
+                ssl_certfile=SSL_SERTIF,
+                factory=True,
                 reload=True)
