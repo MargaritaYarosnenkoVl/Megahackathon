@@ -14,9 +14,7 @@ from auth.schemas import UserRead, UserCreate, UserUpdate
 from parse_news.router import get_router, schedule_parser_router, fill_ml
 from auth.router import router as auth_check_router
 from starlette.middleware.cors import CORSMiddleware
-from scrapyd_api import ScrapydAPI
-
-
+# from scrapyd_api import ScrapydAPI
 
 
 def create_app() -> FastAPI:
@@ -36,12 +34,14 @@ def create_app() -> FastAPI:
     init_logger('app')
     init_routers(app)
     init_middleware(app, origins)
-    init_scrapyd_sever()
+    # init_scrapyd_sever()
     return app
 
 
 def init_scrapyd_sever():
-    subprocess.run(["scrapyd"], stdout=subprocess.PIPE)
+    subprocess.run(["scrapyd"],
+                   stdout=subprocess.PIPE,
+                   cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
 
 
 def init_routers(app: FastAPI) -> None:
