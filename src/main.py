@@ -100,5 +100,5 @@ def logger_filter(log: logging.LogRecord) -> int:
 if __name__ == "__main__":
     uvicorn.run("main:create_app",
                 host=UVCRN_HOST,
-                port=UVCRN_PORT,
+                port=int(UVCRN_PORT),
                 reload=True)
