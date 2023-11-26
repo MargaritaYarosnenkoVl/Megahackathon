@@ -13,6 +13,7 @@ from auth.router import router as auth_check_router
 from starlette.middleware.cors import CORSMiddleware
 
 import uvicorn
+from config import UVCRN_HOST, UVCRN_PORT
 
 
 def create_app() -> FastAPI:
@@ -98,6 +99,6 @@ def logger_filter(log: logging.LogRecord) -> int:
 
 if __name__ == "__main__":
     uvicorn.run("main:create_app",
-                host='127.0.0.1',
-                port=8000,
+                host=UVCRN_HOST,
+                port=UVCRN_PORT,
                 reload=True)
