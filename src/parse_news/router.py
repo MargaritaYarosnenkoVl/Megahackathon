@@ -157,6 +157,7 @@ async def launch_spider(name: SpiderName, username: str = 'admin', session: Asyn
 async def fill_key_words(session: AsyncSession = Depends(get_async_session)):
     try:
         main_tokenizer()
+        return
     except Exception as e:
         print(e)
         return {"status": "error",
@@ -164,10 +165,7 @@ async def fill_key_words(session: AsyncSession = Depends(get_async_session)):
                 "details": e
                 }
     finally:
-        # with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
-        #     data = f.read()
-        # return json.loads(data)
-        return "Coming soon"
+        pass
 
 #
 # if __name__ == "__main__":

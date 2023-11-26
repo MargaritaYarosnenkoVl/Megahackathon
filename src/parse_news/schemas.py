@@ -137,4 +137,4 @@ class Count(int):
 
 
 class JobID(str):
-    quantity: tuple | None
+    quantity: str | None
