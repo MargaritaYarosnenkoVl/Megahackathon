@@ -1,4 +1,7 @@
 import logging
+import uvicorn
+import subprocess
+from config import UVCRN_HOST, UVCRN_PORT, SSL_KEYFILE, SSL_SERTIF
 
 from fastapi import FastAPI, Depends
 from fastapi_users import FastAPIUsers
@@ -11,9 +14,9 @@ from auth.schemas import UserRead, UserCreate, UserUpdate
 from parse_news.router import get_router, schedule_parser_router, fill_ml
 from auth.router import router as auth_check_router
 from starlette.middleware.cors import CORSMiddleware
+from scrapyd_api import ScrapydAPI
 
-import uvicorn
-from config import UVCRN_HOST, UVCRN_PORT, SSL_KEYFILE, SSL_SERTIF
+
 
 
 def create_app() -> FastAPI:
@@ -33,7 +36,12 @@ def create_app() -> FastAPI:
     init_logger('app')
     init_routers(app)
     init_middleware(app, origins)
+    init_scrapyd_sever()
     return app
+
+
+def init_scrapyd_sever():
+    subprocess.run(["scrapyd"], stdout=subprocess.PIPE)
 
 
 def init_routers(app: FastAPI) -> None:
