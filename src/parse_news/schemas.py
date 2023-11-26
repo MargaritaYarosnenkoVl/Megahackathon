@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, validator
-from typing import Optional, Literal
+from typing import Optional, Literal, Any
 from datetime import datetime, timedelta
 from enum import Enum
 
@@ -137,4 +137,4 @@ class Count(int):
 
 
 class JobID(str):
-    quantity: str | None
+    scrapyd_job_id: str | Any
