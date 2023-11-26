@@ -4,12 +4,12 @@ from fastapi import FastAPI, Depends
 from fastapi_users import FastAPIUsers
 from fastadmin import fastapi_app as admin_app
 
-from src.auth.auth import auth_backend
-from src.auth.models import User
-from src.auth.manager import get_user_manager
-from src.auth.schemas import UserRead, UserCreate, UserUpdate
-from src.parse_news.router import get_router, schedule_parser_router, fill_ml
-from src.auth.router import router as auth_check_router
+from auth.auth import auth_backend
+from auth.models import User
+from auth.manager import get_user_manager
+from auth.schemas import UserRead, UserCreate, UserUpdate
+from parse_news.router import get_router, schedule_parser_router, fill_ml
+from auth.router import router as auth_check_router
 from starlette.middleware.cors import CORSMiddleware
 
 import uvicorn
@@ -98,6 +98,6 @@ def logger_filter(log: logging.LogRecord) -> int:
 
 if __name__ == "__main__":
     uvicorn.run("main:create_app",
-                host='0.0.0.0',
-                port=8005,
+                host='127.0.0.1',
+                port=8000,
                 reload=True)

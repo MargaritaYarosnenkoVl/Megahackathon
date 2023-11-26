@@ -4,9 +4,9 @@ from typing import Optional
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin, models, exceptions
 
-from src.auth.models import User, get_user_db
+from auth.models import User, get_user_db
 from fastapi.security import OAuth2PasswordRequestForm
-from src.config import SECRET_AUTH
+from config import SECRET_AUTH
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):

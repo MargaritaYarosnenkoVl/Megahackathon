@@ -7,8 +7,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_async_session
-from src.tokenizer.tokenize_from_db import main as main_tokenizer
+from database import get_async_session
+from tokenizer.tokenize_from_db import main as main_tokenizer
 from .models import article
 from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count, JobID
 

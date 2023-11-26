@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
-from src.auth.models import User
+from auth.models import User
 from fastapi_users import FastAPIUsers
-from src.auth.manager import get_user_manager
-from src.auth.auth import auth_backend
+from auth.manager import get_user_manager
+from auth.auth import auth_backend
 
 router = APIRouter(prefix="/auth",
                    tags=["auth"])

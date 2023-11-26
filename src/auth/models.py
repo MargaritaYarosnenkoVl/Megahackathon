@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession  # async_sessionmaker, create_as
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import Mapped, relationship  # DeclarativeBase,
 
-from ..database import Base, async_session_maker  # DATABASE_URL,
+from database import Base, async_session_maker  # DATABASE_URL,
 
 metadata = MetaData()
 
