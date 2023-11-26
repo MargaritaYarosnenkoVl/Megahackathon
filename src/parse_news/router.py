@@ -142,7 +142,7 @@ async def launch_spider(name: SpiderName, username: str = 'admin', session: Asyn
                                       f"-d",
                                       f"spider={name}",
                                       f"-d",
-                                      f"username='{username}'"], stdout=subprocess.PIPE,
+                                      f"username={username}"], stdout=subprocess.PIPE,
                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
         print("OK", "Please, wait while parser is working. JobID: ", json.loads(proc_result.stdout)["jobid"])
         return json.loads(proc_result.stdout)["jobid"]
