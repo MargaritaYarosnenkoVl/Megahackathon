@@ -19,7 +19,7 @@ role = Table("role",
              metadata,
              Column("id", Integer, primary_key=True),
              Column("name", String, nullable=False),
-             Column("permissions", JSON)
+             # Column("permissions", JSON)
              )
 
 
@@ -49,13 +49,13 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     # oauth_accounts: Mapped[List[OAuthAccount]] = relationship("OAuthAccount", lazy="joined")
     id = Column("id", Integer, primary_key=True)
     username = Column("username", String, nullable=False)
-    hashed_password: Mapped[str] = Column(String(length=1024), nullable=False)
+    hashed_password = Column(String(length=1024), nullable=False)
     registred_at = Column("registred_at", TIMESTAMP, default=datetime.utcnow)
     role_id = Column("role_id", Integer, ForeignKey(role.c.id))
-    email: Mapped[str] = Column(String(length=320), unique=True, index=True, nullable=False)
-    is_active: Mapped[bool] = Column(Boolean, default=True, nullable=False)
-    is_superuser: Mapped[bool] = Column(Boolean, default=False, nullable=False)
-    is_verified: Mapped[bool] = Column(Boolean, default=False, nullable=False)
+    email = Column(String(length=320), unique=True, index=True, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    is_superuser = Column(Boolean, default=False, nullable=False)
+    is_verified = Column(Boolean, default=False, nullable=False)
 
     def __str__(self):
         return self.username
