@@ -1,4 +1,6 @@
 import subprocess
+import sys
+import json
 from typing import List
 from fastapi import APIRouter, Depends
 
@@ -8,16 +10,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import get_async_session
 from src.tokenizer.tokenize_from_db import main as main_tokenizer
 from .models import article
-from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count
+from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count, JobID
 
 get_router = APIRouter(prefix="/get",
                        tags=["Get News"])
 
-launch_parser_router = APIRouter(prefix="/launch",
-                                 tags=["Launch parser"])
+schedule_parser_router = APIRouter(prefix="/launch",
+                                   tags=["Schedule parser"])
 
-fill_ml = APIRouter(prefix="/fill",
-                    tags=["Launch tokenizer"])
+fill_ml = APIRouter(prefix="/launch",
+                    tags=["Fill key words with tokenizer"])
 
 
 @get_router.get("/count/all", response_model=Count)  # response_model=OfferSearchResult, operation_id="offer_search"
@@ -129,18 +131,18 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
                 "details": e}
 
 
-@launch_parser_router.get("/{spider_name}")
+@schedule_parser_router.get("/{spider_name}", response_model=JobID)
 async def launch_spider(spider_name: SpiderName, session: AsyncSession = Depends(get_async_session)):
     try:
-        subprocess.Popen([f"curl",
-                          f"http://localhost:6800/schedule.json",
-                          f"-d",
-                          f"project=parse_news",
-                          f"-d",
-                          f"spider={spider_name}"])
-        # print("OK")
-        # spider = SpiderFromCode(spider_name)
-        # spider.parse()
+        result = subprocess.run([f"curl",
+                                 f"http://localhost:6800/schedule.json",
+                                 f"-d",
+                                 f"project=parse_news",
+                                 f"-d",
+                                 f"spider={spider_name}"],
+                                stdout=subprocess.PIPE)
+        print("OK")
+        return json.loads(result.stdout)["jobid"]  # ' '.join(sys.argv[1:])  # "Spider is running. Please, weight."
     except Exception as e:
         print(e)
         return {"status": "error",
@@ -150,7 +152,8 @@ async def launch_spider(spider_name: SpiderName, session: AsyncSession = Depends
         # with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
         #     data = f.read()
         # return json.loads(data)
-        return "Coming soon"
+        # return "Coming soon"
+        pass
 
 
 @fill_ml.get("/ml_key_words")

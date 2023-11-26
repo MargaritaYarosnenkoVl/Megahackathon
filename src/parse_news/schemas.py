@@ -111,3 +111,7 @@ class KeyWord(str):
 
 class Count(int):
     quantity: int
+
+
+class JobID(str):
+    quantity: str | None
