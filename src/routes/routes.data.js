@@ -1,4 +1,5 @@
 import Auth from '../components/screens/auth/Auth';
+import History from '../components/screens/history/History';
 import Home from '../components/screens/home/Home';
 import PersonalArea from '../components/screens/personal-area/PersonalArea';
 
@@ -16,6 +17,11 @@ export const routes = [
 	{
 		path: '/home/personalArea',
 		component: PersonalArea,
+		isAuth: true,
+	},
+	{
+		path: '/home/history',
+		component: History,
 		isAuth: true,
 	},
 ];

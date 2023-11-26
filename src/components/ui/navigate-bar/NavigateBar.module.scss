@@ -1,0 +1,19 @@
+@import '../../../assets/styles/variables';
+
+.wrapper {
+	display: flex;
+	gap: 12px;
+	padding: 10px 45px 22px 45px;
+
+	> a {
+		font-size: 0.8em;
+		line-height: 1.25;
+		color: $blue;
+	}
+
+	> p {
+		font-size: 0.8em;
+		line-height: 1.25;
+		color: $black;
+	}
+}

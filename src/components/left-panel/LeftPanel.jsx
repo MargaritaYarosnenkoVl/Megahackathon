@@ -93,7 +93,10 @@ const LeftPanel = () => {
 					/>
 					<p>Мои папки</p>
 				</button>
-				<button className={styles.block_param}>
+				<button
+					className={styles.block_param}
+					onClick={() => navigate('/home/history')}
+				>
 					<img
 						className={styles.history}
 						src='../images/icons/history.svg'

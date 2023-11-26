@@ -1,42 +1,42 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { actions } from '../../store/users/Users.slice';
+import { useInfoUser } from '../../hooks/useInfoUser';
+import { actions as interActions } from '../../store/interlayer/Interlayer.slice';
 import Button from '../ui/button/Button';
 import styles from './InsideInfo.module.scss';
 
 const InsideInfo = () => {
-	const [name, setName] = useState('Иванов Иван Иванович');
-	const [prof, setProf] = useState('Директор');
-	const [mobile, setMobile] = useState('8-921-951-95-95');
-	const [email, setEmail] = useState('tix@yandex.ru');
-	const [profileImage, setProfileImage] = useState(null);
+	const {
+		dispatch,
+		name,
+		setName,
+		prof,
+		setProf,
+		mobile,
+		setMobile,
+		email,
+		setEmail,
+		profileImage,
+		setProfileImage,
+		isViewName,
+		setIsViewName,
+		isViewProf,
+		setIsViewProf,
+		isViewMobile,
+		setIsViewMobile,
+		isViewEmail,
+		setIsViewEmail,
+		handleFileChange,
+		confirmImage,
+		deleteFileChange,
+	} = useInfoUser();
 
-	const [isViewName, setIsViewName] = useState(false);
-	const [isViewProf, setIsViewProf] = useState(false);
-	const [isViewMobile, setIsViewMobile] = useState(false);
-	const [isViewEmail, setIsViewEmail] = useState(false);
+	const user = useSelector(state => state.users[0]);
+	const userInterlayer = useSelector(state => state.interlayer[0]);
 
-	const dispatch = useDispatch();
-
-	const handleFileChange = event => {
-		const file = event.target.files[0];
-
-		if (file) {
-			const imageUrl = URL.createObjectURL(file);
-			setProfileImage(imageUrl);
-			console.log(profileImage);
-		}
-	};
-
-	const confirmImage = () => {
-		console.log(profileImage);
-		dispatch(actions.addURLImage(profileImage)); //TODO: Разобраться с добавлением ссылки
-	};
-
-	const deleteFileChange = () => {
-		setProfileImage(null);
-	};
+	const [mainPassword, setMainPassword] = useState();
+	const [secondPassword, setSecondPassword] = useState();
 
 	return (
 		<div className={styles.wrapper}>
@@ -79,13 +79,24 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='ФИО'
 								onClick={() => setIsViewName(!isViewName)}
-								onChange={event => setName(event.target.value)}
-								value={name}
+								// onChange={event => setName(event.target.value)}
+								// value={name}
+								onChange={event =>
+									dispatch(
+										interActions.interlayerUserInfo({
+											name: event.target.value,
+										})
+									)
+								}
+								value={userInterlayer.name}
 							/>
 						</>
 					) : (
 						<>
-							<h2 onClick={() => setIsViewName(!isViewName)}>{name}</h2>
+							{/* <h2 onClick={() => setIsViewName(!isViewName)}>{name}</h2> */}
+							<h2 onClick={() => setIsViewName(!isViewName)}>
+								{userInterlayer.name}
+							</h2>
 						</>
 					)}
 					{isViewProf ? (
@@ -96,13 +107,24 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='Должность'
 								onClick={() => setIsViewProf(!isViewProf)}
-								onChange={event => setProf(event.target.value)}
-								value={prof}
+								// onChange={event => setProf(event.target.value)}
+								// value={prof}
+								onChange={event =>
+									dispatch(
+										interActions.interlayerUserInfo({
+											profession: event.target.value,
+										})
+									)
+								}
+								value={userInterlayer.profession}
 							/>
 						</>
 					) : (
 						<>
-							<p onClick={() => setIsViewProf(!isViewProf)}>{prof}</p>
+							{/* <p onClick={() => setIsViewProf(!isViewProf)}>{prof}</p> */}
+							<p onClick={() => setIsViewProf(!isViewProf)}>
+								{userInterlayer.profession}
+							</p>
 						</>
 					)}
 				</div>
@@ -116,12 +138,21 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='Телефон'
 								onClick={() => setIsViewMobile(!isViewMobile)}
-								onChange={event => setMobile(event.target.value)}
-								value={mobile}
+								// value={mobile}
+								// onChange={event => setMobile(event.target.value)}
+								value={userInterlayer.number}
+								onChange={event =>
+									dispatch(
+										interActions.interlayerUserInfo({
+											number: event.target.value,
+										})
+									)
+								}
 							/>
 						) : (
+							// <p onClick={() => setIsViewMobile(!isViewMobile)}>{mobile}</p>
 							<p onClick={() => setIsViewMobile(!isViewMobile)}>
-								8-921-951-95-95
+								{userInterlayer.number}
 							</p>
 						)}
 					</div>
@@ -134,23 +165,61 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='Почта'
 								onClick={() => setIsViewEmail(!isViewEmail)}
-								onChange={event => setEmail(event.target.value)}
-								value={email}
+								// value={email}
+								// onChange={event => setEmail(event.target.value)}
+								value={userInterlayer.email}
+								onChange={event =>
+									dispatch(
+										interActions.interlayerUserInfo({
+											email: event.target.value,
+										})
+									)
+								}
 							/>
 						) : (
-							<p onClick={() => setIsViewEmail(!isViewEmail)}>tix@yandex.ru</p>
+							// <p onClick={() => setIsViewEmail(!isViewEmail)}>{email}</p>
+							<p onClick={() => setIsViewEmail(!isViewEmail)}>
+								{userInterlayer.email}
+							</p>
 						)}
 					</div>
 				</div>
 				<div className={styles.block__password}>
 					<label htmlFor='main'>Смена пароля</label>
-					<input className={styles.main_pass} type='password' id='main' />
+					<input
+						className={styles.main_pass}
+						type='password'
+						id='main'
+						value={userInterlayer.password.new}
+						onClick={() => {
+							dispatch(
+								interActions.interlayerUserPassword({ old: user.password })
+							);
+						}}
+						onChange={event =>
+							dispatch(
+								interActions.interlayerUserPassword({ new: event.target.value })
+							)
+						}
+					/>
 				</div>
 				<div className={styles.block__password}>
 					<label htmlFor='repeat'>Повторить новый пароль</label>
-					<input className={styles.second_pass} type='password' id='repeat' />
+					<input
+						className={styles.second_pass}
+						type='password'
+						id='repeat'
+						value={secondPassword}
+						onChange={event => setSecondPassword(event.target.value)}
+					/>
 				</div>
-				<Button saveInfo='saveInfo'>сохранить</Button>
+				<Button
+					saveInfo='saveInfo'
+					mainPassword={mainPassword}
+					secondPassword={secondPassword}
+				>
+					сохранить
+				</Button>
 			</div>
 		</div>
 	);

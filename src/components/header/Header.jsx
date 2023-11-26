@@ -1,3 +1,4 @@
+import InputSearch from '../ui/input-search/InputSearch';
 import styles from './Header.module.scss';
 
 const Header = ({ search }) => {
@@ -9,7 +10,7 @@ const Header = ({ search }) => {
 				</div>
 			) : (
 				<div className={styles.wrapper__search}>
-					<div className={styles.block__header_settings}>
+					{/* <div className={styles.block__header_settings}>
 						<div className={styles.block__search}>
 							<img
 								className={styles.search__image}
@@ -26,8 +27,8 @@ const Header = ({ search }) => {
 							<img src='./images/icons/filtr.svg' alt='img' />
 							Фильтры
 						</button>
-					</div>
-
+					</div> */}
+					<InputSearch filter='yes' />
 					<img src='./images/icons/logoHeader.svg' alt='logo' />
 				</div>
 			)}

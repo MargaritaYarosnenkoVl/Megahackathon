@@ -87,6 +87,9 @@ export const Users = createSlice({
 		addURLImage: (state, { payload }) => {
 			state[0].news.urlImage = payload;
 		},
+		editUserInfo: (state, { payload }) => {
+			state[0] = { ...state[0], ...payload };
+		},
 	},
 });
 
