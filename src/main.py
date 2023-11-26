@@ -21,14 +21,15 @@ def create_app() -> FastAPI:
     app = FastAPI(title="This is ХОРОШО!")
 
     origins = [
-        "http://localhost:5173",
-        "http://localhost:5173",
         "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:6800",
+        "http://localhost:8000",
         "http://194.54.176.118:*",
         "http://127.0.0.1:3000",
-        "http://localhost:6800",
+        "http://127.0.0.1:8000",
+        "http://0.0.0.0:6800",
         "http://0.0.0.0:8005",
-        "http://0.0.0.0:6800"
     ]
 
     init_logger('app')
