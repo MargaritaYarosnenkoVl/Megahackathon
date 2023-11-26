@@ -51,7 +51,7 @@ class ParseNewsPipeline:
         print(spider)
 
 
-class TempNewsPipeline:
+class ParseTempNewsPipeline:
 
     def __init__(self):
         # connection details
@@ -70,19 +70,23 @@ class TempNewsPipeline:
         self.cur = self.connection.cursor()
 
     def process_item(self, item, spider):
-        self.cur.execute("""SELECT * FROM temp_article WHERE title = %s""", (item['title'],))
+        username: str = getattr(spider, "username", "")
+        self.cur.execute("""
+        SELECT * FROM temp_article 
+        WHERE (title = %s AND username = %s)""",
+                         (item['title'], username))
         result = self.cur.fetchone()
         if result:
             spider.logger.warn("Item already in database: %s" % item['title'])
         else:
-            self.cur.execute(f"""
+            self.cur.execute("""
             INSERT INTO temp_article (
             title, brief_text, full_text, tag, search_words, parsed_from, 
             full_text_link, published_at, parsed_at, username
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                              (item.get('title'), item.get('brief_text'), item.get('full_text'), item.get('tag'),
                               item.get('search_words'), item.get('parsed_from'), item.get('full_text_link'),
-                              item.get('published_at'), item.get('parsed_at'), item.get('username')))
+                              item.get('published_at'), item.get('parsed_at'), username))
             self.connection.commit()
             print("\n" + item.get('title'), " --|---|-- is successfully added to table temp_article! OK\n")
         return item
@@ -90,4 +94,3 @@ class TempNewsPipeline:
     def close_spider(self, spider: scrapy.Spider = None):  # , spider=None, reason=None
         self.cur.close()
         self.connection.close()
-        print(spider)

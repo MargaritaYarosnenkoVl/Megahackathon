@@ -64,7 +64,7 @@ ROBOTSTXT_OBEY = False
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    # "parse_news.pipelines.ParseNewsPipeline": 300,
-   "parse_news.pipelines.TempNewsPipeline": 300,
+   "parse_news.pipelines.ParseTempNewsPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

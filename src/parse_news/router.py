@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import json
+import time
 from typing import List
 from fastapi import APIRouter, Depends
 
@@ -9,8 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
 from tokenizer.tokenize_from_db import main as main_tokenizer
-from .models import article
-from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count, JobID
+from .models import article, temp_article
+from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count, JobID, TempNews
 
 get_router = APIRouter(prefix="/get",
                        tags=["Get News"])
@@ -19,7 +20,7 @@ schedule_parser_router = APIRouter(prefix="/launch",
                                    tags=["Schedule parser"])
 
 fill_ml = APIRouter(prefix="/launch",
-                    tags=["Fill key words with tokenizer"])
+                    tags=["Fill key words"])
 
 
 @get_router.get("/count/all", response_model=Count)  # response_model=OfferSearchResult, operation_id="offer_search"
@@ -131,33 +132,29 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
                 "details": e}
 
 
-@schedule_parser_router.get("/{spider_name}", response_model=JobID)
-async def launch_spider(spider_name: SpiderName, session: AsyncSession = Depends(get_async_session)):
+@schedule_parser_router.get("/spider/{name}/{username}", response_model=JobID)  # , response_model=List[TempNews]
+async def launch_spider(name: SpiderName, username: str = 'admin', session: AsyncSession = Depends(get_async_session)):
     try:
-        result = subprocess.run([f"curl",
-                                 f"http://localhost:6800/schedule.json",
-                                 f"-d",
-                                 f"project=parse_news",
-                                 f"-d",
-                                 f"spider={spider_name}"],
-                                stdout=subprocess.PIPE)
-        print("OK")
-        return json.loads(result.stdout)["jobid"]  # ' '.join(sys.argv[1:])  # "Spider is running. Please, weight."
+        proc_result = subprocess.run([f"curl",
+                                      f"http://localhost:6800/schedule.json",
+                                      f"-d",
+                                      f"project=parse_news",
+                                      f"-d",
+                                      f"spider={name}",
+                                      f"-d",
+                                      f"username='{username}'"], stdout=subprocess.PIPE,
+                                     cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
+        print("OK", "Please, wait while parser is working. JobID: ", json.loads(proc_result.stdout)["jobid"])
+        return json.loads(proc_result.stdout)["jobid"]
     except Exception as e:
         print(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
-    finally:
-        # with open(f"src/parse_news/parse_news/spiders/json_data/{spider_name}.json", "r") as f:
-        #     data = f.read()
-        # return json.loads(data)
-        # return "Coming soon"
-        pass
 
 
-@fill_ml.get("/ml_key_words")
-async def fill_ml_key_words(session: AsyncSession = Depends(get_async_session)):
+@fill_ml.get("/fill_key_words")
+async def fill_key_words(session: AsyncSession = Depends(get_async_session)):
     try:
         main_tokenizer()
     except Exception as e:
