@@ -135,16 +135,16 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
 
 
 @schedule_parser_router.post("/spider", response_model=JobID)  # , response_model=List[TempNews]  ,
-async def launch_spider(name: Spider, username: UserName):
+async def launch_spider(spider: Spider, username: UserName):
     try:
         proc_result = subprocess.run([f"curl",
                                       f"http://localhost:6800/schedule.json",
                                       f"-d",
                                       f"project=parse_news",
                                       f"-d",
-                                      f"spider={name}",
+                                      f"spider={spider.name}",
                                       f"-d",
-                                      f"username={username}"], stdout=subprocess.PIPE,
+                                      f"username={username.name}"], stdout=subprocess.PIPE,
                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
         print("OK", "Please, wait while parser is working. JobID: ", json.loads(proc_result.stdout)["jobid"])
         return json.loads(proc_result.stdout)["jobid"]

@@ -126,7 +126,7 @@ class SpiderName(str, Enum):
 
 
 class Spider(BaseModel):
-    spider: SpiderName = Field(default="naked_science", alias="имя спайдера")
+    name: SpiderName = Field(default="naked_science", alias="имя спайдера")
 
     class Config:
         orm_mode = False
@@ -155,7 +155,7 @@ class UserNameBase(str, Enum):
 
 
 class UserName(BaseModel):
-    parsed_from: UserNameBase = Field(default="alex", alias="username пользователя")
+    name: UserNameBase = Field(default="alex", alias="username пользователя")
 
     class Config:
         orm_mode = False
