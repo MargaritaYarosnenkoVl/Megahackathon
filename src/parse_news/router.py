@@ -146,8 +146,41 @@ async def launch_spider(spider: Spider, username: UserName):
                                       f"-d",
                                       f"username={username.name}"], stdout=subprocess.PIPE,
                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
-        print("OK", "Please, wait while parser is working. JobID: ", json.loads(proc_result.stdout)["jobid"])
-        return json.loads(proc_result.stdout)["jobid"]
+        result = json.loads(proc_result.stdout)["jobid"]
+        print("OK", "Please, wait while parser is working. JobID: ", result)
+        return result
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@schedule_parser_router.post("/spider/stop", response_model=JobID)  # , response_model=List[TempNews]  , ,
+async def stop_spider(job_id: str):
+    try:
+        proc_result1 = subprocess.run([f"curl",
+                                       f"http://localhost:6800/cancel.json",
+                                       f"-d",
+                                       f"project=parse_news",
+                                       f"-d",
+                                       f"job={job_id}"], stdout=subprocess.PIPE,
+                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
+        proc_result2 = subprocess.run([f"curl",
+                                       f"http://localhost:6800/cancel.json",
+                                       f"-d",
+                                       f"project=parse_news",
+                                       f"-d",
+                                       f"job={job_id}"], stdout=subprocess.PIPE,
+                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
+        proc_result3 = subprocess.run([f"curl",
+                                       f"http://localhost:6800/cancel.json",
+                                       f"-d",
+                                       f"project=parse_news",
+                                       f"-d",
+                                       f"job={job_id}"], stdout=subprocess.PIPE,
+                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
+        return "Spider STOPPED"
     except Exception as e:
         print(e)
         return {"status": "error",
