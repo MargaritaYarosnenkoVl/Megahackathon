@@ -11,19 +11,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from tokenizer.tokenize_from_db import main as main_tokenizer
 from .models import article, temp_article
-from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count, JobID, TempNews
+from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count, JobID, TempNews, UserName, UserNameBase, Spider
 
-get_router = APIRouter(prefix="/get",
-                       tags=["Get News"])
+get_base_router = APIRouter(prefix="/get",
+                            tags=["Get News"])
 
-schedule_parser_router = APIRouter(prefix="/launch",
+get_temp_router = APIRouter(prefix="/get",
+                            tags=["Get Temp News"])
+
+schedule_parser_router = APIRouter(prefix="/schedule",
                                    tags=["Schedule parser"])
 
-fill_ml = APIRouter(prefix="/launch",
-                    tags=["Fill key words"])
 
-
-@get_router.get("/count/all", response_model=Count)  # response_model=OfferSearchResult, operation_id="offer_search"
+@get_base_router.get("/count/all",
+                     response_model=Count)  # response_model=OfferSearchResult, operation_id="offer_search"
 async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(func.count(article.c.id))
@@ -36,8 +37,8 @@ async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
                 "details": e}
 
 
-@get_router.get("/single/{item_id}",
-                response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
+@get_base_router.get("/single/{item_id}",
+                     response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article).where(article.c.id == item_id)
@@ -50,7 +51,7 @@ async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async
                 "details": e}
 
 
-@get_router.get("/many/{last_n}", response_model=List[News])
+@get_base_router.get("/many/{last_n}", response_model=List[News])
 async def get_last_published(last_n: int, session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article).order_by(article.c.published_at.desc()).limit(last_n)
@@ -63,8 +64,8 @@ async def get_last_published(last_n: int, session: AsyncSession = Depends(get_as
                 "details": e}
 
 
-@get_router.get("/tags/unique",
-                response_model=List[Tag])  # response_model=OfferSearchResult, operation_id="offer_search"
+@get_base_router.get("/tags/unique",
+                     response_model=List[Tag])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article.c.tag).distinct()
@@ -77,7 +78,7 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
                 "details": e}
 
 
-@get_router.get("/origins/unique", response_model=List[Origin])
+@get_base_router.get("/origins/unique", response_model=List[Origin])
 # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_origins(session: AsyncSession = Depends(get_async_session)):
     try:
@@ -91,7 +92,8 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
                 "details": e}
 
 
-@get_router.post("/filter", response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
+@get_base_router.post("/filter",
+                      response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article).filter(article.c.parsed_from == data.parsed_from,
@@ -107,7 +109,7 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
                 "details": e}
 
 
-@get_router.get("/filter_kw/{key_word}", response_model=List[News])
+@get_base_router.get("/filter_kw/{key_word}", response_model=List[News])
 async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article).where(article.c.ml_key_words.ilike(f"%{key_word}%")).order_by(
@@ -120,7 +122,7 @@ async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends
                 "details": e}
 
 
-@get_router.get("/filter_t/{tag}", response_model=List[News])
+@get_base_router.get("/filter_t/{tag}", response_model=List[News])
 async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(article).where(article.c.tag.ilike(f"%{tag}%")).order_by(article.c.published_at.desc())
@@ -132,8 +134,8 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
                 "details": e}
 
 
-@schedule_parser_router.get("/spider/{name}/{username}", response_model=JobID)  # , response_model=List[TempNews]  ,
-async def launch_spider(name: SpiderName, username: str = 'admin', session: AsyncSession = Depends(get_async_session)):
+@schedule_parser_router.post("/spider", response_model=JobID)  # , response_model=List[TempNews]  ,
+async def launch_spider(name: Spider, username: UserName):
     try:
         proc_result = subprocess.run([f"curl",
                                       f"http://localhost:6800/schedule.json",
@@ -153,19 +155,116 @@ async def launch_spider(name: SpiderName, username: str = 'admin', session: Asyn
                 "details": e}
 
 
-@fill_ml.get("/fill_key_words")
-async def fill_key_words(session: AsyncSession = Depends(get_async_session)):
+@get_temp_router.get("/temp/article/count/all", response_model=Count)
+# response_model=OfferSearchResult, operation_id="offer_search"
+async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
     try:
-        main_tokenizer()
-        return
+        query = select(func.count(temp_article.c.id))
+        result = await session.execute(query)
+        return result.scalar()
     except Exception as e:
         print(e)
         return {"status": "error",
                 "data": e,
-                "details": e
-                }
-    finally:
-        pass
+                "details": e}
+
+
+@get_temp_router.get("/temp/article/single/{item_id}",
+                     response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
+async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(temp_article).where(temp_article.c.id == item_id)
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@get_temp_router.get("/temp/many/{last_n}", response_model=List[News])
+async def get_last_published(last_n: int, session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(temp_article).order_by(temp_article.c.published_at.desc()).limit(last_n)
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@get_temp_router.get("/temp/tags/unique",
+                     response_model=List[Tag])  # response_model=OfferSearchResult, operation_id="offer_search"
+async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(temp_article.c.tag).distinct()
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@get_temp_router.get("/temp/origins/unique", response_model=List[Origin])
+# response_model=OfferSearchResult, operation_id="offer_search"
+async def get_unique_origins(session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(temp_article.c.parsed_from).distinct()
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@get_temp_router.post("/temp/filter",
+                      response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
+async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(temp_article).filter(temp_article.c.parsed_from == data.parsed_from,
+                                            temp_article.c.published_at >= data.published_at_low,
+                                            temp_article.c.published_at <= data.published_at_high
+                                            ).order_by(temp_article.c.published_at.desc())
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        print(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@get_temp_router.get("/temp/filter_kw/{key_word}", response_model=List[News])
+async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(temp_article).where(temp_article.c.ml_key_words.ilike(f"%{key_word}%")).order_by(
+            temp_article.c.published_at.desc())
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@get_temp_router.get("/temp/filter_t/{tag}", response_model=List[News])
+async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async_session)):
+    try:
+        query = select(temp_article).where(temp_article.c.tag.ilike(f"%{tag}%")).order_by(
+            temp_article.c.published_at.desc())
+        result = await session.execute(query)
+        return result.all()
+    except Exception as e:
+        return {"status": "error",
+                "data": e,
+                "details": e}
 
 #
 # if __name__ == "__main__":

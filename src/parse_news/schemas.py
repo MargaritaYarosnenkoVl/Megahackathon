@@ -66,9 +66,6 @@ class ParsedFrom(str, Enum):
 
 
 class FilterNews(BaseModel):
-    # tag: str = Field(default="наука", alias="Тема новости")
-    # search_words: str = Field(alias="Поиск по темам/тэгам")
-    # ml_key_words: str = Field(alias="Ключевые слова")
     parsed_from: ParsedFrom = Field(default="cnews.ru", alias="Источник новости")
     published_at_high: datetime = Field(default=datetime.utcnow(), alias="Дата публикации до")
     published_at_low: datetime = Field(default=datetime.utcnow()-timedelta(days=7), alias="Дата публикации с")
@@ -128,6 +125,13 @@ class SpiderName(str, Enum):
     windozo = "windozo"
 
 
+class Spider(BaseModel):
+    spider: SpiderName = Field(default="naked_science", alias="имя спайдера")
+
+    class Config:
+        orm_mode = False
+
+
 class KeyWord(str):
     name: str
 
@@ -138,3 +142,20 @@ class Count(int):
 
 class JobID(str):
     scrapyd_job_id: str | None
+
+
+class UserNameBase(str, Enum):
+    admin = "admin"
+    user = "user"
+    user777 = "user777"
+    user77 = "user77"
+    bushuev_alex = "bushuev-alex"
+    mary = "mary"
+    alex = "alex"
+
+
+class UserName(BaseModel):
+    parsed_from: UserNameBase = Field(default="alex", alias="username пользователя")
+
+    class Config:
+        orm_mode = False

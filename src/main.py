@@ -11,7 +11,8 @@ from auth.auth import auth_backend
 from auth.models import User
 from auth.manager import get_user_manager
 from auth.schemas import UserRead, UserCreate, UserUpdate
-from parse_news.router import get_router, schedule_parser_router, fill_ml
+from parse_news.router import get_base_router, get_temp_router, schedule_parser_router
+from tokenizer.router import fill_ml
 from auth.router import router as auth_check_router
 from starlette.middleware.cors import CORSMiddleware
 # from scrapyd_api import ScrapydAPI
@@ -66,7 +67,8 @@ def init_routers(app: FastAPI) -> None:
         tags=["users"],
     )
 
-    app.include_router(get_router)
+    app.include_router(get_base_router)
+    app.include_router(get_temp_router)
     app.include_router(auth_check_router)
     app.include_router(schedule_parser_router)
     app.include_router(fill_ml)
