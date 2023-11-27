@@ -57,4 +57,5 @@ temp_article = Table("temp_article",
                      Column("unique_metric", Float, default=0),  # метрика уникальности
                      Column("simple_metric", Float, default=0),  # метрика простоты понимания
                      Column("username", String),
+                     Column("spidername", String),
                      )
