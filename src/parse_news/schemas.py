@@ -66,9 +66,9 @@ class ParsedFrom(str, Enum):
 
 
 class FilterNews(BaseModel):
-    parsed_from: ParsedFrom = Field(default="cnews.ru", alias="Источник новости")
-    published_at_high: datetime = Field(default=datetime.utcnow(), alias="Дата публикации до")
-    published_at_low: datetime = Field(default=datetime.utcnow()-timedelta(days=7), alias="Дата публикации с")
+    parsed_from: ParsedFrom = Field(default="cnews.ru", alias="news_origin")
+    published_at_high: datetime = Field(default=datetime.utcnow(), alias="date_published_up_to_")
+    published_at_low: datetime = Field(default=datetime.utcnow()-timedelta(days=7), alias="date_published_from_")
 
     class Config:
         orm_mode = True
@@ -126,7 +126,7 @@ class SpiderName(str, Enum):
 
 
 class Spider(BaseModel):
-    name: SpiderName = Field(default="naked_science", alias="имя спайдера")
+    name: SpiderName = Field(default="naked_science", alias="spider_name")
 
     class Config:
         orm_mode = False
@@ -152,10 +152,17 @@ class UserNameBase(str, Enum):
     bushuev_alex = "bushuev-alex"
     mary = "mary"
     alex = "alex"
+    andrey = "andrey"
+    test = "test"
+    test123 = "test123"
+    dima = "dima"
+    dima12 = "dima12"
+    Aku = "Aku"
+    AkuQ = "AkuQ"
 
 
 class UserName(BaseModel):
-    name: UserNameBase = Field(default="alex", alias="username пользователя")
+    name: UserNameBase = Field(default="alex", alias="users_username")
 
     class Config:
         orm_mode = False
