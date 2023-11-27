@@ -12,14 +12,13 @@ const Button = ({
 	getValues,
 	setIsEditNews,
 	setIsViewEditNews,
-	mainPassword,
 	secondPassword,
 }) => {
 	const navigate = useNavigate();
 
 	const { isAuth } = useAuth();
 
-	const { dispatch, name, prof, mobile, email, repeatPassword } = useInfoUser();
+	const { dispatch, repeatPassword } = useInfoUser();
 
 	const userInterlayer = useSelector(state => state.interlayer[0]);
 
@@ -42,14 +41,6 @@ const Button = ({
 								: userInterlayer.password.old,
 						};
 						dispatch(actions.editUserInfo(userData));
-						console.log(
-							'mainPassword',
-							mainPassword,
-							': secondPassword',
-							secondPassword
-						);
-						console.log(repeatPassword(mainPassword, secondPassword));
-						setTest(true);
 					}}
 				>
 					{children}

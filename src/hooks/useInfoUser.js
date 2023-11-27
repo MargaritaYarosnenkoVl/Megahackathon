@@ -3,10 +3,6 @@ import { useDispatch } from 'react-redux';
 import { actions } from '../store/users/Users.slice';
 
 export const useInfoUser = () => {
-	const [name, setName] = useState('Иванов Иван Иванович');
-	const [prof, setProf] = useState('Директор');
-	const [mobile, setMobile] = useState('8-921-951-95-95');
-	const [email, setEmail] = useState('tix@yandex.ru');
 	const [profileImage, setProfileImage] = useState(null);
 
 	const [isViewName, setIsViewName] = useState(false);
@@ -39,24 +35,8 @@ export const useInfoUser = () => {
 		return main === two;
 	};
 
-	// console.log({
-	// 	name,
-	// 	profession: prof,
-	// 	number: mobile,
-	// 	email,
-	// 	password: repeatPassword() ? mainPassword : undefined,
-	// });
-
 	return {
 		dispatch,
-		name,
-		setName,
-		prof,
-		setProf,
-		mobile,
-		setMobile,
-		email,
-		setEmail,
 		profileImage,
 		setProfileImage,
 		isViewName,

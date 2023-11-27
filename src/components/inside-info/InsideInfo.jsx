@@ -9,14 +9,6 @@ import styles from './InsideInfo.module.scss';
 const InsideInfo = () => {
 	const {
 		dispatch,
-		name,
-		setName,
-		prof,
-		setProf,
-		mobile,
-		setMobile,
-		email,
-		setEmail,
 		profileImage,
 		setProfileImage,
 		isViewName,
@@ -35,7 +27,6 @@ const InsideInfo = () => {
 	const user = useSelector(state => state.users[0]);
 	const userInterlayer = useSelector(state => state.interlayer[0]);
 
-	const [mainPassword, setMainPassword] = useState();
 	const [secondPassword, setSecondPassword] = useState();
 
 	return (
@@ -79,8 +70,6 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='ФИО'
 								onClick={() => setIsViewName(!isViewName)}
-								// onChange={event => setName(event.target.value)}
-								// value={name}
 								onChange={event =>
 									dispatch(
 										interActions.interlayerUserInfo({
@@ -93,7 +82,6 @@ const InsideInfo = () => {
 						</>
 					) : (
 						<>
-							{/* <h2 onClick={() => setIsViewName(!isViewName)}>{name}</h2> */}
 							<h2 onClick={() => setIsViewName(!isViewName)}>
 								{userInterlayer.name}
 							</h2>
@@ -107,8 +95,6 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='Должность'
 								onClick={() => setIsViewProf(!isViewProf)}
-								// onChange={event => setProf(event.target.value)}
-								// value={prof}
 								onChange={event =>
 									dispatch(
 										interActions.interlayerUserInfo({
@@ -121,7 +107,6 @@ const InsideInfo = () => {
 						</>
 					) : (
 						<>
-							{/* <p onClick={() => setIsViewProf(!isViewProf)}>{prof}</p> */}
 							<p onClick={() => setIsViewProf(!isViewProf)}>
 								{userInterlayer.profession}
 							</p>
@@ -138,8 +123,6 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='Телефон'
 								onClick={() => setIsViewMobile(!isViewMobile)}
-								// value={mobile}
-								// onChange={event => setMobile(event.target.value)}
 								value={userInterlayer.number}
 								onChange={event =>
 									dispatch(
@@ -150,7 +133,6 @@ const InsideInfo = () => {
 								}
 							/>
 						) : (
-							// <p onClick={() => setIsViewMobile(!isViewMobile)}>{mobile}</p>
 							<p onClick={() => setIsViewMobile(!isViewMobile)}>
 								{userInterlayer.number}
 							</p>
@@ -165,8 +147,6 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='Почта'
 								onClick={() => setIsViewEmail(!isViewEmail)}
-								// value={email}
-								// onChange={event => setEmail(event.target.value)}
 								value={userInterlayer.email}
 								onChange={event =>
 									dispatch(
@@ -177,7 +157,6 @@ const InsideInfo = () => {
 								}
 							/>
 						) : (
-							// <p onClick={() => setIsViewEmail(!isViewEmail)}>{email}</p>
 							<p onClick={() => setIsViewEmail(!isViewEmail)}>
 								{userInterlayer.email}
 							</p>
@@ -213,11 +192,7 @@ const InsideInfo = () => {
 						onChange={event => setSecondPassword(event.target.value)}
 					/>
 				</div>
-				<Button
-					saveInfo='saveInfo'
-					mainPassword={mainPassword}
-					secondPassword={secondPassword}
-				>
+				<Button saveInfo='saveInfo' secondPassword={secondPassword}>
 					сохранить
 				</Button>
 			</div>

@@ -1,6 +1,8 @@
 import Auth from '../components/screens/auth/Auth';
+import Favorite from '../components/screens/favorite/Favorite';
 import History from '../components/screens/history/History';
 import Home from '../components/screens/home/Home';
+import LaterRead from '../components/screens/later-read/LaterRead';
 import PersonalArea from '../components/screens/personal-area/PersonalArea';
 
 export const routes = [
@@ -22,6 +24,16 @@ export const routes = [
 	{
 		path: '/home/history',
 		component: History,
+		isAuth: true,
+	},
+	{
+		path: '/home/favorite',
+		component: Favorite,
+		isAuth: true,
+	},
+	{
+		path: '/home/laterRead',
+		component: LaterRead,
 		isAuth: true,
 	},
 ];

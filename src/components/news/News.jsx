@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
+import useDescriptionLength from '../../hooks/useDescriptionLength';
 import { actions } from '../../store/users/Users.slice';
 import styles from './News.module.scss';
 
@@ -11,6 +12,8 @@ const News = ({
 }) => {
 	const dispatch = useDispatch();
 	const user = useSelector(state => state.users[0]);
+
+	const { truncateDescription } = useDescriptionLength();
 
 	return (
 		<div
@@ -37,7 +40,9 @@ const News = ({
 				<p className={styles.news__id}>{news.id}</p>
 				<h2 className={styles.news__title}>{news.title}</h2>
 			</div>
-			<p className={styles.news__preview}>{news.preview}</p>
+			<p className={styles.news__preview}>
+				{truncateDescription(news.description, 240)}
+			</p>
 			<div className={styles.news__blockTwo}>
 				<div className={styles.news__block_date}>
 					<p className={styles.news__date}>{news.date}</p>
@@ -47,8 +52,19 @@ const News = ({
 					<button>
 						<img src='./images/icons/vector.svg' alt='image' />
 					</button>
-					<button>
-						<img src='./images/icons/marker.svg' alt='image' />
+					<button
+						onClick={() => {
+							dispatch(actions.addLaterNews(news));
+						}}
+					>
+						<img
+							src={
+								user.news.viewLaterNews.some(later => later.id === news.id)
+									? './images/icons/marker_active_blue.svg'
+									: './images/icons/marker.svg'
+							}
+							alt='image'
+						/>
 					</button>
 					<button
 						onClick={() => {

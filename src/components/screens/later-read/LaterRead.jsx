@@ -8,12 +8,11 @@ import NewsInOtherPage from '../../news-in-other-page/NewsInOtherPage';
 import TitleList from '../../title-list/TitleList';
 import BlockSearch from '../../ui/block-search/BlockSearch';
 import NavigateBar from '../../ui/navigate-bar/NavigateBar';
-import styles from './History.module.scss';
+import styles from './LaterRead.module.scss';
 
-const History = () => {
-	const user = useSelector(store => store.users[0]);
-
+const LaterRead = () => {
 	const [focusNews, setFocusNews] = useState();
+	const user = useSelector(state => state.users[0]);
 
 	return (
 		<Layout>
@@ -21,15 +20,15 @@ const History = () => {
 			<Content>
 				<LeftPanel />
 				<div className={styles.main}>
-					<NavigateBar location='history' />
+					<NavigateBar location='later' />
 					<BlockSearch
 						doubleBlock='yes'
 						focusNews={focusNews}
 						setFocusNews={setFocusNews}
 					/>
 					<TitleList />
-					<div className={styles.block__resultHistory}>
-						{user.news.viewHistoryNews.map(news => {
+					<div className={styles.block__resultLater}>
+						{user.news.viewLaterNews.map(news => {
 							return (
 								<NewsInOtherPage
 									key={news.id}
@@ -46,4 +45,4 @@ const History = () => {
 	);
 };
 
-export default History;
+export default LaterRead;

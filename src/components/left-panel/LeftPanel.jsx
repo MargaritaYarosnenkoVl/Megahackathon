@@ -9,7 +9,20 @@ const LeftPanel = () => {
 	const navigate = useNavigate();
 	const { setIsAuth } = useAuth();
 
-	const { userRef, user_activeRef, userBlockRef } = useCheckPath();
+	const {
+		userRef,
+		user_activeRef,
+		userBlockRef,
+		historyBlockRef,
+		historyRef,
+		historyRef_active,
+		favoriteBlockRef,
+		favoriteRef,
+		favoriteRef_active,
+		laterRef,
+		laterRef_active,
+		laterBlockRef,
+	} = useCheckPath();
 
 	const logoutHandler = () => {
 		Cookies.remove(TOKEN);
@@ -54,26 +67,38 @@ const LeftPanel = () => {
 				</button>
 			</div>
 			<div className={styles.block_two}>
-				<button className={styles.block_param}>
+				<button
+					ref={laterBlockRef}
+					className={styles.block_param}
+					onClick={() => navigate('/home/laterRead')}
+				>
 					<img
+						ref={laterRef}
 						className={styles.bookmark}
 						src='../images/icons/bookmark.svg'
 						alt='img'
 					/>
 					<img
+						ref={laterRef_active}
 						className={styles.bookmark_active}
 						src='../images/icons/bookmark_white.svg'
 						alt='img'
 					/>
 					<p>Читать потом</p>
 				</button>
-				<button className={styles.block_param}>
+				<button
+					className={styles.block_param}
+					onClick={() => navigate('/home/favorite')}
+					ref={favoriteBlockRef}
+				>
 					<img
+						ref={favoriteRef}
 						className={styles.blackStar}
 						src='../images/icons/black_star.svg'
 						alt='img'
 					/>
 					<img
+						ref={favoriteRef_active}
 						className={styles.blackStar_active}
 						src='../images/icons/favorite_active_white.svg'
 						alt='img'
@@ -94,15 +119,18 @@ const LeftPanel = () => {
 					<p>Мои папки</p>
 				</button>
 				<button
+					ref={historyBlockRef}
 					className={styles.block_param}
 					onClick={() => navigate('/home/history')}
 				>
 					<img
+						ref={historyRef}
 						className={styles.history}
 						src='../images/icons/history.svg'
 						alt='img'
 					/>
 					<img
+						ref={historyRef_active}
 						className={styles.history_active}
 						src='../images/icons/history_white.svg'
 						alt='img'
