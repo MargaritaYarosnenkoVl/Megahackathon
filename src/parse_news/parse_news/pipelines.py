@@ -71,6 +71,7 @@ class ParseTempNewsPipeline:
 
     def process_item(self, item, spider):
         username: str = getattr(spider, "username", "")
+        spidername: str = getattr(spider, "spidername", "")
         self.cur.execute("""
         SELECT * FROM temp_article 
         WHERE (title = %s AND username = %s)""",
@@ -82,11 +83,11 @@ class ParseTempNewsPipeline:
             self.cur.execute("""
             INSERT INTO temp_article (
             title, brief_text, full_text, tag, search_words, parsed_from, 
-            full_text_link, published_at, parsed_at, username
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+            full_text_link, published_at, parsed_at, username, spidername
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                              (item.get('title'), item.get('brief_text'), item.get('full_text'), item.get('tag'),
                               item.get('search_words'), item.get('parsed_from'), item.get('full_text_link'),
-                              item.get('published_at'), item.get('parsed_at'), username))
+                              item.get('published_at'), item.get('parsed_at'), username, spidername))
             self.connection.commit()
             print("\n" + item.get('title'), " --|---|-- is successfully added to table temp_article! OK\n")
         return item

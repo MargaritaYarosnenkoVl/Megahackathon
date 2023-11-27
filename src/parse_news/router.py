@@ -12,6 +12,7 @@ from database import get_async_session
 from tokenizer.tokenize_from_db import main as main_tokenizer
 from .models import article, temp_article
 from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count, JobID, TempNews, UserName, UserNameBase, Spider
+from .schemas import ParsedFrom
 
 get_base_router = APIRouter(prefix="/get",
                             tags=["Get News"])
@@ -144,7 +145,10 @@ async def launch_spider(spider: Spider, username: UserName):
                                       f"-d",
                                       f"spider={spider.name}",
                                       f"-d",
-                                      f"username={username.name}"], stdout=subprocess.PIPE,
+                                      f"username={username.name}",
+                                      f"-d",
+                                      f"spidername={spider.name}",
+                                      ], stdout=subprocess.PIPE,
                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
         result = json.loads(proc_result.stdout)["jobid"]
         print("OK", "Please, wait while parser is working. JobID: ", result)
@@ -259,11 +263,10 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
 
 @get_temp_router.post("/temp/filter",
                       response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
-async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_async_session)):
+async def filter_news(username: UserName, spider: Spider, session: AsyncSession = Depends(get_async_session)):
     try:
-        query = select(temp_article).filter(temp_article.c.parsed_from == data.parsed_from,
-                                            temp_article.c.published_at >= data.published_at_low,
-                                            temp_article.c.published_at <= data.published_at_high
+        query = select(temp_article).filter(temp_article.c.username == username.name,
+                                            temp_article.c.spidername == spider.name,
                                             ).order_by(temp_article.c.published_at.desc())
         result = await session.execute(query)
         return result.all()
