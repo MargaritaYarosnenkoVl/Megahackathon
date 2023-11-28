@@ -1,0 +1,58 @@
+@import '../../../assets/styles/variables';
+
+.block__search {
+	display: flex;
+	background-color: $gray;
+	width: 100%;
+	height: 72px;
+	align-items: center;
+	gap: 20px;
+}
+
+.block__search_yes {
+	background-color: $gray;
+	width: 100%;
+	height: 121px;
+
+	> .block__one {
+		display: flex;
+		align-items: center;
+		gap: 20px;
+		padding: 8px 43px;
+	}
+
+	> .add_and_delete {
+		display: flex;
+		justify-content: space-between;
+		background-color: $blue;
+		height: 49px;
+		padding: 15px 16px 16px 43px;
+
+		> p {
+			font-size: 0.6em;
+			line-height: 1.28;
+			color: $white;
+		}
+
+		> .block__button {
+			display: flex;
+			gap: 40px;
+			margin-right: 51px;
+
+			> button {
+				background-color: rgba($color: #000000, $alpha: 0);
+				color: $white;
+				display: flex;
+				align-items: center;
+				gap: 12px;
+
+				&:hover {
+					cursor: pointer;
+				}
+
+				> img {
+				}
+			}
+		}
+	}
+}

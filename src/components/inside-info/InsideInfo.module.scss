@@ -1,0 +1,209 @@
+@import '../../assets/styles/variables';
+
+.wrapper {
+	padding: 85px 46px;
+	display: flex;
+	gap: 20px;
+
+	> .block__image_profile {
+		width: 434px;
+		height: 338px;
+		position: relative;
+
+		> .block__navigation {
+			display: flex;
+			gap: 12px;
+			position: absolute;
+			top: -30px;
+
+			> a {
+				color: $blue;
+				font-size: 0.8em;
+				line-height: 1.25;
+			}
+
+			> p {
+				font-size: 0.8em;
+				line-height: 1.25;
+				color: $black;
+			}
+		}
+
+		> .image_profile {
+			width: 434px;
+			height: 338px;
+		}
+
+		> .image_profile_noFoto {
+			width: 434px;
+			height: 338px;
+			text-align: center;
+			background-color: $gray;
+			padding-top: 35%;
+			font-size: 1em;
+			line-height: 1.2;
+			text-transform: uppercase;
+			color: $black;
+		}
+
+		> .block__addImage {
+			display: flex;
+			gap: 8px;
+			position: absolute;
+			bottom: 2.5%;
+			right: 2%;
+
+			> button {
+				background-color: rgba($color: #000000, $alpha: 0);
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+
+			> .block__image_upload {
+				position: relative;
+
+				> input {
+					position: absolute;
+					top: 0;
+					left: 0;
+					bottom: 0;
+					right: 0;
+					opacity: 0;
+					z-index: 3;
+
+					&:hover {
+						cursor: pointer;
+					}
+				}
+			}
+		}
+	}
+
+	> .block__content {
+		display: flex;
+		flex-direction: column;
+		max-width: 438px;
+
+		> .block__name {
+			margin-bottom: 85px;
+
+			> h2 {
+				font-weight: 600;
+				line-height: 1.4;
+				margin-bottom: 17px;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+			> p {
+				line-height: 1;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+
+			> .h2 {
+				font-weight: 600;
+				line-height: 1.4;
+				margin-bottom: 17px;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+			> .p {
+				line-height: 1;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+		}
+
+		> .block__contact {
+			display: flex;
+			gap: 100px;
+			margin-bottom: 85px;
+
+			> .mobile {
+				> p {
+					line-height: 1;
+
+					&:first-child {
+						margin-bottom: 28px;
+					}
+
+					&:last-child {
+						&:hover {
+							cursor: pointer;
+						}
+					}
+				}
+
+				> .p {
+					line-height: 1;
+
+					&:hover {
+						cursor: pointer;
+					}
+				}
+			}
+			> .email {
+				> p {
+					line-height: 1;
+
+					&:first-child {
+						margin-bottom: 28px;
+					}
+
+					&:last-child {
+						&:hover {
+							cursor: pointer;
+						}
+					}
+				}
+
+				> .p {
+					line-height: 1;
+
+					&:hover {
+						cursor: pointer;
+					}
+				}
+			}
+		}
+
+		> .block__password {
+			display: flex;
+			flex-direction: column;
+
+			> label {
+				margin-bottom: 25px;
+			}
+
+			> input {
+				width: 326px;
+				height: 31px;
+				line-height: 1;
+				border: 1px solid $blue;
+				border-radius: 20px;
+				outline: none;
+				font-size: 1em;
+				line-height: 1;
+				padding: 6.5px 16px;
+			}
+
+			> .main_pass {
+				margin-bottom: 25px;
+			}
+
+			> .second_pass {
+				margin-bottom: 11px;
+			}
+		}
+	}
+}

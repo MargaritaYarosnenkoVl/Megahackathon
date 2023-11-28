@@ -1,0 +1,146 @@
+@import './variables';
+
+@mixin leftPanelBlock_param() {
+	width: 100%;
+	padding: 10px 0px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 92px;
+	background-color: rgba($color: #000000, $alpha: 0);
+	font-size: $fz_standart;
+
+	> img {
+		margin-bottom: 5px;
+		width: 30px;
+		height: 30px;
+	}
+
+	> .user {
+		display: block;
+	}
+
+	> .user_active {
+		display: none;
+	}
+
+	> .settings {
+		display: block;
+	}
+
+	> .settings_active {
+		display: none;
+	}
+
+	> .bookmark {
+		display: block;
+		width: 34px;
+		height: 36px;
+	}
+
+	> .bookmark_active {
+		display: none;
+		width: 34px;
+		height: 36px;
+	}
+
+	> .blackStar {
+		display: block;
+	}
+
+	> .blackStar_active {
+		display: none;
+	}
+
+	> .foulder {
+		display: block;
+	}
+
+	> .foulder_active {
+		display: none;
+	}
+
+	> .history {
+		display: block;
+	}
+
+	> .history_active {
+		display: none;
+	}
+
+	> .logout {
+		display: block;
+	}
+
+	> .logout_active {
+		display: none;
+	}
+
+	> p {
+		width: 96px;
+		font-size: 0.8em;
+	}
+
+	&:hover {
+		background-color: $blue;
+		color: $white;
+		cursor: pointer;
+
+		.user {
+			display: none;
+		}
+
+		.user_active {
+			display: block;
+		}
+
+		.settings {
+			display: none;
+		}
+
+		.settings_active {
+			display: block;
+		}
+
+		.bookmark {
+			display: none;
+		}
+
+		.bookmark_active {
+			display: block;
+		}
+
+		.blackStar {
+			display: none;
+		}
+
+		.blackStar_active {
+			display: block;
+		}
+
+		.foulder {
+			display: none;
+		}
+
+		.foulder_active {
+			display: block;
+		}
+
+		.history {
+			display: none;
+		}
+
+		.history_active {
+			display: block;
+		}
+
+		.logout {
+			display: none;
+		}
+
+		.logout_active {
+			display: block;
+		}
+	}
+}
