@@ -26,7 +26,9 @@ role = Table("role",
 user = Table("user",
              metadata,
              Column("id", Integer, primary_key=True),
-             Column("username", String, nullable=False),
+             Column("full_name", String, default="Иванов Иван Иванович"),
+             Column("phone_number", String, default="9871234567"),
+             Column("username", String, nullable=False, unique=True),
              Column("hashed_password", String(length=1024), nullable=False),
              Column("registred_at", TIMESTAMP, default=datetime.utcnow),
              Column("role_id", Integer, ForeignKey(role.c.id)),
@@ -48,7 +50,9 @@ user = Table("user",
 class User(SQLAlchemyBaseUserTable[int], Base):
     # oauth_accounts: Mapped[List[OAuthAccount]] = relationship("OAuthAccount", lazy="joined")
     id = Column("id", Integer, primary_key=True)
-    username = Column("username", String, nullable=False)
+    full_name = Column("full_name", String, default="Иванов Иван Иванович", nullable=False)
+    phone_number = Column("phone_number", String, default="9871234567")
+    username = Column("username", String, nullable=False, unique=True)
     hashed_password = Column(String(length=1024), nullable=False)
     registred_at = Column("registred_at", TIMESTAMP, default=datetime.utcnow)
     role_id = Column("role_id", Integer, ForeignKey(role.c.id))
