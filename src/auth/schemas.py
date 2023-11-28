@@ -7,8 +7,8 @@ from enum import Enum
 
 
 class RoleName(str, Enum):
-    admin = "admin"
     user = "user"
+    admin = "admin"
     director = "director"
     editor = "editor"
 
@@ -22,13 +22,13 @@ class Role(BaseModel):
 
 
 class UserRead(schemas.BaseUser[int]):
-    id: int
+    id: int = Field(ge=1)
     full_name: str | None
     phone_number: str | None
     registred_at: datetime
     email: EmailStr
     username: str
-    role_id: int
+    role_name: RoleName
     is_active: bool = True
     is_superuser: bool = False
     is_verified: bool = False
@@ -39,9 +39,11 @@ class UserRead(schemas.BaseUser[int]):
 
 class UserCreate(schemas.BaseUserCreate):
     username: str = "user"
+    full_name: str = "Иванов Иван Иванович"
+    phone_number: str = "9871234567"
     email: EmailStr = "user@example.com"
     password: str = "123456"
-    role_id: int = 1
+    role_name: RoleName
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False
     is_verified: Optional[bool] = False

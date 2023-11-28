@@ -31,7 +31,7 @@ user = Table("user",
              Column("username", String, nullable=False, unique=True),
              Column("hashed_password", String(length=1024), nullable=False),
              Column("registred_at", TIMESTAMP, default=datetime.utcnow),
-             Column("role_name", Integer, ForeignKey(role.c.id)),
+             Column("role_name", String, ForeignKey(role.c.name)),
              Column("email", String(length=320), unique=True, index=True, nullable=False),
              Column("is_active", Boolean, default=True, nullable=False),
              Column("is_superuser", Boolean, default=False, nullable=False),
@@ -55,7 +55,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     username = Column("username", String, nullable=False, unique=True)
     hashed_password = Column(String(length=1024), nullable=False)
     registred_at = Column("registred_at", TIMESTAMP, default=datetime.utcnow)
-    role_id = Column("role_id", Integer, ForeignKey(role.c.id))
+    role_name = Column("role_name", String, ForeignKey(role.c.name))
     email = Column(String(length=320), unique=True, index=True, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
     is_superuser = Column(Boolean, default=False, nullable=False)
