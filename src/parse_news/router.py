@@ -1,3 +1,4 @@
+import logging
 import subprocess
 import sys
 import json
@@ -35,13 +36,16 @@ get_temp_router = APIRouter(prefix="/get",
 schedule_parser_router = APIRouter(prefix="/schedule",
                                    tags=["Schedule parser"])
 
+logger = logging.getLogger('app')
 
 @get_base_router.get("/count/all",
                      response_model=Count)  # response_model=OfferSearchResult, operation_id="offer_search"
 async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
     try:
-        query = select(func.count(article.c.id))
+        logger.info(f"Try to count all news in table article")
+        query = select(func.count(article.c.id)).where(article.c.title.is_not(None))
         result = await session.execute(query)
+        logger.info(f"Count all news in table article")
         return result.scalar()
     except Exception as e:
         print(e)
@@ -54,11 +58,14 @@ async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
                      response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to get news with id={item_id} from article table")
         query = select(article).where(article.c.id == item_id)
         result = await session.execute(query)
+        logger.info(f"Got news with id={item_id} from article table")
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -67,11 +74,14 @@ async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async
 @get_base_router.get("/many/{last_n}", response_model=List[News])
 async def get_last_published(last_n: int, session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to get news N = {last_n} from article table")
         query = select(article).order_by(article.c.published_at.desc()).limit(last_n)
         result = await session.execute(query)
+        logger.info(f"Got {last_n} from article table")
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -81,8 +91,10 @@ async def get_last_published(last_n: int, session: AsyncSession = Depends(get_as
                      response_model=List[Tag])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to get unique tags from article table")
         query = select(article.c.tag).distinct()
         result = await session.execute(query)
+        logger.info(f"Got unique tags from article table")
         return result.all()
     except Exception as e:
         print(e)
@@ -95,6 +107,7 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
 # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_origins(session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to get unique tags from article table")
         query = select(article.c.parsed_from).distinct()
         result = await session.execute(query)
         return result.all()
@@ -290,10 +303,11 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
 
 @get_temp_router.post("/temp/filter",
                       response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
-async def filter_news(username: UserName, spider: Spider, session: AsyncSession = Depends(get_async_session)):
+async def filter_news(username: UserName, origin: TempOrigin, session: AsyncSession = Depends(get_async_session)):
     try:
+        spidername: str = origin.__dict__.get("parsed_from").__dict__.get("_name_")
         query = select(temp_article).filter(temp_article.c.username == username.name,
-                                            temp_article.c.spidername == spider.name,
+                                            temp_article.c.spidername == spidername,
                                             ).order_by(temp_article.c.published_at.desc())
         result = await session.execute(query)
         return result.all()
