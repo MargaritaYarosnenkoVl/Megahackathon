@@ -1,0 +1,123 @@
+@import '../../../assets/styles/variables';
+
+.wrapper {
+	display: flex;
+	gap: 12px;
+	padding: 55px 46px 22px 46px;
+
+	> a {
+		font-size: 0.8em;
+		line-height: 1.25;
+		color: $blue;
+	}
+
+	> p {
+		font-size: 0.8em;
+		line-height: 1.25;
+		color: $black;
+	}
+
+	> .block__users {
+        grid-template-columns: 17% 56.5% 10.5% 16%;
+    
+        > h2 {
+            font-size: 0.8em;
+            line-height: 1.25;
+            font-weight: 700;
+            color: $black;
+            padding: 18px 0px 18px 14px;
+        }
+
+
+		> .block__navigation {
+			display: flex;
+			gap: 12px;
+			
+			> a {
+				font-size: 0.8em;
+				line-height: 1.25;
+				color: $blue;
+			}
+
+			> p {
+				font-size: 0.8em;
+				line-height: 1.25;
+				color: $black;
+			}
+		}
+
+
+		> .block__table {
+			display: table;
+			color: $blue;
+			font-size: 1em;
+			padding-top: 72px;
+			padding-bottom: 64px;			
+			
+			> table {
+
+				> thead {
+					> tr {
+						
+	
+						> th {
+							color: $blue;
+							font-size: 1em;
+							text-align: left;
+							
+						}
+					}	
+				}
+				
+				> tbody {
+					> tr {
+						
+
+						> td {
+							padding-top: 28px;
+							padding-right: 112px;
+							font-size: 0.8em;
+							text-align: left;
+							vertical-align: middle;
+							color: $black;
+
+							> button {
+								padding-right: 0px;
+							}
+
+						}
+					}
+				}
+			}
+		}
+		
+
+		> .block__pagination{
+			text-align: right;
+
+			> ul {
+				display: flex;
+				flex-direction: row;
+				color: $blue;
+				padding-right: 112px;
+				padding-top: 28px;
+				justify-content: flex-end;
+				gap: 15px;
+
+				> li {
+					> a{
+						color: $blue;
+					}
+				}
+			}
+		}
+
+		> .block__content {
+			display: flex;
+			flex-direction: column;
+			padding-right: 112px;
+	
+			
+		}	
+	}
+}
