@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { $axios } from '../../../api';
 import Content from '../../content/Content';
 import Editing from '../../editing/Editing';
 import Header from '../../header/Header';
@@ -8,26 +7,29 @@ import Layout from '../../layout/Layout';
 import LeftPanel from '../../left-panel/LeftPanel';
 import News from '../../news/News';
 import styles from './Home.module.scss';
+import { useUser } from '../../../hooks/useUser';
+import { useUsers } from '../../../hooks/useUsers';
+
 
 const Home = () => {
-	const test = async () => {
-		try {
-			const responce = await $axios.get('https://212.20.45.230:8004/users/me');
-			console.log(await responce);
-		} catch (error) {
-			console.log(error);
-		}
-	};
-
 	const users = useSelector(state => state.users[0]);
 
 	const [editingNews, setEditingNews] = useState();
 	const [isViewEditNews, setIsViewEditNews] = useState(false);
+	const {infoUser, get_user} = useUser();
+	const {infoUsers, get_users} = useUsers();
 
 	useEffect(() => {
 		console.log(editingNews);
 		console.log(isViewEditNews);
-	}, [editingNews]);
+		if(!infoUser){
+			get_user();
+			console.log(infoUser);
+		};
+		if(!infoUsers){
+			get_users();
+		};
+	}, [editingNews, infoUser]);
 
 	return (
 		<Layout justifyContent='space-between'>
@@ -63,7 +65,6 @@ const Home = () => {
 					isViewEditNews={isViewEditNews}
 				/>
 			</Content>
-			{/* <button onClick={test}>test</button> */}
 		</Layout>
 	);
 };

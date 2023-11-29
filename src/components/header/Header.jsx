@@ -6,7 +6,7 @@ const Header = ({ search }) => {
 		<>
 			{search !== 'search' ? (
 				<div className={styles.wrapper}>
-					<img src='../images/icons/logoHeader.svg' alt='logo' />
+					<img src='../../images/icons/logoHeader.svg' alt='logo' />
 				</div>
 			) : (
 				<div className={styles.wrapper__search}>
@@ -29,7 +29,7 @@ const Header = ({ search }) => {
 						</button>
 					</div> */}
 					<InputSearch filter='yes' />
-					<img src='./images/icons/logoHeader.svg' alt='logo' />
+					<img src='../../images/icons/logoHeader.svg' alt='logo' />
 				</div>
 			)}
 		</>

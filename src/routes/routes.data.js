@@ -4,6 +4,7 @@ import History from '../components/screens/history/History';
 import Home from '../components/screens/home/Home';
 import LaterRead from '../components/screens/later-read/LaterRead';
 import PersonalArea from '../components/screens/personal-area/PersonalArea';
+import UserList from '../components/screens/users-list/UserList';
 
 export const routes = [
 	{
@@ -19,6 +20,11 @@ export const routes = [
 	{
 		path: '/home/personalArea',
 		component: PersonalArea,
+		isAuth: true,
+	},
+	{
+		path: '/home/personalArea/adminPanel',
+		component: UserList,
 		isAuth: true,
 	},
 	{

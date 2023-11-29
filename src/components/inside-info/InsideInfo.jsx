@@ -5,6 +5,7 @@ import { useInfoUser } from '../../hooks/useInfoUser';
 import { actions as interActions } from '../../store/interlayer/Interlayer.slice';
 import Button from '../ui/button/Button';
 import styles from './InsideInfo.module.scss';
+import { useUser } from '../../hooks/useUser';
 
 const InsideInfo = () => {
 	const {
@@ -26,6 +27,7 @@ const InsideInfo = () => {
 
 	const user = useSelector(state => state.users[0]);
 	const userInterlayer = useSelector(state => state.interlayer[0]);
+	const {infoUser} = useUser();
 
 	const [secondPassword, setSecondPassword] = useState();
 
@@ -77,13 +79,13 @@ const InsideInfo = () => {
 										})
 									)
 								}
-								value={userInterlayer.name}
+								value={infoUser.full_name}
 							/>
 						</>
 					) : (
 						<>
 							<h2 onClick={() => setIsViewName(!isViewName)}>
-								{userInterlayer.name}
+								{infoUser.full_name}
 							</h2>
 						</>
 					)}
@@ -102,13 +104,13 @@ const InsideInfo = () => {
 										})
 									)
 								}
-								value={userInterlayer.profession}
+								value={infoUser.role_name}
 							/>
 						</>
 					) : (
 						<>
 							<p onClick={() => setIsViewProf(!isViewProf)}>
-								{userInterlayer.profession}
+								{infoUser.role_name}
 							</p>
 						</>
 					)}
@@ -123,7 +125,7 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='Телефон'
 								onClick={() => setIsViewMobile(!isViewMobile)}
-								value={userInterlayer.number}
+								value={infoUser.phone_number}
 								onChange={event =>
 									dispatch(
 										interActions.interlayerUserInfo({
@@ -134,7 +136,7 @@ const InsideInfo = () => {
 							/>
 						) : (
 							<p onClick={() => setIsViewMobile(!isViewMobile)}>
-								{userInterlayer.number}
+								{infoUser.phone_number}
 							</p>
 						)}
 					</div>
@@ -147,7 +149,7 @@ const InsideInfo = () => {
 								type='text'
 								placeholder='Почта'
 								onClick={() => setIsViewEmail(!isViewEmail)}
-								value={userInterlayer.email}
+								value={infoUser.email}
 								onChange={event =>
 									dispatch(
 										interActions.interlayerUserInfo({
@@ -158,7 +160,7 @@ const InsideInfo = () => {
 							/>
 						) : (
 							<p onClick={() => setIsViewEmail(!isViewEmail)}>
-								{userInterlayer.email}
+								{infoUser.email}
 							</p>
 						)}
 					</div>
