@@ -74,6 +74,13 @@ class FilterNews(BaseModel):
         orm_mode = True
 
 
+class TempOrigin(BaseModel):
+    parsed_from: ParsedFrom = Field(default="naked-science.ru")
+
+    class Config:
+        orm_mode = True
+
+
 class Tag(BaseModel):
     tag: str | None
 

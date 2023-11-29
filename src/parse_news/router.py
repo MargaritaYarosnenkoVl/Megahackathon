@@ -11,7 +11,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from tokenizer.tokenize_from_db import main as main_tokenizer
 from .models import article, temp_article
-from .schemas import News, FilterNews, Tag, Origin, SpiderName, Count, JobID, TempNews, UserName, UserNameBase, Spider
+from .schemas import (News,
+                      FilterNews,
+                      Tag,
+                      Origin,
+                      SpiderName,
+                      Count,
+                      JobID,
+                      TempNews,
+                      UserName,
+                      UserNameBase,
+                      Spider,
+                      TempOrigin)
+
 from .schemas import ParsedFrom
 
 get_base_router = APIRouter(prefix="/get",
@@ -136,18 +148,34 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
 
 
 @schedule_parser_router.post("/spider", response_model=JobID)  # , response_model=List[TempNews]  ,
-async def launch_spider(spider: Spider, username: UserName):
+async def launch_spider(origin: TempOrigin, username: UserName):
+    # print(origin.__dict__.get("parsed_from").__dict__.get("_value_"))
+    origin_spiders = {"naked-science.ru": "naked_science",
+                      "cnews.ru": "cnews",
+                      "fontanka.ru": "fontanka",
+                      "dimonvideo.ru": "dimonvideo",
+                      "3dnews.ru": "news3d",
+                      "forbes.ru": "forbes",
+                      "knife.media": "knife_media",
+                      "nplus1.ru": "nplus1",
+                      "portal-kultura.ru": "portal_kultura",
+                      "sdelanounas.ru": "sdelanounas",
+                      "snob.ru": "snob",
+                      "techno-news.ru": "techno_news",
+                      "windozo.ru": "windozo"}
+    spidername = origin_spiders.get(origin.__dict__.get("parsed_from").__dict__.get("_value_"))
+    # print(spider_name)
     try:
         proc_result = subprocess.run([f"curl",
                                       f"http://localhost:6800/schedule.json",
                                       f"-d",
                                       f"project=parse_news",
                                       f"-d",
-                                      f"spider={spider.name}",
+                                      f"spider={spidername}",
                                       f"-d",
                                       f"username={username.name}",
                                       f"-d",
-                                      f"spidername={spider.name}",
+                                      f"spidername={spidername}",
                                       ], stdout=subprocess.PIPE,
                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
         result = json.loads(proc_result.stdout)["jobid"]
