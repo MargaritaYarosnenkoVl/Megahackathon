@@ -149,22 +149,21 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
 
 @schedule_parser_router.post("/spider", response_model=JobID)  # , response_model=List[TempNews]  ,
 async def launch_spider(origin: TempOrigin, username: UserName):
-    # print(origin.__dict__.get("parsed_from").__dict__.get("_value_"))
-    origin_spiders = {"naked-science.ru": "naked_science",
-                      "cnews.ru": "cnews",
-                      "fontanka.ru": "fontanka",
-                      "dimonvideo.ru": "dimonvideo",
-                      "3dnews.ru": "news3d",
-                      "forbes.ru": "forbes",
-                      "knife.media": "knife_media",
-                      "nplus1.ru": "nplus1",
-                      "portal-kultura.ru": "portal_kultura",
-                      "sdelanounas.ru": "sdelanounas",
-                      "snob.ru": "snob",
-                      "techno-news.ru": "techno_news",
-                      "windozo.ru": "windozo"}
-    spidername = origin_spiders.get(origin.__dict__.get("parsed_from").__dict__.get("_value_"))
-    # print(spider_name)
+    # origin_spiders = {"naked-science.ru": "naked_science",
+    #                   "cnews.ru": "cnews",
+    #                   "fontanka.ru": "fontanka",
+    #                   "dimonvideo.ru": "dimonvideo",
+    #                   "3dnews.ru": "news3d",
+    #                   "forbes.ru": "forbes",
+    #                   "knife.media": "knife_media",
+    #                   "nplus1.ru": "nplus1",
+    #                   "portal-kultura.ru": "portal_kultura",
+    #                   "sdelanounas.ru": "sdelanounas",
+    #                   "snob.ru": "snob",
+    #                   "techno-news.ru": "techno_news",
+    #                   "windozo.ru": "windozo"}
+    # spidername = origin_spiders.get(origin.__dict__.get("parsed_from").__dict__.get("_value_"))
+    spidername = origin.__dict__.get("parsed_from").__dict__.get("_name_")
     try:
         proc_result = subprocess.run([f"curl",
                                       f"http://localhost:6800/schedule.json",
