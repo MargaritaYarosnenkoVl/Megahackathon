@@ -98,6 +98,7 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -107,12 +108,14 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
 # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_origins(session: AsyncSession = Depends(get_async_session)):
     try:
-        logger.info(f"Try to get unique tags from article table")
+        logger.info(f"Try to get unique origins from article table")
         query = select(article.c.parsed_from).distinct()
         result = await session.execute(query)
+        logger.info(f"Got unique origins from article table")
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -122,14 +125,19 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
                       response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to filter by {data.parsed_from}, "
+                    f"from {data.published_at_low},"
+                    f"to {data.published_at_high} from article table")
         query = select(article).filter(article.c.parsed_from == data.parsed_from,
                                        article.c.published_at >= data.published_at_low,
                                        article.c.published_at <= data.published_at_high
                                        ).order_by(article.c.published_at.desc())
+        logger.info("Got filter result")
         result = await session.execute(query)
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -138,11 +146,14 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
 @get_base_router.get("/filter_kw/{key_word}", response_model=List[News])
 async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to filter by {key_word} from article table")
         query = select(article).where(article.c.ml_key_words.ilike(f"%{key_word}%")).order_by(
             article.c.published_at.desc())
         result = await session.execute(query)
+        logger.info(f"Got filter result by {key_word} from article table")
         return result.all()
     except Exception as e:
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -151,10 +162,13 @@ async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends
 @get_base_router.get("/filter_t/{tag}", response_model=List[News])
 async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to filter by {tag} from article table")
         query = select(article).where(article.c.tag.ilike(f"%{tag}%")).order_by(article.c.published_at.desc())
         result = await session.execute(query)
+        logger.info(f"Got filter result by {tag} from article table")
         return result.all()
     except Exception as e:
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -178,6 +192,7 @@ async def launch_spider(origin: TempOrigin, username: UserName):
     # spidername = origin_spiders.get(origin.__dict__.get("parsed_from").__dict__.get("_value_"))
     spidername = origin.__dict__.get("parsed_from").__dict__.get("_name_")
     try:
+        logger.info(f"Try to launch spider {spidername} by {username.name}")
         proc_result = subprocess.run([f"curl",
                                       f"http://localhost:6800/schedule.json",
                                       f"-d",
@@ -190,11 +205,14 @@ async def launch_spider(origin: TempOrigin, username: UserName):
                                       f"spidername={spidername}",
                                       ], stdout=subprocess.PIPE,
                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
-        result = json.loads(proc_result.stdout)["jobid"]
-        print("OK", "Please, wait while parser is working. JobID: ", result)
-        return result
+        params = json.loads(proc_result.stdout)
+        job_id = params["jobid"]
+        logger.info(f"Spider {spidername} is launched with params = {params}")
+        print("OK", "Please, wait while parser is working. JobID: ", job_id)
+        return job_id
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -203,6 +221,7 @@ async def launch_spider(origin: TempOrigin, username: UserName):
 @schedule_parser_router.post("/spider/stop", response_model=JobID)  # , response_model=List[TempNews]  , ,
 async def stop_spider(job_id: str):
     try:
+        logger.info(f"Try to stop spider with JObID={job_id}")
         proc_result1 = subprocess.run([f"curl",
                                        f"http://localhost:6800/cancel.json",
                                        f"-d",
@@ -224,9 +243,11 @@ async def stop_spider(job_id: str):
                                        f"-d",
                                        f"job={job_id}"], stdout=subprocess.PIPE,
                                       cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
+        logger.info(f"Spider with JobID={job_id} is STOPPED")
         return "Spider STOPPED"
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -236,11 +257,14 @@ async def stop_spider(job_id: str):
 # response_model=OfferSearchResult, operation_id="offer_search"
 async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to count all news in table temp_article")
         query = select(func.count(temp_article.c.id))
         result = await session.execute(query)
+        logger.info(f"Count all news in table temp_article")
         return result.scalar()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -250,11 +274,14 @@ async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
                      response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to get news with id={item_id} from temp_article table")
         query = select(temp_article).where(temp_article.c.id == item_id)
         result = await session.execute(query)
+        logger.info(f"Got news with id={item_id} from temp_article table")
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -263,11 +290,14 @@ async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async
 @get_temp_router.get("/temp/many/{last_n}", response_model=List[News])
 async def get_last_published(last_n: int, session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to get news N = {last_n} from temp_article table")
         query = select(temp_article).order_by(temp_article.c.published_at.desc()).limit(last_n)
         result = await session.execute(query)
+        logger.info(f"Got {last_n} news from temp_article table")
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -282,6 +312,7 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -296,6 +327,7 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -305,14 +337,18 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
                       response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
 async def filter_news(username: UserName, origin: TempOrigin, session: AsyncSession = Depends(get_async_session)):
     try:
+        logger.info(f"Try to filter by {username.name}, {origin} from temp_article")
         spidername: str = origin.__dict__.get("parsed_from").__dict__.get("_name_")
+        logger.debug(f"Got {spidername} name")
         query = select(temp_article).filter(temp_article.c.username == username.name,
                                             temp_article.c.spidername == spidername,
                                             ).order_by(temp_article.c.published_at.desc())
+        logger.info("Got filter result")
         result = await session.execute(query)
         return result.all()
     except Exception as e:
         print(e)
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -326,6 +362,7 @@ async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends
         result = await session.execute(query)
         return result.all()
     except Exception as e:
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
@@ -339,6 +376,7 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
         result = await session.execute(query)
         return result.all()
     except Exception as e:
+        logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}

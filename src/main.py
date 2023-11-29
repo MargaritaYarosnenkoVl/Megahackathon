@@ -37,6 +37,8 @@ def create_app() -> FastAPI:
     init_routers(app)
     init_middleware(app, origins)
     # init_scrapyd_sever()
+    logger = logging.getLogger('app')
+    logger.info("main app as started")
     return app
 
 
@@ -85,17 +87,17 @@ def init_middleware(app: FastAPI, origins_host: list):
 # Logging
 def init_logger(name):
     logger = logging.getLogger(name)
-    FORMAT = "%(asctime)s - %(name)s:%(lineno)s - %(levelname)s - %(message)s"
-    logger.setLevel(logging.INFO)
+    FORMAT = "%(levelprefix)s \t %(asctime)s \t %(name)s:%(lineno)s \t %(levelname)s \t %(message)s"
+    logger.setLevel(logging.DEBUG)
 
     sh = logging.StreamHandler()
-    sh.setFormatter(logging.Formatter(FORMAT))
-    sh.setLevel(logging.ERROR)
+    sh.setFormatter(uvicorn.logging.DefaultFormatter(FORMAT))
+    sh.setLevel(logging.INFO)
     sh.addFilter(logger_filter)
 
     fh = logging.FileHandler(filename='app.log')
-    fh.setFormatter(logging.Formatter(FORMAT))
-    fh.setLevel(logging.INFO)
+    fh.setFormatter(uvicorn.logging.DefaultFormatter(FORMAT))
+    fh.setLevel(logging.DEBUG)
     fh.addFilter(logger_filter)
 
     logger.addHandler(sh)

@@ -16,7 +16,7 @@ metadata = MetaData()
 
 
 role = Table("role",
-             Base.metadata,
+             metadata,
              Column("id", Integer, primary_key=True),
              Column("name", String, nullable=False, unique=True, primary_key=True),
              # Column("permissions", JSON)
