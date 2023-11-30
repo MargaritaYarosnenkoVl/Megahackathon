@@ -4,6 +4,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useInfoUser } from '../../../hooks/useInfoUser';
 import { actions } from '../../../store/users/Users.slice';
 import styles from './Button.module.scss';
+import { useUsers } from '../../../hooks/useUsers';
 
 const Button = ({
 	children,
@@ -17,10 +18,16 @@ const Button = ({
 	const navigate = useNavigate();
 
 	const { isAuth } = useAuth();
+	const { get_users } = useUsers();
 
 	const { dispatch, repeatPassword } = useInfoUser();
 
 	const userInterlayer = useSelector(state => state.interlayer[0]);
+
+	const usersHandler = () => {
+		get_users();
+		navigate('/home/personalArea/adminPanel');
+	};
 
 	return (
 		<>
@@ -78,7 +85,23 @@ const Button = ({
 				</button>
 			) : saveInfo === 'search' ? (
 				<button className={styles.button}>{children}</button>
-			) : (
+			) : saveInfo === 'users' ? (
+				<button
+					className={styles.button_save}
+					onClick={() => (isAuth ? navigate('/home/personalArea/adminPanel') : '')}
+					// onClick={usersHandler}
+				>
+					{children}
+				</button>
+			) : saveInfo === 'add_user' ? (
+				<button
+					className={styles.button_save}
+					// onClick={() => (isAuth ? navigate('/home/personalArea/adminPanel') : '')}
+					// onClick={usersHandler}
+				>
+					{children}
+				</button>
+			):(
 				<button
 					className={styles.button}
 					onClick={() => (isAuth ? navigate('/home') : '')}

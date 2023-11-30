@@ -10,7 +10,7 @@ const Router = () => {
 			<Routes>
 				{routes.map(route => {
 					if (route.isAuth && !isAuth) return false;
-
+						
 					return (
 						<Route
 							key={route.path}

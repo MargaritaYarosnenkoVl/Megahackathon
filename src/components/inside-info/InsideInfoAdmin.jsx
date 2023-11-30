@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom';
 import { useInfoUser } from '../../hooks/useInfoUser';
 import { actions as interActions } from '../../store/interlayer/Interlayer.slice';
 import Button from '../ui/button/Button';
-import styles from './InsideInfo.module.scss';
 import { useUser } from '../../hooks/useUser';
+import styles from './InsideInfo.module.scss';
 
-const InsideInfo = () => {
+
+const InsideInfoAdmin = () => {
 	const {
 		dispatch,
 		profileImage,
@@ -198,8 +199,13 @@ const InsideInfo = () => {
 					сохранить
 				</Button>
 			</div>
+            <div className={styles.block__content}>
+                <Button saveInfo='users'>
+                    Пользователи
+                </Button>
+            </div>
 		</div>
 	);
 };
 
-export default InsideInfo;
+export default InsideInfoAdmin;

@@ -3,6 +3,7 @@ import Layout from '../../layout/Layout';
 import Button from '../../ui/button/Button';
 import styles from './Auth.module.scss';
 
+
 const Auth = () => {
 	const { onSubmit, register, handleSubmit, errors } = useAuthPage();
 
