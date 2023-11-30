@@ -57,10 +57,6 @@ const WindowFilter = () => {
 						})}
 					</div>
 				</div>
-
-				<button type='submit' onClick={result}>
-					testResult
-				</button>
 				<div className={styles.block__buttons}>
 					<Button saveInfo='filter-clear'>очистить</Button>
 					<Button saveInfo='filter-start' result={result}>

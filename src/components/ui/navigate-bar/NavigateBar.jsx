@@ -7,7 +7,7 @@ const NavigateBar = ({ location }) => {
 			<Link to={'/home'}>Главная</Link>
 			<p>/</p>
 			{location !== 'later' ? (
-				<Link to={'/home/readLater'}>Читать потом</Link>
+				<Link to={'/home/laterRead'}>Читать потом</Link>
 			) : (
 				<p>Читать потом</p>
 			)}

@@ -4,10 +4,12 @@ import { TOKEN } from '../../app.constants';
 import { useAuth } from '../../hooks/useAuth';
 import { useCheckPath } from '../../hooks/useCheckPath';
 import styles from './LeftPanel.module.scss';
+import { useUser } from '../../hooks/useUser';
 
 const LeftPanel = () => {
 	const navigate = useNavigate();
 	const { setIsAuth } = useAuth();
+	const { get_user, infoUser, setInfoUser } = useUser();
 
 	const {
 		userRef,
@@ -27,6 +29,7 @@ const LeftPanel = () => {
 	const logoutHandler = () => {
 		Cookies.remove(TOKEN);
 		setIsAuth(false);
+		setInfoUser();
 		navigate('/');
 	};
 
@@ -41,13 +44,13 @@ const LeftPanel = () => {
 					<img
 						ref={userRef}
 						className={styles.user}
-						src='../images/icons/user.svg'
+						src='../../images/icons/user.svg'
 						alt='img'
 					/>
 					<img
 						ref={user_activeRef}
 						className={styles.user_active}
-						src='../images/icons/user_white.svg'
+						src='../../images/icons/user_white.svg'
 						alt='img'
 					/>
 					<p>Личный кабинет</p>
@@ -55,12 +58,12 @@ const LeftPanel = () => {
 				<button className={styles.block_param}>
 					<img
 						className={styles.settings}
-						src='../images/icons/settings.svg'
+						src='../../images/icons/settings.svg'
 						alt='img'
 					/>
 					<img
 						className={styles.settings_active}
-						src='../images/icons/settings_white.svg'
+						src='../../images/icons/settings_white.svg'
 						alt='img'
 					/>
 					<p>Настройки просмотра</p>
@@ -75,13 +78,13 @@ const LeftPanel = () => {
 					<img
 						ref={laterRef}
 						className={styles.bookmark}
-						src='../images/icons/bookmark.svg'
+						src='../../images/icons/bookmark.svg'
 						alt='img'
 					/>
 					<img
 						ref={laterRef_active}
 						className={styles.bookmark_active}
-						src='../images/icons/bookmark_white.svg'
+						src='../../images/icons/bookmark_white.svg'
 						alt='img'
 					/>
 					<p>Читать потом</p>
@@ -94,13 +97,13 @@ const LeftPanel = () => {
 					<img
 						ref={favoriteRef}
 						className={styles.blackStar}
-						src='../images/icons/black_star.svg'
+						src='../../images/icons/black_star.svg'
 						alt='img'
 					/>
 					<img
 						ref={favoriteRef_active}
 						className={styles.blackStar_active}
-						src='../images/icons/favorite_active_white.svg'
+						src='../../images/icons/favorite_active_white.svg'
 						alt='img'
 					/>
 					<p>Избранное</p>
@@ -108,12 +111,12 @@ const LeftPanel = () => {
 				<button className={styles.block_param}>
 					<img
 						className={styles.foulder}
-						src='../images/icons/foulder_black.svg'
+						src='../../images/icons/foulder_black.svg'
 						alt='img'
 					/>
 					<img
 						className={styles.foulder_active}
-						src='../images/icons/foulder_white.svg'
+						src='../../images/icons/foulder_white.svg'
 						alt='img'
 					/>
 					<p>Мои папки</p>
@@ -126,13 +129,13 @@ const LeftPanel = () => {
 					<img
 						ref={historyRef}
 						className={styles.history}
-						src='../images/icons/history.svg'
+						src='../../images/icons/history.svg'
 						alt='img'
 					/>
 					<img
 						ref={historyRef_active}
 						className={styles.history_active}
-						src='../images/icons/history_white.svg'
+						src='../../images/icons/history_white.svg'
 						alt='img'
 					/>
 					<p>История просмотра</p>
@@ -141,12 +144,12 @@ const LeftPanel = () => {
 			<button className={styles.block_param} onClick={logoutHandler}>
 				<img
 					className={styles.logout}
-					src='../images/icons/logout.svg'
+					src='../../images/icons/logout.svg'
 					alt='img'
 				/>
 				<img
 					className={styles.logout_active}
-					src='../images/icons/logout_white.svg'
+					src='../../images/icons/logout_white.svg'
 					alt='img'
 				/>
 				<p>Выход</p>
