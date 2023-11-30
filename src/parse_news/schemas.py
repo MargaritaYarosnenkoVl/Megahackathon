@@ -21,6 +21,7 @@ class News(BaseModel):
     fun_metric: float | None
     unique_metric: float | None
     simple_metric: float | None
+    username: str | None
 
     class Config:
         orm_mode = True
@@ -173,3 +174,11 @@ class UserName(BaseModel):
 
     class Config:
         orm_mode = False
+
+
+class DeleteNews(BaseModel):
+    rowcount: int | Any
+    _soft_closed: bool | Any
+
+    class Config:
+        orm_mode = True
