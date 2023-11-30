@@ -1,31 +1,25 @@
 import logging
 import subprocess
-import sys
 import json
-import time
-from typing import List
+from typing import List, Any
 from fastapi import APIRouter, Depends
-
-from sqlalchemy import select, func
+from sqlalchemy import insert, select, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from database import get_async_session
-from tokenizer.tokenize_from_db import main as main_tokenizer
 from .models import article, temp_article
-from .schemas import (News,
-                      FilterNews,
+from .schemas import (MainNews,
+                      TempNews,
+                      NewsFilter,
                       Tag,
                       Origin,
                       SpiderName,
                       Count,
                       JobID,
-                      TempNews,
                       UserName,
                       UserNameBase,
                       Spider,
-                      TempOrigin)
-
-from .schemas import ParsedFrom
+                      SpiderOrigin,
+                      ParsedFrom, DeleteNews)
 
 get_base_router = APIRouter(prefix="/get",
                             tags=["Get News"])
@@ -34,12 +28,14 @@ get_temp_router = APIRouter(prefix="/get",
                             tags=["Get Temp News"])
 
 schedule_parser_router = APIRouter(prefix="/schedule",
-                                   tags=["Schedule parser"])
+                                   tags=["Schedule parser/spider"])
 
 logger = logging.getLogger('app')
 
+
+# --- ARTICLE --- #
 @get_base_router.get("/count/all",
-                     response_model=Count)  # response_model=OfferSearchResult, operation_id="offer_search"
+                     response_model=Count)
 async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to count all news in table article")
@@ -54,8 +50,7 @@ async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
                 "details": e}
 
 
-@get_base_router.get("/single/{item_id}",
-                     response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
+@get_base_router.get("/single/{item_id}", response_model=List[MainNews])
 async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to get news with id={item_id} from article table")
@@ -71,7 +66,7 @@ async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async
                 "details": e}
 
 
-@get_base_router.get("/many/{last_n}", response_model=List[News])
+@get_base_router.get("/many/{last_n}", response_model=List[MainNews])
 async def get_last_published(last_n: int, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to get news N = {last_n} from article table")
@@ -87,8 +82,7 @@ async def get_last_published(last_n: int, session: AsyncSession = Depends(get_as
                 "details": e}
 
 
-@get_base_router.get("/tags/unique",
-                     response_model=List[Tag])  # response_model=OfferSearchResult, operation_id="offer_search"
+@get_base_router.get("/tags/unique", response_model=List[Tag])
 async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to get unique tags from article table")
@@ -105,7 +99,6 @@ async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
 
 
 @get_base_router.get("/origins/unique", response_model=List[Origin])
-# response_model=OfferSearchResult, operation_id="offer_search"
 async def get_unique_origins(session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to get unique origins from article table")
@@ -121,9 +114,8 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
                 "details": e}
 
 
-@get_base_router.post("/filter",
-                      response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
-async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_async_session)):
+@get_base_router.post("/filter", response_model=List[MainNews])
+async def filter_news(data: NewsFilter, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to filter by {data.parsed_from}, "
                     f"from {data.published_at_low},"
@@ -143,7 +135,7 @@ async def filter_news(data: FilterNews, session: AsyncSession = Depends(get_asyn
                 "details": e}
 
 
-@get_base_router.get("/filter_kw/{key_word}", response_model=List[News])
+@get_base_router.get("/filter_kw/{key_word}", response_model=List[MainNews])
 async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to filter by {key_word} from article table")
@@ -159,7 +151,7 @@ async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends
                 "details": e}
 
 
-@get_base_router.get("/filter_t/{tag}", response_model=List[News])
+@get_base_router.get("/filter_t/{tag}", response_model=List[MainNews])
 async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to filter by {tag} from article table")
@@ -174,8 +166,9 @@ async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async
                 "details": e}
 
 
-@schedule_parser_router.post("/spider", response_model=JobID)  # , response_model=List[TempNews]  ,
-async def launch_spider(origin: TempOrigin, username: UserName):
+# --- PARSERS-SPIDERS --- #
+@schedule_parser_router.post("/spider", response_model=JobID)
+async def launch_spider(origin: SpiderOrigin, username: UserName):
     # origin_spiders = {"naked-science.ru": "naked_science",
     #                   "cnews.ru": "cnews",
     #                   "fontanka.ru": "fontanka",
@@ -218,31 +211,20 @@ async def launch_spider(origin: TempOrigin, username: UserName):
                 "details": e}
 
 
-@schedule_parser_router.post("/spider/stop", response_model=JobID)  # , response_model=List[TempNews]  , ,
+@schedule_parser_router.post("/spider/stop", response_model=JobID)
 async def stop_spider(job_id: str):
     try:
         logger.info(f"Try to stop spider with JObID={job_id}")
-        proc_result1 = subprocess.run([f"curl",
-                                       f"http://localhost:6800/cancel.json",
-                                       f"-d",
-                                       f"project=parse_news",
-                                       f"-d",
-                                       f"job={job_id}"], stdout=subprocess.PIPE,
-                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
-        proc_result2 = subprocess.run([f"curl",
-                                       f"http://localhost:6800/cancel.json",
-                                       f"-d",
-                                       f"project=parse_news",
-                                       f"-d",
-                                       f"job={job_id}"], stdout=subprocess.PIPE,
-                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
-        proc_result3 = subprocess.run([f"curl",
-                                       f"http://localhost:6800/cancel.json",
-                                       f"-d",
-                                       f"project=parse_news",
-                                       f"-d",
-                                       f"job={job_id}"], stdout=subprocess.PIPE,
-                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
+        for _ in range(3):
+            proc_result = subprocess.run([f"curl",
+                                          f"http://localhost:6800/cancel.json",
+                                          f"-d",
+                                          f"project=parse_news",
+                                          f"-d",
+                                          f"job={job_id}"], stdout=subprocess.PIPE,
+                                         cwd="/home/alexander/PycharmProjects/Megahackathon_T17/"
+                                             "src/parse_news/parse_news")
+
         logger.info(f"Spider with JobID={job_id} is STOPPED")
         return "Spider STOPPED"
     except Exception as e:
@@ -253,7 +235,8 @@ async def stop_spider(job_id: str):
                 "details": e}
 
 
-@get_temp_router.get("/temp/article/count/all", response_model=Count)
+# --- TEMP_ARTICLE --- #
+@get_temp_router.get("/temp/count/all", response_model=Count)
 # response_model=OfferSearchResult, operation_id="offer_search"
 async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
     try:
@@ -270,8 +253,7 @@ async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
                 "details": e}
 
 
-@get_temp_router.get("/temp/article/single/{item_id}",
-                     response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
+@get_temp_router.get("/temp/single/{item_id}", response_model=List[MainNews])
 async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to get news with id={item_id} from temp_article table")
@@ -280,14 +262,71 @@ async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async
         logger.info(f"Got news with id={item_id} from temp_article table")
         return result.all()
     except Exception as e:
-        print(e)
         logger.debug(e)
         return {"status": "error",
                 "data": e,
                 "details": e}
 
 
-@get_temp_router.get("/temp/many/{last_n}", response_model=List[News])
+@get_temp_router.get("/temp/copy_to_main/{item_id}", response_model=List[MainNews] | Any)
+async def copy_news_by_id(item_id: int, session: AsyncSession = Depends(get_async_session)):
+    fields_to_copy = ["title", "brief_text", "full_text", "tag", "search_words", "ml_key_words", "parsed_from",
+                      "full_text_link", "published_at", "parsed_at", "rating", "counter", "fun_metric", "unique_metric",
+                      "simple_metric", "username"]
+    try:
+        logger.info(f"Try to copy news with id={item_id} from temp_article to article table")
+        query = select(temp_article.c.title, temp_article.c.brief_text, temp_article.c.full_text,
+                       temp_article.c.tag, temp_article.c.search_words, temp_article.c.ml_key_words,
+                       temp_article.c.parsed_from, temp_article.c.full_text_link, temp_article.c.published_at,
+                       temp_article.c.parsed_at, temp_article.c.rating, temp_article.c.counter,
+                       temp_article.c.fun_metric, temp_article.c.unique_metric, temp_article.c.simple_metric,
+                       temp_article.c.username
+                       ).where(temp_article.c.id == item_id)
+        stmt = article.insert().from_select(fields_to_copy, query)  # .returning(query)
+        await session.execute(stmt)
+        await session.commit()
+        logger.info(f"News with id={item_id} copied from temp_article to article")
+        return "OK"  # result.all()
+    except Exception as e:
+        logger.debug(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@get_temp_router.patch("/temp/single/", response_model=List[TempNews])
+async def patch_news(news: TempNews, session: AsyncSession = Depends(get_async_session)):
+    try:
+        logger.info(f"Try to patch news by id={id} from temp_article table")
+        delete_stmt = delete(temp_article).where(temp_article.c.id == id).returning(id)
+        result = await session.execute(delete_stmt)
+        await session.commit()
+        logger.info(f"News with id={id} is deleted from temp_article table")
+        return result.scalar()
+    except Exception as e:
+        logger.debug(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@get_temp_router.delete("/temp/single/{id}", response_model=List[DeleteNews] | Any)
+async def delete_news_by_id(id: int, session: AsyncSession = Depends(get_async_session)):
+    try:
+        logger.info(f"Try to delete news by id={id} from temp_article table")
+        delete_stmt = delete(temp_article).where(temp_article.c.id == id).returning(id)
+        result = await session.execute(delete_stmt)
+        await session.commit()
+        logger.info(f"News with id={id} is deleted from temp_article table")
+        return result.scalar()
+    except Exception as e:
+        logger.debug(e)
+        return {"status": "error",
+                "data": e,
+                "details": e}
+
+
+@get_temp_router.get("/temp/many/{last_n}", response_model=List[MainNews])
 async def get_last_published(last_n: int, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to get news N = {last_n} from temp_article table")
@@ -303,8 +342,7 @@ async def get_last_published(last_n: int, session: AsyncSession = Depends(get_as
                 "details": e}
 
 
-@get_temp_router.get("/temp/tags/unique",
-                     response_model=List[Tag])  # response_model=OfferSearchResult, operation_id="offer_search"
+@get_temp_router.get("/temp/tags/unique", response_model=List[Tag])
 async def get_unique_tags(session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(temp_article.c.tag).distinct()
@@ -333,9 +371,8 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
                 "details": e}
 
 
-@get_temp_router.post("/temp/filter",
-                      response_model=List[News])  # response_model=OfferSearchResult, operation_id="offer_search"
-async def filter_news(username: UserName, origin: TempOrigin, session: AsyncSession = Depends(get_async_session)):
+@get_temp_router.post("/temp/filter", response_model=List[MainNews])
+async def filter_news(username: UserName, origin: SpiderOrigin, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to filter by {username.name}, {origin} from temp_article")
         spidername: str = origin.__dict__.get("parsed_from").__dict__.get("_name_")
@@ -354,7 +391,7 @@ async def filter_news(username: UserName, origin: TempOrigin, session: AsyncSess
                 "details": e}
 
 
-@get_temp_router.get("/temp/filter_kw/{key_word}", response_model=List[News])
+@get_temp_router.get("/temp/filter_kw/{key_word}", response_model=List[MainNews])
 async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(temp_article).where(temp_article.c.ml_key_words.ilike(f"%{key_word}%")).order_by(
@@ -368,7 +405,7 @@ async def filter_news_by_key_word(key_word: str, session: AsyncSession = Depends
                 "details": e}
 
 
-@get_temp_router.get("/temp/filter_t/{tag}", response_model=List[News])
+@get_temp_router.get("/temp/filter_t/{tag}", response_model=List[MainNews])
 async def filter_news_by_tag(tag: str, session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(temp_article).where(temp_article.c.tag.ilike(f"%{tag}%")).order_by(

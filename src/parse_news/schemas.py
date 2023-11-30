@@ -22,29 +22,35 @@ class News(BaseModel):
     unique_metric: float | None
     simple_metric: float | None
     username: str | None
+    spidername: str | None
 
     class Config:
         orm_mode = True
 
 
-class TempNews(BaseModel):
-    id: Optional[int] = Field(1, ge=1)
-    title: str
-    brief_text: str | None
-    full_text: str
+class MainNews(News):
+
+    class Config:
+        fields = {"spidername": {"exclude": True}}
+        orm_mode = True
+
+
+class TempNews(News):
+
+    class Config:
+        fields = {"spidername": {"exclude": True}}
+        orm_mode = True
+
+
+class Tag(BaseModel):
     tag: str | None
-    search_words: str | None
-    ml_key_words: str | None
-    parsed_from: str
-    full_text_link: str
-    published_at: datetime
-    parsed_at: datetime
-    rating: int | None
-    counter: int | None
-    fun_metric: float | None
-    unique_metric: float | None
-    simple_metric: float | None
-    username: str | None
+
+    class Config:
+        orm_mode = True
+
+
+class Origin(BaseModel):
+    parsed_from: str | None
 
     class Config:
         orm_mode = True
@@ -66,7 +72,7 @@ class ParsedFrom(str, Enum):
     windozo = "windozo.ru"
 
 
-class FilterNews(BaseModel):
+class NewsFilter(BaseModel):
     parsed_from: ParsedFrom = Field(default="cnews.ru", alias="news_origin")
     published_at_high: datetime = Field(default=datetime.utcnow(), alias="date_published_up_to_")
     published_at_low: datetime = Field(default=datetime.utcnow()-timedelta(days=7), alias="date_published_from_")
@@ -75,43 +81,8 @@ class FilterNews(BaseModel):
         orm_mode = True
 
 
-class TempOrigin(BaseModel):
+class SpiderOrigin(BaseModel):
     parsed_from: ParsedFrom = Field(default="naked-science.ru")
-
-    class Config:
-        orm_mode = True
-
-
-class Tag(BaseModel):
-    tag: str | None
-
-    class Config:
-        orm_mode = True
-
-
-class Origin(BaseModel):
-    parsed_from: str | None
-
-    class Config:
-        orm_mode = True
-
-
-class NewsJSONNoID(BaseModel):
-    title: str
-    brief_text: str
-    full_text: str
-    tag: str | None
-    search_words: str | None
-    ml_key_words: str | None
-    parsed_from: str
-    full_text_link: str
-    published_at: datetime
-    parsed_at: datetime
-    rating: int | None
-    counter: int | None
-    fun_metric: float | None
-    unique_metric: float | None
-    simple_metric: float | None
 
     class Config:
         orm_mode = True
