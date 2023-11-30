@@ -348,7 +348,7 @@ async def delete_news_by_id(id: int, username: UserName, session: AsyncSession =
 
 
 @get_temp_router.delete("/temp/many/all", response_model=List[DeleteNews] | Any)
-async def delete_news_by_id(username: UserName, session: AsyncSession = Depends(get_async_session)):
+async def delete_all_news(username: UserName, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to delete all news for {username} from temp_article table")
         delete_stmt = delete(temp_article).where(temp_article.c.username == username.name)
