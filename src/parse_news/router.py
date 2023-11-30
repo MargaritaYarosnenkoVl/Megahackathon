@@ -22,10 +22,10 @@ from .schemas import (MainNews,
                       SpiderOrigin,
                       ParsedFrom, DeleteNews)
 
-get_base_router = APIRouter(prefix="/get",
+get_base_router = APIRouter(prefix="",
                             tags=["Get News"])
 
-get_temp_router = APIRouter(prefix="/get",
+get_temp_router = APIRouter(prefix="",
                             tags=["Get Temp News"])
 
 schedule_parser_router = APIRouter(prefix="/schedule",
