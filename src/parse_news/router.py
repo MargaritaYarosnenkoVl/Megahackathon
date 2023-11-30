@@ -294,20 +294,20 @@ async def copy_news_by_id(item_id: int, session: AsyncSession = Depends(get_asyn
                 "details": e}
 
 
-@get_temp_router.patch("/temp/single/", response_model=List[TempNews])
-async def patch_news(news: TempNews, session: AsyncSession = Depends(get_async_session)):
-    try:
-        logger.info(f"Try to patch news by id={id} from temp_article table")
-        delete_stmt = delete(temp_article).where(temp_article.c.id == id).returning(id)
-        result = await session.execute(delete_stmt)
-        await session.commit()
-        logger.info(f"News with id={id} is deleted from temp_article table")
-        return result.scalar()
-    except Exception as e:
-        logger.debug(e)
-        return {"status": "error",
-                "data": e,
-                "details": e}
+# @get_temp_router.patch("/temp/single/", response_model=List[TempNews])
+# async def patch_news(news: TempNews, session: AsyncSession = Depends(get_async_session)):
+#     try:
+#         logger.info(f"Try to patch news by id={id} from temp_article table")
+#         delete_stmt = delete(temp_article).where(temp_article.c.id == id).returning(id)
+#         result = await session.execute(delete_stmt)
+#         await session.commit()
+#         logger.info(f"News with id={id} is deleted from temp_article table")
+#         return result.scalar()
+#     except Exception as e:
+#         logger.debug(e)
+#         return {"status": "error",
+#                 "data": e,
+#                 "details": e}
 
 
 @get_temp_router.delete("/temp/single/{id}", response_model=List[DeleteNews] | Any)
