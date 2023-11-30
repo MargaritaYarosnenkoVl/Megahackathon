@@ -35,7 +35,8 @@ article = Table("article",
                 Column("counter", Integer, default=0),  # сколько раз встречалась на сайтах
                 Column("fun_metric", Float, default=0),  # метрика забавности что ли
                 Column("unique_metric", Float, default=0),  # метрика уникальности
-                Column("simple_metric", Float, default=0)  # метрика простоты понимания
+                Column("simple_metric", Float, default=0),  # метрика простоты понимания
+                Column("username", String),
                 )
 
 temp_article = Table("temp_article",
