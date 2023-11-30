@@ -42,6 +42,14 @@ class TempNews(News):
         orm_mode = True
 
 
+class NewsID(News):
+
+    class Config:
+        fields = {"spidername": {"exclude": True}}
+        orm_mode = True
+
+
+
 class Tag(BaseModel):
     tag: str | None
 
