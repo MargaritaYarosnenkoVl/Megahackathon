@@ -351,11 +351,11 @@ async def delete_news_by_id(id: int, username: UserName, session: AsyncSession =
 async def delete_news_by_id(username: UserName, session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to delete all news for {username} from temp_article table")
-        delete_stmt = delete(temp_article).where(temp_article.c.username == username)
+        delete_stmt = delete(temp_article).where(temp_article.c.username == username.name)
         result = await session.execute(delete_stmt)
         logger.info(result)
         await session.commit()
-        logger.info(f"All News for user {username} are deleted from temp_article table")
+        logger.info(f"All News for user {username.name} are deleted from temp_article table")
         return "Articles deleted"
     except Exception as e:
         logger.debug(e)
