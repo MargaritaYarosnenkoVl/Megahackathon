@@ -271,21 +271,8 @@ async def get_news_by_id(item_id: int, session: AsyncSession = Depends(get_async
 
 @get_temp_router.post("/temp/copy_to_main/{item_id}", response_model=Any)
 async def copy_news_by_id(item_id: int, username: UserName, session: AsyncSession = Depends(get_async_session)):
-    fields_to_copy = ["title", "brief_text", "full_text", "tag", "search_words", "ml_key_words", "parsed_from",
-                      "full_text_link", "published_at", "parsed_at", "rating", "counter", "fun_metric", "unique_metric",
-                      "simple_metric", "username"]
     try:
-        logger.info(f"Try to copy news with id={item_id} from temp_article to article table")
-
-        query = select(temp_article.c.title, temp_article.c.brief_text, temp_article.c.full_text,
-                       temp_article.c.tag, temp_article.c.search_words, temp_article.c.ml_key_words,
-                       temp_article.c.parsed_from, temp_article.c.full_text_link, temp_article.c.published_at,
-                       temp_article.c.parsed_at, temp_article.c.rating, temp_article.c.counter,
-                       temp_article.c.fun_metric, temp_article.c.unique_metric, temp_article.c.simple_metric,
-                       temp_article.c.username
-                       ).where(temp_article.c.id == item_id,
-                               temp_article.c.username == username.name)
-
+        logger.info("Check for title with username in main")
         # query on title from temp
         query_title = select(temp_article.c.title).where(temp_article.c.id == item_id,
                                                          temp_article.c.username == username.name)
@@ -293,20 +280,35 @@ async def copy_news_by_id(item_id: int, username: UserName, session: AsyncSessio
         title = await session.execute(query_title)
         query_title_res: str = title.fetchone()[0]
         logger.info(query_title)
-
         # check title with username in main
         query_on_exist_in_main = select(article).where(article.c.title == query_title_res,
                                                        article.c.username == username.name)
         news_exist_in_main = await session.execute(query_on_exist_in_main)
         is_exist = news_exist_in_main.fetchone()
         if not is_exist:
+            logger.info(f"Try to copy news with id={item_id} from temp_article to article table")
+            fields_to_copy = ["title", "brief_text", "full_text", "tag", "search_words", "ml_key_words", "parsed_from",
+                              "full_text_link", "published_at", "parsed_at", "rating", "counter", "fun_metric",
+                              "unique_metric",
+                              "simple_metric", "username"]
+            query = select(temp_article.c.title, temp_article.c.brief_text, temp_article.c.full_text,
+                           temp_article.c.tag, temp_article.c.search_words, temp_article.c.ml_key_words,
+                           temp_article.c.parsed_from, temp_article.c.full_text_link, temp_article.c.published_at,
+                           temp_article.c.parsed_at, temp_article.c.rating, temp_article.c.counter,
+                           temp_article.c.fun_metric, temp_article.c.unique_metric, temp_article.c.simple_metric,
+                           temp_article.c.username
+                           ).where(temp_article.c.id == item_id,
+                                   temp_article.c.username == username.name)
             stmt = article.insert().from_select(fields_to_copy, query)
             await session.execute(stmt)
             await session.commit()
             logger.info(f"News with id={item_id} by {username.name} copied from temp_article to article")
-            return "OK"
+            return "Article was copied"
         else:
             return "Article already exists"
+    except TypeError as e:
+        logger.debug(e)
+        return "Article doesnt exit in temp"
     except Exception as e:
         logger.debug(e)
         return {"status": "error",
