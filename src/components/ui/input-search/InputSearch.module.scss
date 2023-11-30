@@ -3,8 +3,7 @@
 .block__header_settings {
 	display: flex;
 	align-items: center;
-	gap: 121px;
-	// margin-left: 150px;
+	gap: 10px;
 
 	> .block__search {
 		height: 56px;
@@ -34,6 +33,15 @@
 				line-height: 1.5;
 				color: $black;
 			}
+		}
+	}
+
+	> .image__pars {
+		margin-left: 10px;
+		background-color: rgba($color: #000000, $alpha: 0);
+
+		&:hover {
+			cursor: pointer;
 		}
 	}
 

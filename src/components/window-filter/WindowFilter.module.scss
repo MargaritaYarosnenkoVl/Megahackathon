@@ -1,0 +1,104 @@
+@import '../../assets/styles/variables';
+
+.wrapper {
+	position: absolute;
+	top: 10%;
+	left: 20%;
+	width: 1143px;
+	height: 920px;
+	background-color: $white;
+	padding: 34px 34px 64px 56px;
+	border: 1px solid $dark__blue;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+
+	> .exit__button {
+		background-color: rgba($color: #000000, $alpha: 0);
+		align-self: end;
+
+		> img {
+		}
+	}
+
+	> form {
+		display: flex;
+		gap: 68px;
+		position: relative;
+
+		> .block__category {
+			max-width: 285px;
+
+			> h2 {
+				font-size: 1em;
+				color: $white;
+				line-height: 1.2;
+				text-transform: uppercase;
+				padding: 11px 125px 11px 41px;
+				background-color: $dark__blue;
+				border-radius: 5px;
+			}
+
+			> .block__checkbox {
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				padding: 24px 20px 0px 40px;
+			}
+		}
+
+		> .block__check_and_calendar {
+			max-width: 317px;
+
+			> .block__miscellaneous {
+				> h2 {
+					font-size: 1em;
+					color: $white;
+					line-height: 1.2;
+					text-transform: uppercase;
+					padding: 11px 211px 11px 41px;
+					background-color: $dark__blue;
+					border-radius: 5px;
+				}
+				> .block__checkbox {
+					display: flex;
+					flex-direction: column;
+					gap: 20px;
+					padding: 24px 20px 0px 40px;
+				}
+			}
+		}
+
+		> .block__source {
+			margin-right: 53px;
+			max-width: 262px;
+
+			> h2 {
+				font-size: 1em;
+				color: $white;
+				line-height: 1.2;
+				text-transform: uppercase;
+				padding: 11px 116px 11px 41px;
+				background-color: $dark__blue;
+				border-radius: 5px;
+			}
+			> .block__checkbox {
+				display: flex;
+				flex-direction: column;
+				gap: 20px;
+				padding: 24px 20px 0px 40px;
+			}
+		}
+
+		> .block__buttons {
+			margin-right: 53px;
+			position: absolute;
+			right: 0;
+			bottom: -44px;
+
+			> button {
+				margin-left: 93px;
+			}
+		}
+	}
+}

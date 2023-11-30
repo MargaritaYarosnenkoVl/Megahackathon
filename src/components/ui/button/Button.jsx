@@ -13,6 +13,7 @@ const Button = ({
 	setIsEditNews,
 	setIsViewEditNews,
 	secondPassword,
+	result,
 }) => {
 	const navigate = useNavigate();
 
@@ -78,6 +79,10 @@ const Button = ({
 				</button>
 			) : saveInfo === 'search' ? (
 				<button className={styles.button}>{children}</button>
+			) : saveInfo === 'filter-start' ? (
+				<button className={styles.button} type='submit'>
+					{children}
+				</button>
 			) : (
 				<button
 					className={styles.button}
