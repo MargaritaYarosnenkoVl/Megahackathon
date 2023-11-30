@@ -2,9 +2,9 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { useInfoUser } from '../../../hooks/useInfoUser';
+import { useUsers } from '../../../hooks/useUsers';
 import { actions } from '../../../store/users/Users.slice';
 import styles from './Button.module.scss';
-import { useUsers } from '../../../hooks/useUsers';
 
 const Button = ({
 	children,
@@ -14,6 +14,7 @@ const Button = ({
 	setIsEditNews,
 	setIsViewEditNews,
 	secondPassword,
+	result,
 }) => {
 	const navigate = useNavigate();
 
@@ -85,10 +86,16 @@ const Button = ({
 				</button>
 			) : saveInfo === 'search' ? (
 				<button className={styles.button}>{children}</button>
+			) : saveInfo === 'filter-start' ? (
+				<button className={styles.button} type='submit'>
+					{children}
+				</button>
 			) : saveInfo === 'users' ? (
 				<button
 					className={styles.button_save}
-					onClick={() => (isAuth ? navigate('/home/personalArea/adminPanel') : '')}
+					onClick={() =>
+						isAuth ? navigate('/home/personalArea/adminPanel') : ''
+					}
 					// onClick={usersHandler}
 				>
 					{children}
@@ -101,7 +108,7 @@ const Button = ({
 				>
 					{children}
 				</button>
-			):(
+			) : (
 				<button
 					className={styles.button}
 					onClick={() => (isAuth ? navigate('/home') : '')}
