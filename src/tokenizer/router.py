@@ -11,9 +11,9 @@ fill_ml = APIRouter(prefix="/ml",
 
 
 @fill_ml.get("/fill_key_words")
-async def fill_key_words(session: AsyncSession = Depends(get_async_session)):
+async def fill_key_words(table_name: str, session: AsyncSession = Depends(get_async_session)):
     try:
-        main_tokenizer()
+        main_tokenizer(table_name)
         return
     except Exception as e:
         print(e)

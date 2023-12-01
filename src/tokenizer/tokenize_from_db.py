@@ -44,32 +44,32 @@ def vectorize(tokens: pd.DataFrame, names: np.array) -> pd.DataFrame:
     return matrix
 
 
-def write_to_db(df: pd.DataFrame, engine):
+def write_to_db(df: pd.DataFrame, engine, table_name: str):
     for idx in df.index:
         with engine.connect() as cur:
             res_ = df.loc[idx, :].reset_index().sort_values(by=[idx, 'index'], ascending=False)
             res = " ".join(res_["index"].iloc[:20].values)
             params = ({"ml_key_words": res, "id": idx})
             cur.execute(text(f"""
-            UPDATE article
+            UPDATE {table_name}
             SET ml_key_words = :ml_key_words
-            WHERE :id = article.id 
-            RETURNING article.id, :id"""), params)
+            WHERE :id = {table_name}.id 
+            RETURNING {table_name}.id, :id"""), params)
             cur.commit()
     print("Words written to DB", "OK")
 
 
-def main():
+def main(table_name: str):
     engine = create_engine(
         f'postgresql+psycopg2://{FSTR_DB_LOGIN}:{FSTR_DB_PASS}@{FSTR_DB_HOST}:{FSTR_DB_PORT}/{FSTR_DB_NAME}')
     print("DB engine created", "OK")
-    df = pd.read_sql_query("""SELECT id, full_text FROM article WHERE ml_key_words IS NULL""", con=engine)
+    df = pd.read_sql_query(f"""SELECT id, full_text FROM {table_name} WHERE ml_key_words IS NULL""", con=engine)
     print("DB data loaded", "OK")
     df["tokenized_text"] = df["full_text"].apply(get_clear_tokens)
     print("DF column 'tokenized_text' created", "OK")
     mtrx = vectorize(df["tokenized_text"].values, names=df["id"].values)
-    write_to_db(mtrx, engine=engine)
+    write_to_db(mtrx, engine=engine, table_name=table_name)
 
 
 if __name__ == "__main__":
-    main()
+    main(table_name="article")
