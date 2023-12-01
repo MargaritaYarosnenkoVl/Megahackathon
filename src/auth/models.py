@@ -8,58 +8,35 @@ from fastapi_users.db import SQLAlchemyUserDatabase, SQLAlchemyBaseUserTable, SQ
 from sqlalchemy import String, Boolean, Column, Integer, TIMESTAMP, ForeignKey, select, MetaData, Table, JSON
 from sqlalchemy.ext.asyncio import AsyncSession  # async_sessionmaker, create_async_engine
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import Mapped, relationship  # DeclarativeBase,
+from sqlalchemy.orm import Mapped, relationship, mapped_column
 
 from database import Base, async_session_maker  # DATABASE_URL,
 
 metadata = MetaData()
 
 
-role = Table("role",
-             metadata,
-             Column("id", Integer, primary_key=True),
-             Column("name", String, nullable=False, unique=True, primary_key=True),
-             # Column("permissions", JSON)
-             )
-
-
-user = Table("user",
-             metadata,
-             Column("id", Integer, primary_key=True),
-             Column("full_name", String, default="Иванов Иван Иванович"),
-             Column("phone_number", String, default="9871234567"),
-             Column("username", String, nullable=False, unique=True),
-             Column("hashed_password", String(length=1024), nullable=False),
-             Column("registred_at", TIMESTAMP, default=datetime.utcnow),
-             Column("role_name", String, ForeignKey(role.c.name)),
-             Column("email", String(length=320), unique=True, index=True, nullable=False),
-             Column("is_active", Boolean, default=True, nullable=False),
-             Column("is_superuser", Boolean, default=False, nullable=False),
-             Column("is_verified", Boolean, default=False, nullable=False)
-             )
-
-#
-# class OAuthAccount(SQLAlchemyBaseOAuthAccountTable[int], Base):
-#     id = Column(Integer, primary_key=True)
-#
-#     @declared_attr
-#     def user_id(cls):
-#         return Column(Integer, ForeignKey("user.id", ondelete="cascade"), nullable=False)
+class Role(Base):
+    metadata = metadata
+    __tablename__ = "role"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String, nullable=False, unique=True, primary_key=True)
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
+    metadata = metadata
+    __tablename__ = "user"
     # oauth_accounts: Mapped[List[OAuthAccount]] = relationship("OAuthAccount", lazy="joined")
-    id = Column("id", Integer, primary_key=True)
-    full_name = Column("full_name", String, default="Иванов Иван Иванович", nullable=False)
-    phone_number = Column("phone_number", String, default="9871234567")
-    username = Column("username", String, nullable=False, unique=True)
-    hashed_password = Column(String(length=1024), nullable=False)
-    registred_at = Column("registred_at", TIMESTAMP, default=datetime.utcnow)
-    role_name = Column("role_name", String, ForeignKey(role.c.name))
-    email = Column(String(length=320), unique=True, index=True, nullable=False)
-    is_active = Column(Boolean, default=True, nullable=False)
-    is_superuser = Column(Boolean, default=False, nullable=False)
-    is_verified = Column(Boolean, default=False, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    full_name: Mapped[str | None] = mapped_column(String, default="Иванов Иван Иванович", nullable=False)
+    phone_number: Mapped[str | None] = mapped_column(String, default="9871234567")
+    username: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    hashed_password: Mapped[str] = mapped_column(String(length=1024), nullable=False)
+    registred_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, default=datetime.utcnow)
+    role_name: Mapped[str] = mapped_column(String, ForeignKey(Role.name))
+    email: Mapped[str] = mapped_column(String(length=320), unique=True, index=True, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     def __str__(self):
         return self.username

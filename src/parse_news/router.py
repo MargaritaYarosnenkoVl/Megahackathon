@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import insert, select, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
-from .models import article, temp_article
+from .models import Article, TempArticle
 from .schemas import (MainNews,
                       TempNews,
                       NewsID,
@@ -32,6 +32,9 @@ schedule_parser_router = APIRouter(prefix="/schedule",
                                    tags=["Schedule parser/spider"])
 
 logger = logging.getLogger('app')
+
+article = Article.__table__
+temp_article = TempArticle.__table__
 
 
 # --- ARTICLE --- #
@@ -238,7 +241,6 @@ async def stop_spider(job_id: str):
 
 # --- TEMP_ARTICLE --- #
 @get_temp_router.get("/temp/count/all", response_model=Count)
-# response_model=OfferSearchResult, operation_id="offer_search"
 async def whole_quantity(session: AsyncSession = Depends(get_async_session)):
     try:
         logger.info(f"Try to count all news in table temp_article")

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from auth.models import User, user, role
+from auth.models import User, Role
 from fastapi_users import FastAPIUsers
 from typing import List
 from auth.manager import get_user_manager
@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
-from .schemas import UserRead, UserCreate, Role
+from .schemas import UserRead, UserCreate, UserRole
 
 router = APIRouter(prefix="/auth",
                    tags=["auth"])
@@ -17,8 +17,11 @@ fastapi_users = FastAPIUsers[User, int](get_user_manager,
                                         )
 current_user = fastapi_users.current_user()
 
+user = User.__table__
+role = Role.__table__
 
-@router.get("/get_all_roles", response_model=List[Role])
+
+@router.get("/get_all_roles", response_model=List[UserRole])
 async def get_all_roles(session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(role).order_by(role.c.id.desc())

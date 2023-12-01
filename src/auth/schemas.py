@@ -13,7 +13,7 @@ class RoleName(str, Enum):
     editor = "editor"
 
 
-class Role(BaseModel):
+class UserRole(BaseModel):
     id: int
     name: RoleName = Field(default="user")
 
