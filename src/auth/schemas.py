@@ -50,4 +50,16 @@ class UserCreate(schemas.BaseUserCreate):
 
 
 class UserUpdate(schemas.BaseUserUpdate):
-    pass
+    username: str = "user"
+    full_name: str = "Иванов Иван Иванович"
+    role_name: RoleName
+    email: EmailStr = "user@example.com"
+    phone_number: str = "9871234567"
+    password: str = "123456"
+    registred_at: datetime
+    is_active: Optional[bool] = True
+    is_superuser: Optional[bool] = False
+    is_verified: Optional[bool] = False
+
+    class Config:
+        orm_mode = True
