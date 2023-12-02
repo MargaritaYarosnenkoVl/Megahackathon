@@ -5,10 +5,11 @@ import nltk
 from string import punctuation
 from nltk.corpus import stopwords
 from sqlalchemy import create_engine, text
-from .config import FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_NAME
+from config import FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_NAME
 # from typing import Generator
 # import psycopg2
 import logging
+from celery import shared_task
 
 logger = logging.getLogger("app")
 
@@ -62,6 +63,7 @@ def write_to_db(df: pd.DataFrame, engine, table_name: str):
     print("Words written to DB", "OK")
 
 
+@shared_task
 def main(table_name: str):
     engine = create_engine(
         f'postgresql+psycopg2://{FSTR_DB_LOGIN}:{FSTR_DB_PASS}@{FSTR_DB_HOST}:{FSTR_DB_PORT}/{FSTR_DB_NAME}')
@@ -73,8 +75,13 @@ def main(table_name: str):
     df["tokenized_text"] = df["full_text"].apply(get_clear_tokens)
     print("DF column 'tokenized_text' created", "OK")
     logger.info("DB engine created OK")
-    mtrx = vectorize(df["tokenized_text"].values, names=df["id"].values)
-    write_to_db(mtrx, engine=engine, table_name=table_name)
+    try:
+        mtrx = vectorize(df["tokenized_text"].values, names=df["id"].values)
+        write_to_db(mtrx, engine=engine, table_name=table_name)
+    except ValueError as e:
+        print(e)
+        logger.debug(e)
+
 
 
 if __name__ == "__main__":
