@@ -8,6 +8,9 @@ from sqlalchemy import create_engine, text
 from .config import FSTR_DB_LOGIN, FSTR_DB_PASS, FSTR_DB_HOST, FSTR_DB_PORT, FSTR_DB_NAME
 # from typing import Generator
 # import psycopg2
+import logging
+
+logger = logging.getLogger("app")
 
 
 def get_clear_tokens(text) -> str:
@@ -63,13 +66,16 @@ def main(table_name: str):
     engine = create_engine(
         f'postgresql+psycopg2://{FSTR_DB_LOGIN}:{FSTR_DB_PASS}@{FSTR_DB_HOST}:{FSTR_DB_PORT}/{FSTR_DB_NAME}')
     print("DB engine created", "OK")
+    logger.info("DB engine created", "OK")
     df = pd.read_sql_query(f"""SELECT id, full_text FROM {table_name} WHERE ml_key_words IS NULL""", con=engine)
     print("DB data loaded", "OK")
+    logger.info("DB engine created OK")
     df["tokenized_text"] = df["full_text"].apply(get_clear_tokens)
     print("DF column 'tokenized_text' created", "OK")
+    logger.info("DB engine created OK")
     mtrx = vectorize(df["tokenized_text"].values, names=df["id"].values)
     write_to_db(mtrx, engine=engine, table_name=table_name)
 
 
 if __name__ == "__main__":
-    main(table_name="article")
+    main(table_name="temp_article")
