@@ -79,7 +79,7 @@ def init_routers(app: FastAPI) -> None:
     app.include_router(get_temp_router)
     app.include_router(auth_check_router)
     app.include_router(schedule_parser_router)
-    app.include_router(fill_ml)
+    # app.include_router(fill_ml)
 
 
 def init_middleware(app: FastAPI, origins_host: list):
