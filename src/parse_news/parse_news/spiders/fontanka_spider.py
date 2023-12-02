@@ -35,9 +35,8 @@ class FontankaSpider(scrapy.Spider):
         links = ["/".join(link) for link in raw_links]  # соединяем группы
         # print(*links, sep="\n")
         for link in links:
-            full_text_link: str = "https://www.fontanka.ru/" + link + "/"
             try:
-
+                full_text_link: str = "https://www.fontanka.ru/" + link + "/"
                 news_info: dict = await self.get_news_info(link=full_text_link)
 
                 yield {"title": news_info.get("title"),  # название
@@ -51,13 +50,13 @@ class FontankaSpider(scrapy.Spider):
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
                        }
             except AttributeError as e:
-                print(e, full_text_link)
+                print(e)
                 continue
             except IndexError as e:
-                print(e, full_text_link)
+                print(e)
                 continue
             except TypeError as e:
-                print(e, full_text_link)
+                print(e)
                 continue
 
     async def get_news_info(self, link: str) -> dict:

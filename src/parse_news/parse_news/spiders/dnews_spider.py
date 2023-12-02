@@ -48,6 +48,12 @@ class DNewsSpider(scrapy.Spider):
             except AttributeError as e:
                 print(e)
                 continue
+            except TypeError as e:
+                print(e)
+                continue
+            except IndexError as e:
+                print(e)
+                continue
 
     async def get_news_info(self, link: str) -> dict:
         res = requests.get(url=link, headers=self.headers)

@@ -18,8 +18,8 @@ class NakedScienceSpider(scrapy.Spider):
 
     async def parse(self, response, **kwargs):
         for quote in response.css("div.news-item.grid"):
-            full_text_link: str = quote.css("a::attr(href)").get()
             try:
+                full_text_link: str = quote.css("a::attr(href)").get()
                 search_words: list = quote.css("div.terms-item a.animate-custom::text").getall()
                 search_words_cleared: list = await self.clear_search_words(search_words)
 
@@ -36,13 +36,13 @@ class NakedScienceSpider(scrapy.Spider):
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
                        }
             except AttributeError as e:
-                print(e, full_text_link)
+                print(e)
                 continue
             except TypeError as e:
-                print(e, full_text_link)
+                print(e)
                 continue
             except IndexError as e:
-                print(e, full_text_link)
+                print(e)
                 continue
 
     async def get_full_text(self, link: str) -> dict:

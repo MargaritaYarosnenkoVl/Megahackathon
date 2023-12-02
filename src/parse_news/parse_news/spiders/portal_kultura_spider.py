@@ -33,9 +33,9 @@ class PortalKultura(scrapy.Spider):
                        "brief_text": title + " " + news_info.get("brief_text"),  # короткое описание
                        "full_text": news_info.get("full_text").replace(' ', ' ').replace('\r', '').replace('\n', ''),
                        # полный текст
-                       # "tag": quote.css("div.entry__tags a::text").get(),  # тэг - тема новости
+                       "tag": "культура",  # quote.css("div.entry__tags a::text").get(),  # тэг - тема новости
                        # (первое слово/фраза из группы тегов)
-                       # "search_words":news_info.get("search_words"),  # строка всех тегов
+                       "search_words": "культура",  # news_info.get("search_words"),  # строка всех тегов
                        "parsed_from": "portal-kultura.ru",  # название сайта
                        "full_text_link": full_text_link,  # ссылка на полный текст
                        "published_at": news_info.get("published_at"),  # дата публикации
