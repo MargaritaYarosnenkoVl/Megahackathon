@@ -3,12 +3,15 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { useResultNews } from './useResultNews';
+import { useUser } from './useUser';
 
 const useSearchNews = () => {
 	const user = useSelector(state => state.users[0]);
+	const {infoUser} = useUser();
 
-	const { request, setRequest } = useResultNews();
+	const { request, setRequest, responseNews, setResponseNews } = useResultNews({});
 	const [formData, setFormData] = useState();
+	const [parseToken, setParseToken] = useState();
 
 	const arrayAdres = [
 		'naked-science.ru',
@@ -58,17 +61,18 @@ const useSearchNews = () => {
 				{
 					origin: { parsed_from: adresCheck(searchCheck(data), arrayAdres) },
 					username: {
-						name: user.name,
+						name: infoUser.username,
 					},
 				}
 			);
 			setRequest({
-				origin: { parsed_from: adresCheck(searchCheck(data), arrayAdres) },
 				username: {
-					name: user.name,
+					name: infoUser.username,
 				},
+				origin: { parsed_from: adresCheck(searchCheck(data), arrayAdres) },
 			});
 			console.log(response);
+			setParseToken(response.data);
 		} catch (error) {
 			console.log(error);
 		}
@@ -77,10 +81,26 @@ const useSearchNews = () => {
 	const result = async () => {
 		try {
 			const response = await axios.post(
-				'https://212.20.45.230:8004/get/temp/filter',
+				'https://212.20.45.230:8004/temp/filter',
 				request
 			);
+			console.log(response.data);
+			const data = response.data;
+			setResponseNews(data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
+
+	const stop_parse = async () => {
+		try {
+			const response = await axios.post(
+				'https://212.20.45.230:8004/schedule/spider/stop',
+				{
+					job_id: {parseToken}
+				}
+			);
 			console.log(response);
 		} catch (error) {
 			console.log(error);
@@ -97,6 +117,8 @@ const useSearchNews = () => {
 		result,
 		user,
 		request,
+		stop_parse,
+		responseNews,
 	};
 };
 

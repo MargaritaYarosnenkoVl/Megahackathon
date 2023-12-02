@@ -2,17 +2,17 @@ import Header from '../../header/Header';
 import Layout from '../../layout/Layout';
 import LeftPanel from '../../left-panel/LeftPanel';
 import Content from '../../content/Content';
-import styles from './UserList.module.scss';
 import { Link } from 'react-router-dom';
 import { useUsers } from '../../../hooks/useUsers';
 import User from './User';
 import Pagination from './Pagination';
 import { useState } from 'react';
 import Button from '../../ui/button/Button';
+import styles from './UserList.module.scss';
 
 
 const UserList = () => {
-    const {infoUsers, get_users } = useUsers();
+    const {infoUsers } = useUsers();
 	
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(10);

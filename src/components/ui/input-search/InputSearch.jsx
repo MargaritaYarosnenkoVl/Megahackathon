@@ -6,7 +6,7 @@ import styles from './InputSearch.module.scss';
 const InputSearch = ({ filter }) => {
 	const { setIsViewFilter } = useFilter(FilterContext);
 
-	const { result, request } = useSearchNews();
+	const { result, request, stop_parse } = useSearchNews();
 
 	return (
 		<div className={styles.block__header_settings}>
@@ -27,7 +27,7 @@ const InputSearch = ({ filter }) => {
 				/>
 				<input className={styles.search} type='text' placeholder='Поиск' />
 			</div>
-			<button className={styles.image__pars}>
+			<button className={styles.image__pars} onClick={stop_parse}>
 				<img src='../images/icons/stop_pars_white.svg' alt='stop' />
 			</button>
 			<button className={styles.image__pars} onClick={result}>

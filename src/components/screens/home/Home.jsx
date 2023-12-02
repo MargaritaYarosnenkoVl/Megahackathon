@@ -12,9 +12,11 @@ import LeftPanel from '../../left-panel/LeftPanel';
 import News from '../../news/News';
 import WindowFilter from '../../window-filter/WindowFilter';
 import styles from './Home.module.scss';
+import { useResultNews } from '../../../hooks/useResultNews';
 
 const Home = () => {
 	const users = useSelector(state => state.users[0]);
+	const { responseNews, setResponseNews } = useResultNews({});
 
 	const [editingNews, setEditingNews] = useState();
 	const [isViewEditNews, setIsViewEditNews] = useState(false);
@@ -64,6 +66,18 @@ const Home = () => {
 							/>
 						);
 					})}
+					{/* {responseNews.map(news => {
+						return (
+							<News
+								key={news.id}
+								setEditingNews={setEditingNews}
+								setIsViewEditNews={setIsViewEditNews}
+								editingNews={editingNews}
+								isViewEditNews={isViewEditNews}
+								news={news}
+							/>
+						);
+					})} */}
 				</div>
 				<Editing
 					setEditingNews={setEditingNews}

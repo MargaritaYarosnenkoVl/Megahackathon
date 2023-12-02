@@ -96,15 +96,13 @@ const Button = ({
 					onClick={() =>
 						isAuth ? navigate('/home/personalArea/adminPanel') : ''
 					}
-					// onClick={usersHandler}
 				>
 					{children}
 				</button>
 			) : saveInfo === 'add_user' ? (
 				<button
 					className={styles.button_save}
-					// onClick={() => (isAuth ? navigate('/home/personalArea/adminPanel') : '')}
-					// onClick={usersHandler}
+					onClick={() => (isAuth ? navigate('/home/personalArea/adminPanel/addNewUser') : '')}
 				>
 					{children}
 				</button>

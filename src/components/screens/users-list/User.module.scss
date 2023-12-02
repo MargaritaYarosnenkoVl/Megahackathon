@@ -18,3 +18,45 @@
         }
     }
 }
+
+
+.modal__text {
+    display: flex;
+    justify-content: center;
+    font-size: 24px;
+    color: $black;
+    padding-top: 43px;
+}
+
+
+.modal__buttons {
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+    gap: 24px;
+    
+
+    > button {
+        background-color: rgba($color: #000000, $alpha: 0);
+        width: 148px;
+        height: 44px;
+        border-radius: 20px;
+        border: 1px solid $blue;
+        color: $blue;
+        text-transform: uppercase;
+        line-height: 1.2;
+        background-color: rgba($color: #000000, $alpha: 0);
+        font-size: 1em;
+
+        &:hover {
+            cursor: pointer;
+            background-color: $blue;
+		    color: $white;
+        }
+    }
+}
+
+.modal__delete {
+    width: 563px;
+    height: 204px;
+}

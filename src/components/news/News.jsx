@@ -35,6 +35,18 @@ const News = ({
 				setIsViewEditNews(!isViewEditNews);
 				dispatch(actions.addHistoryNews(news));
 			}}
+			// onClick={() => {
+			// 	setEditingNews({
+			// 		id: news.id,
+			// 		title: news.title,
+			// 		preview: news.preview,
+			// 		date: news.date,
+			// 		source: news.source,
+			// 		description: news.brief_text,
+			// 	});
+			// 	setIsViewEditNews(!isViewEditNews);
+			// 	dispatch(actions.addHistoryNews(news));
+			// }}
 		>
 			<div className={styles.news__blockOne}>
 				<p className={styles.news__id}>{news.id}</p>
