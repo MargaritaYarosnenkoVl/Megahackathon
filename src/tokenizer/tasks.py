@@ -1,4 +1,5 @@
-from celery import Celery
+from celery import Celery, shared_task
+from tokenize_from_db import main
 
 celery = Celery("tokenizer", broker="redis://127.0.0.1:6379")
 
