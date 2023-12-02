@@ -7,20 +7,7 @@ from sqlalchemy import insert, select, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from .models import Article, TempArticle
-from .schemas import (MainNews,
-                      TempNews,
-                      NewsID,
-                      NewsFilter,
-                      Tag,
-                      Origin,
-                      SpiderName,
-                      Count,
-                      JobID,
-                      UserName,
-                      UserNameBase,
-                      Spider,
-                      SpiderOrigin,
-                      ParsedFrom, DeleteNews)
+from .schemas import MainNews, NewsFilter, Tag, Origin, Count, JobID, UserName, SpiderOrigin, DeleteNews
 
 get_base_router = APIRouter(prefix="",
                             tags=["Get News"])
@@ -204,7 +191,7 @@ async def launch_spider(origin: SpiderOrigin, username: UserName):
                                      cwd="/home/alexander/PycharmProjects/Megahackathon_T17/src/parse_news/parse_news")
         params = json.loads(proc_result.stdout)
         job_id = params["jobid"]
-        logger.info(f"Spider {spidername} is launched with params = {params}")
+        logger.info(f"Spider {spidername} is launched by {username.name} with params = {params}")
         print("OK", "Please, wait while parser is working. JobID: ", job_id)
         return job_id
     except Exception as e:
@@ -416,7 +403,7 @@ async def get_unique_origins(session: AsyncSession = Depends(get_async_session))
 @get_temp_router.post("/temp/filter", response_model=List[MainNews])
 async def filter_news(username: UserName, origin: SpiderOrigin, session: AsyncSession = Depends(get_async_session)):
     try:
-        logger.info(f"Try to filter by {username.name}, {origin} from temp_article")
+        logger.info(f"Try to filter by {username.name}, {origin.parsed_from} from temp_article")
         spidername: str = origin.__dict__.get("parsed_from").__dict__.get("_name_")
         logger.debug(f"Got {spidername} name")
         query = select(temp_article).filter(temp_article.c.username == username.name,
