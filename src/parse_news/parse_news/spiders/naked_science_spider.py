@@ -12,8 +12,8 @@ class NakedScienceSpider(scrapy.Spider):
 
     start_urls = ["https://naked-science.ru/article/page/1",
                   "https://naked-science.ru/article/page/2",
-                  # "https://naked-science.ru/article/page/3",
-                  # "https://naked-science.ru/article/page/4",
+                  "https://naked-science.ru/article/page/3",
+                  "https://naked-science.ru/article/page/4",
                   ]
 
     async def parse(self, response, **kwargs):
