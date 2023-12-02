@@ -18,14 +18,16 @@ class NakedScienceSpider(scrapy.Spider):
 
     async def parse(self, response, **kwargs):
         for quote in response.css("div.news-item.grid"):
+            full_text_link: str = quote.css("a::attr(href)").get()
             try:
-                full_text_link: str = quote.css("a::attr(href)").get()
                 search_words: list = quote.css("div.terms-item a.animate-custom::text").getall()
                 search_words_cleared: list = await self.clear_search_words(search_words)
 
+                news_info = await self.get_full_text(link=full_text_link)
+
                 yield {"title": quote.css("a::text").get(),  # название
                        "brief_text": quote.css("p::text").get(),  # короткое описание
-                       "full_text": await self.get_full_text(link=full_text_link),  # полный текст
+                       "full_text": news_info.get("full_text"),  # полный текст
                        "tag": "наука",  # тэг - одно слово
                        "search_words": " ".join(search_words_cleared),  # слова для поиска
                        "parsed_from": "naked-science.ru",
@@ -34,17 +36,23 @@ class NakedScienceSpider(scrapy.Spider):
                        "parsed_at": datetime.utcnow(),  # дата добавления / парсинга
                        }
             except AttributeError as e:
-                print(e)
+                print(e, full_text_link)
+                continue
+            except TypeError as e:
+                print(e, full_text_link)
+                continue
+            except IndexError as e:
+                print(e, full_text_link)
                 continue
 
-    async def get_full_text(self, link: str) -> str:
+    async def get_full_text(self, link: str) -> dict:
         res = requests.get(url=link, headers=self.headers)
         if res.status_code == 200:
             soup = BeautifulSoup(res.content, 'lxml')
             post_lead: str = soup.find('div', {"class": "post-lead"}).text
-            paragraphs = soup.find('div', {"class": "body"}).findAll("p")
-            full_t = post_lead.strip() + " " + " ".join((p.text.strip() for p in paragraphs))
-            return full_t
+            ps = soup.find('div', {"class": "body"}).findAll("p")
+            full_text = post_lead.strip() + " " + " ".join((p.text.strip() for p in ps))
+            return {"full_text": full_text}
 
     async def clear_search_words(self, words: list[str]) -> list:
         return [word.strip()[2:] if word.startswith("#") else word.strip().lower() for word in words]
