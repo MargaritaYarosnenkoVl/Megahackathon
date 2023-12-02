@@ -2,6 +2,7 @@ import logging
 import uvicorn
 import subprocess
 from config import UVCRN_HOST, UVCRN_PORT, SSL_KEYFILE, SSL_SERTIF
+from redis import asyncio as aioredis
 
 from fastapi import FastAPI, Depends
 from fastapi_users import FastAPIUsers
@@ -36,10 +37,15 @@ def create_app() -> FastAPI:
     init_logger('app')
     init_routers(app)
     init_middleware(app, origins)
+    init_redis()
     # init_scrapyd_sever()
     logger = logging.getLogger('app')
     logger.info("main app as started")
     return app
+
+
+def init_redis():
+    redis = aioredis.from_url("redis://127.0.0.1:6379", encoding="utf8", decode_responses=True)
 
 
 def init_scrapyd_sever():
