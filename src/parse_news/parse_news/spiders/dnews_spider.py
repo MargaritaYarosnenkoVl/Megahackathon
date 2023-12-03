@@ -64,5 +64,5 @@ class DNewsSpider(scrapy.Spider):
             tags = soup.find('div', {'class': 'taglist'}).findAll('a')
             return {"full_text": " ".join((p.text.strip() for p in full_text_list)),
                     "search_words": " ".join((a.text.strip() for a in search_words)),
-                    "tags": " ".join((a.text.strip() for a in tags)),
+                    "tag": " ".join((a.text.strip() for a in tags)),
                     }
