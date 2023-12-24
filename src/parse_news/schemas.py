@@ -146,6 +146,7 @@ class UserNameBase(str, Enum):
     dima12 = "dima12"
     Aku = "Aku"
     AkuQ = "AkuQ"
+    celery = "celery"
 
 
 class UserName(BaseModel):
