@@ -13,15 +13,16 @@ class Nplus1Spider(scrapy.Spider):
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
 
     start_urls = ["https://www.forbes.ru/new?page=1",
-                  "https://www.forbes.ru/new?page=2",
-                  "https://www.forbes.ru/new?page=3",
-                  "https://www.forbes.ru/new?page=4",
-                  "https://www.forbes.ru/new?page=5",
-                  "https://www.forbes.ru/new?page=6",
-                  "https://www.forbes.ru/new?page=7",
-                  "https://www.forbes.ru/new?page=8",
-                  "https://www.forbes.ru/new?page=9",
-                  "https://www.forbes.ru/new?page=10"]
+                  # "https://www.forbes.ru/new?page=2",
+                  # "https://www.forbes.ru/new?page=3",
+                  # "https://www.forbes.ru/new?page=4",
+                  # "https://www.forbes.ru/new?page=5",
+                  # "https://www.forbes.ru/new?page=6",
+                  # "https://www.forbes.ru/new?page=7",
+                  # "https://www.forbes.ru/new?page=8",
+                  # "https://www.forbes.ru/new?page=9",
+                  # "https://www.forbes.ru/new?page=10",
+                  ]
 
     async def parse(self, response, **kwargs):
         target_script_content = response.css("script").getall()[0]  # строка - результат выполнения скрипта

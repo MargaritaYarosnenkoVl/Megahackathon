@@ -11,8 +11,8 @@ class KnifeMediaSpider(scrapy.Spider):
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
 
     start_urls = ["https://knife.media/category/news/page/1/",
-                  "https://knife.media/category/news/page/2/",
-                  "https://knife.media/category/news/page/3/",
+                  # "https://knife.media/category/news/page/2/",
+                  # "https://knife.media/category/news/page/3/",
                   ]
 
     async def parse(self, response, **kwargs):

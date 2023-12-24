@@ -13,10 +13,10 @@ class PortalKultura(scrapy.Spider):
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
 
     start_urls = [f"https://portal-kultura.ru/articles/news/?SECTION_CODE=news",
-                  f"https://portal-kultura.ru/articles/news/?SECTION_CODE=news&PAGEN_4=2",
-                  f"https://portal-kultura.ru/articles/news/?SECTION_CODE=news&PAGEN_4=3",
-                  f"https://portal-kultura.ru/articles/news/?SECTION_CODE=news&PAGEN_4=4",
-                  f"https://portal-kultura.ru/articles/news/?SECTION_CODE=news&PAGEN_4=5",
+                  # f"https://portal-kultura.ru/articles/news/?SECTION_CODE=news&PAGEN_4=2",
+                  # f"https://portal-kultura.ru/articles/news/?SECTION_CODE=news&PAGEN_4=3",
+                  # f"https://portal-kultura.ru/articles/news/?SECTION_CODE=news&PAGEN_4=4",
+                  # f"https://portal-kultura.ru/articles/news/?SECTION_CODE=news&PAGEN_4=5",
                   ]
 
     async def parse(self, response, **kwargs):

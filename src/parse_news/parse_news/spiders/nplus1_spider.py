@@ -20,12 +20,12 @@ class Nplus1Spider(scrapy.Spider):
     today_6 = today - timedelta(days=6)
 
     start_urls = [f"https://nplus1.ru/news/{today.year}/{today.month}/{today.day}",
-                  f"https://nplus1.ru/news/{today_1.year}/{today_1.month}/{today_1.day}",
-                  f"https://nplus1.ru/news/{today_2.year}/{today_2.month}/{today_2.day}",
-                  f"https://nplus1.ru/news/{today_3.year}/{today_3.month}/{today_3.day}",
-                  f"https://nplus1.ru/news/{today_4.year}/{today_4.month}/{today_4.day}",
-                  f"https://nplus1.ru/news/{today_5.year}/{today_5.month}/{today_5.day}",
-                  f"https://nplus1.ru/news/{today_6.year}/{today_6.month}/{today_6.day}",
+                  # f"https://nplus1.ru/news/{today_1.year}/{today_1.month}/{today_1.day}",
+                  # f"https://nplus1.ru/news/{today_2.year}/{today_2.month}/{today_2.day}",
+                  # f"https://nplus1.ru/news/{today_3.year}/{today_3.month}/{today_3.day}",
+                  # f"https://nplus1.ru/news/{today_4.year}/{today_4.month}/{today_4.day}",
+                  # f"https://nplus1.ru/news/{today_5.year}/{today_5.month}/{today_5.day}",
+                  # f"https://nplus1.ru/news/{today_6.year}/{today_6.month}/{today_6.day}",
                   ]
 
     async def parse(self, response, **kwargs):

@@ -12,16 +12,16 @@ class DNewsSpider(scrapy.Spider):
 
     start_urls = ["https://3dnews.ru/news/page-1.html",
                   "https://3dnews.ru/news/page-2.html",
-                  "https://3dnews.ru/news/page-3.html",
-                  "https://3dnews.ru/news/page-4.html",
-                  "https://3dnews.ru/news/page-5.html",
-                  "https://3dnews.ru/news/page-6.html",
-                  "https://3dnews.ru/news/page-7.html",
-                  "https://3dnews.ru/news/page-8.html",
-                  "https://3dnews.ru/news/page-9.html",
-                  "https://3dnews.ru/news/page-10.html",
-                  "https://3dnews.ru/news/page-11.html",
-                  "https://3dnews.ru/news/page-12.html",
+                  # "https://3dnews.ru/news/page-3.html",
+                  # "https://3dnews.ru/news/page-4.html",
+                  # "https://3dnews.ru/news/page-5.html",
+                  # "https://3dnews.ru/news/page-6.html",
+                  # "https://3dnews.ru/news/page-7.html",
+                  # "https://3dnews.ru/news/page-8.html",
+                  # "https://3dnews.ru/news/page-9.html",
+                  # "https://3dnews.ru/news/page-10.html",
+                  # "https://3dnews.ru/news/page-11.html",
+                  # "https://3dnews.ru/news/page-12.html",
                   ]
 
     async def parse(self, response, **kwargs):

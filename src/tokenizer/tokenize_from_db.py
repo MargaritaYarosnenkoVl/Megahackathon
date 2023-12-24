@@ -71,17 +71,16 @@ def main(table_name: str):
     logger.info("DB engine created", "OK")
     df = pd.read_sql_query(f"""SELECT id, full_text FROM {table_name} WHERE ml_key_words IS NULL""", con=engine)
     print("DB data loaded", "OK")
-    logger.info("DB engine created OK")
+    logger.info("DB data loaded OK")
     df["tokenized_text"] = df["full_text"].apply(get_clear_tokens)
     print("DF column 'tokenized_text' created", "OK")
-    logger.info("DB engine created OK")
+    logger.info("DF column 'tokenized_text' create OK")
     try:
         mtrx = vectorize(df["tokenized_text"].values, names=df["id"].values)
         write_to_db(mtrx, engine=engine, table_name=table_name)
     except ValueError as e:
         print(e)
         logger.debug(e)
-
 
 
 if __name__ == "__main__":

@@ -13,10 +13,10 @@ class DimonVideoSpider(scrapy.Spider):
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
 
     start_urls = [f"https://dimonvideo.ru/usernews/1/0/dateD/0",
-                  f"https://dimonvideo.ru/usernews/1/0/dateD/10",
-                  f"https://dimonvideo.ru/usernews/1/0/dateD/20",
-                  f"https://dimonvideo.ru/usernews/1/0/dateD/30",
-                  f"https://dimonvideo.ru/usernews/1/0/dateD/40",
+                  # f"https://dimonvideo.ru/usernews/1/0/dateD/10",
+                  # f"https://dimonvideo.ru/usernews/1/0/dateD/20",
+                  # f"https://dimonvideo.ru/usernews/1/0/dateD/30",
+                  # f"https://dimonvideo.ru/usernews/1/0/dateD/40",
                   ]
 
     async def parse(self, response, **kwargs):

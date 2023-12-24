@@ -11,15 +11,15 @@ class SdelanoUNasSpider(scrapy.Spider):
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
 
     start_urls = ["https://sdelanounas.ru/blogs/?page=0",
-                  "https://sdelanounas.ru/blogs/?page=1",
-                  "https://sdelanounas.ru/blogs/?page=2",
-                  "https://sdelanounas.ru/blogs/?page=3",
-                  "https://sdelanounas.ru/blogs/?page=4",
-                  "https://sdelanounas.ru/blogs/?page=5",
-                  "https://sdelanounas.ru/blogs/?page=6",
-                  "https://sdelanounas.ru/blogs/?page=7",
-                  "https://sdelanounas.ru/blogs/?page=8",
-                  "https://sdelanounas.ru/blogs/?page=9",
+                  # "https://sdelanounas.ru/blogs/?page=1",
+                  # "https://sdelanounas.ru/blogs/?page=2",
+                  # "https://sdelanounas.ru/blogs/?page=3",
+                  # "https://sdelanounas.ru/blogs/?page=4",
+                  # "https://sdelanounas.ru/blogs/?page=5",
+                  # "https://sdelanounas.ru/blogs/?page=6",
+                  # "https://sdelanounas.ru/blogs/?page=7",
+                  # "https://sdelanounas.ru/blogs/?page=8",
+                  # "https://sdelanounas.ru/blogs/?page=9",
                   ]
 
     async def parse(self, response, **kwargs):

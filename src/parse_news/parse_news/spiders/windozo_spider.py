@@ -14,14 +14,14 @@ class WindozoSpider(scrapy.Spider):
 
     start_urls = [f"https://windozo.ru/topics/news/page/1/",
                   f"https://windozo.ru/topics/news/page/2/",
-                  f"https://windozo.ru/topics/news/page/3/",
-                  f"https://windozo.ru/topics/news/page/4/",
-                  f"https://windozo.ru/topics/news/page/5/",
-                  f"https://windozo.ru/topics/news/page/6/",
-                  f"https://windozo.ru/topics/news/page/7/",
-                  f"https://windozo.ru/topics/news/page/8/",
-                  f"https://windozo.ru/topics/news/page/9/",
-                  f"https://windozo.ru/topics/news/page/10/",
+                  # f"https://windozo.ru/topics/news/page/3/",
+                  # f"https://windozo.ru/topics/news/page/4/",
+                  # f"https://windozo.ru/topics/news/page/5/",
+                  # f"https://windozo.ru/topics/news/page/6/",
+                  # f"https://windozo.ru/topics/news/page/7/",
+                  # f"https://windozo.ru/topics/news/page/8/",
+                  # f"https://windozo.ru/topics/news/page/9/",
+                  # f"https://windozo.ru/topics/news/page/10/",
                   ]
 
     async def parse(self, response, **kwargs):

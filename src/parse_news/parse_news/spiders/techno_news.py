@@ -11,15 +11,15 @@ class TexnoNewsSpider(scrapy.Spider):
                                    "Chrome/116.0.5845.1028 YaBrowser/23.9.1.1028 (beta) Yowser/2.5 Safari/537.36"}
 
     start_urls = ["https://techno-news.net/page/1/",
-                  "https://techno-news.net/page/2/",
-                  "https://techno-news.net/page/3/",
-                  "https://techno-news.net/page/4/",
-                  "https://techno-news.net/page/5/",
-                  "https://techno-news.net/page/6/",
-                  "https://techno-news.net/page/7/",
-                  "https://techno-news.net/page/8/",
-                  "https://techno-news.net/page/9/",
-                  "https://techno-news.net/page/10/",
+                  # "https://techno-news.net/page/2/",
+                  # "https://techno-news.net/page/3/",
+                  # "https://techno-news.net/page/4/",
+                  # "https://techno-news.net/page/5/",
+                  # "https://techno-news.net/page/6/",
+                  # "https://techno-news.net/page/7/",
+                  # "https://techno-news.net/page/8/",
+                  # "https://techno-news.net/page/9/",
+                  # "https://techno-news.net/page/10/",
                   ]
 
     async def parse(self, response, **kwargs):

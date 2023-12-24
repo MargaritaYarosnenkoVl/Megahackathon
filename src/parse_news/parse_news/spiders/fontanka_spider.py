@@ -20,12 +20,12 @@ class FontankaSpider(scrapy.Spider):
     today_6 = today - timedelta(days=6)
 
     start_urls = [f"https://www.fontanka.ru/{today.year}/{'%02d' % today.month}/{'%02d' % today.day}/all.html",
-                  f"https://www.fontanka.ru/{today_1.year}/{'%02d' % today_1.month}/{'%02d' % today_1.day}/all.html",
-                  f"https://www.fontanka.ru/{today_2.year}/{'%02d' % today_2.month}/{'%02d' % today_2.day}/all.html",
-                  f"https://www.fontanka.ru/{today_3.year}/{'%02d' % today_3.month}/{'%02d' % today_3.day}/all.html",
-                  f"https://www.fontanka.ru/{today_4.year}/{'%02d' % today_4.month}/{'%02d' % today_4.day}/all.html",
-                  f"https://www.fontanka.ru/{today_5.year}/{'%02d' % today_5.month}/{'%02d' % today_5.day}/all.html",
-                  f"https://www.fontanka.ru/{today_6.year}/{'%02d' % today_6.month}/{'%02d' % today_6.day}/all.html",
+                  # f"https://www.fontanka.ru/{today_1.year}/{'%02d' % today_1.month}/{'%02d' % today_1.day}/all.html",
+                  # f"https://www.fontanka.ru/{today_2.year}/{'%02d' % today_2.month}/{'%02d' % today_2.day}/all.html",
+                  # f"https://www.fontanka.ru/{today_3.year}/{'%02d' % today_3.month}/{'%02d' % today_3.day}/all.html",
+                  # f"https://www.fontanka.ru/{today_4.year}/{'%02d' % today_4.month}/{'%02d' % today_4.day}/all.html",
+                  # f"https://www.fontanka.ru/{today_5.year}/{'%02d' % today_5.month}/{'%02d' % today_5.day}/all.html",
+                  # f"https://www.fontanka.ru/{today_6.year}/{'%02d' % today_6.month}/{'%02d' % today_6.day}/all.html",
                   ]
 
     async def parse(self, response, **kwargs):
